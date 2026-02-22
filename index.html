@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>منصة صفحة التعليمية</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23667eea'/%3E%3Cpath d='M32 10L52 21V35L32 46L12 35V21L32 10Z' fill='rgba(255,255,255,0.25)' stroke='rgba(255,255,255,0.7)' stroke-width='2'/%3E%3Ccircle cx='32' cy='28' r='7' fill='white'/%3E%3Cpath d='M20 46L32 52L44 46' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- Settings -->
+<div class="overlay hidden" id="ov-settings">
+  <div class="modal" id="modal-settings">
+    <div class="modal-drag"></div>
+    <div class="modal-hd">
+      <div class="modal-hd-l">
+        <div class="modal-hd-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <span>الإعدادات</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('ov-settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- User row -->
+    <div class="set-user" id="set-user">
+      <div class="set-avatar" id="set-avatar">؟</div>
+      <div class="set-user-info">
+        <div class="set-uname" id="set-uname">—</div>
+        <div class="set-ustage" id="set-ustage">لم تختر مرحلة</div>
+      </div>
+    </div>
+
+    <div class="modal-list">
+
+      <!-- Dark mode -->
+      <div class="mitem" onclick="toggleTheme()">
+        <div class="mitem-ic mi-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </div>
+        <div class="mitem-txt">
+          <div class="mitem-title" id="set-theme-lbl">الوضع الليلي</div>
+          <div class="mitem-sub">تغيير مظهر التطبيق</div>
+        </div>
+        <div class="toggle-sw" id="set-toggle"><div class="toggle-kn" id="set-knob"></div></div>
+      </div>
+
+      <!-- Change stage -->
+      <div class="mitem" onclick="askChangeStage()">
+        <div class="mitem-ic mi-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+        </div>
+        <div class="mitem-txt">
+          <div class="mitem-title">تغيير المرحلة</div>
+          <div class="mitem-sub">الانتقال لمرحلة دراسية مختلفة</div>
+        </div>
+        <div class="mitem-arr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="mitem" onclick="closeModal('ov-settings');bottomNav('profile')">
+        <div class="mitem-ic mi-teal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="mitem-txt">
+          <div class="mitem-title">الملف الشخصي</div>
+          <div class="mitem-sub">تعديل الاسم وكلمة المرور</div>
+        </div>
+        <div class="mitem-arr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+      </div>
+
+      <!-- Report -->
+      <a class="mitem" href="https://t.me/dfuvfbot" target="_blank">
+        <div class="mitem-ic mi-orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="mitem-txt">
+          <div class="mitem-title">الإبلاغ عن مشكلة</div>
+          <div class="mitem-sub">تواصل معنا عبر تيليغرام</div>
+        </div>
+        <div class="mitem-arr ext">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </div>
+      </a>
+
+      <!-- Logout -->
+      <div class="mitem mitem-red" onclick="doLogout()">
+        <div class="mitem-ic mi-red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+        <div class="mitem-txt">
+          <div class="mitem-title">تسجيل الخروج</div>
+          <div class="mitem-sub">الخروج من حسابك الحالي</div>
+        </div>
+        <div class="mitem-arr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Change Stage Confirm -->
+<div class="overlay hidden" id="ov-changestage">
+  <div class="modal confirm-modal">
+    <div class="confirm-ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+    </div>
+    <h3>تغيير المرحلة</h3>
+    <p>هل أنت متأكد؟ سيتم توجيهك لاختيار مرحلة جديدة.</p>
+    <div class="confirm-btns">
+      <button class="cbtn-cancel" onclick="closeModal('ov-changestage')">إلغاء</button>
+      <button class="cbtn-ok" onclick="doChangeStage()">نعم، غيّر المرحلة</button>
+    </div>
+  </div>
+</div>
+
+<!-- Stage Picker -->
+<div class="overlay hidden" id="ov-picker">
+  <div class="modal picker-modal">
+    <div class="picker-hd">
+      <div class="picker-hd-ic">🎓</div>
+      <h3 id="picker-title">اختر مرحلتك الدراسية</h3>
+      <p id="picker-sub">اختر مرحلتك لعرض المحتوى المناسب لك</p>
+    </div>
+    <div class="picker-grid" id="picker-grid"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     BOTTOM NAV
+══════════════════════════════════════ -->
+<nav class="bnav hidden" id="bottomNav">
+  <button class="bnb active" id="bnav-home" onclick="bottomNav('home')">
+    <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    <span>الرئيسية</span>
+  </button>
+  <button class="bnb" id="bnav-search" onclick="bottomNav('search')">
+    <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <span>بحث</span>
+  </button>
+  <button class="bnb" id="bnav-favs" onclick="bottomNav('favs')">
+    <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    <span>المفضلة</span>
+  </button>
+  <button class="bnb" id="bnav-profile" onclick="bottomNav('profile')">
+    <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>حسابي</span>
+  </button>
+  <button class="bnb" id="bnav-settings" onclick="openSettings()">
+    <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    <span>إعدادات</span>
+  </button>
+</nav>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — AUTH
+══════════════════════════════════════ -->
+<div id="pg-auth" class="pg active">
+  <div class="auth-bg" id="authBg"></div>
+  <div class="auth-center">
+
+    <!-- Brand -->
+    <div class="auth-brand">
+      <div class="brand-logo anim-float">
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8L54 20V36L32 48L10 36V20L32 8Z" fill="rgba(255,255,255,0.28)" stroke="white" stroke-width="2.5"/>
+          <circle cx="32" cy="28" r="8" fill="white"/>
+          <path d="M20 45L32 52L44 45" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">صفحة التعليمية</div>
+        <div class="brand-tag">منصتك الدراسية الشاملة</div>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div class="auth-card">
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول</button>
+        <button class="auth-tab" id="tab-reg" onclick="switchTab('register')">حساب جديد</button>
+        <div class="auth-tab-line" id="tab-line"></div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="frm-login" class="auth-form">
+        <div class="auth-form-intro">
+          <span class="form-emoji">👋</span>
+          <p>أهلاً بعودتك! أدخل بياناتك للدخول</p>
+        </div>
+        <div class="field">
+          <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input id="l-name" type="text" placeholder="اسمك" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input id="l-pass" type="password" placeholder="كلمة المرور"/>
+          <button class="eye-btn" onclick="toggleEye('l-pass','eye-l')" id="eye-l">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="ferr" id="l-err"></div>
+        <button class="btn-main" onclick="doLogin()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          دخول
+        </button>
+        <div class="auth-or"><span>أو</span></div>
+        <button class="btn-ghost" onclick="doGuest()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          دخول كضيف
+        </button>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="frm-register" class="auth-form hidden">
+        <div class="auth-form-intro">
+          <span class="form-emoji">🎓</span>
+          <p>أنشئ حسابك وابدأ رحلتك التعليمية</p>
+        </div>
+        <div class="field">
+          <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input id="r-name" type="text" placeholder="اسمك الكامل" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input id="r-pass" type="password" placeholder="اختر كلمة مرور (٤+ أحرف)"/>
+          <button class="eye-btn" onclick="toggleEye('r-pass','eye-r1')" id="eye-r1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="field">
+          <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <input id="r-pass2" type="password" placeholder="تأكيد كلمة المرور"/>
+          <button class="eye-btn" onclick="toggleEye('r-pass2','eye-r2')" id="eye-r2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="ferr" id="r-err"></div>
+        <button class="btn-main" onclick="doRegister()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          إنشاء الحساب
+        </button>
+      </div>
+
+    </div>
+    <!-- End card -->
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — GRADE (user's stage grades)
+══════════════════════════════════════ -->
+<div id="pg-grade" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <div class="tbar-logo">
+        <svg width="20" height="20" viewBox="0 0 64 64" fill="none"><path d="M32 8L54 20V36L32 48L10 36V20L32 8Z" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="3"/><circle cx="32" cy="28" r="8" fill="white"/></svg>
+      </div>
+      <div>
+        <div class="tbar-title" id="grade-tbar-title">صفحة التعليمية</div>
+        <div class="tbar-sub" id="grade-tbar-sub">اختر صفك</div>
+      </div>
+    </div>
+    <div class="tbar-r">
+      <div class="user-pill" id="upill-grade">👤</div>
+    </div>
+  </header>
+  <main class="pg-body">
+    <div class="pg-hero" style="margin-bottom:28px">
+      <div class="big-ic" id="grade-hero-ic">📘</div>
+      <h1 id="grade-hero-h1">اختر صفك</h1>
+      <p id="grade-hero-p">صفوف مرحلتك الدراسية</p>
+    </div>
+    <div class="grades-list" id="grades-list"></div>
+  </main>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — CLASS (subjects + content)
+══════════════════════════════════════ -->
+<div id="pg-class" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <button class="back-btn" onclick="goPage('pg-grade')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        رجوع
+      </button>
+      <div>
+        <div class="tbar-title" id="class-tbar-title">الصف</div>
+        <div class="tbar-sub" id="class-tbar-sub">المواد الدراسية</div>
+      </div>
+    </div>
+    <div class="tbar-r">
+      <div class="user-pill" id="upill-class">👤</div>
+    </div>
+  </header>
+
+  <div class="strip-wrap">
+    <div class="sub-strip" id="sub-strip"></div>
+  </div>
+
+  <!-- Content tabs -->
+  <div class="ctabs-bar">
+    <button class="ctab active" onclick="switchCTab('booklets',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      ملازم
+    </button>
+    <button class="ctab" onclick="switchCTab('exams',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+      اختبارات
+    </button>
+    <button class="ctab" onclick="switchCTab('favs',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      مفضلة
+    </button>
+    <button class="ctab" onclick="switchCTab('curriculum',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      المنهج
+    </button>
+  </div>
+
+  <main class="pg-body" id="class-body"></main>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 4 — SEARCH
+══════════════════════════════════════ -->
+<div id="pg-search" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <div class="tbar-logo"><svg width="20" height="20" viewBox="0 0 64 64" fill="none"><path d="M32 8L54 20V36L32 48L10 36V20L32 8Z" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="3"/><circle cx="32" cy="28" r="8" fill="white"/></svg></div>
+      <span class="tbar-title">البحث</span>
+    </div>
+  </header>
+  <main class="pg-body">
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="opacity:.45;flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="search-inp" type="text" placeholder="ابحث عن مادة أو ملزمة أو اختبار..." oninput="doSearch(this.value)" autocomplete="off"/>
+        <button class="s-clear hidden" id="s-clear" onclick="clearSearch()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="sf-row">
+      <button class="sf active" onclick="setFilter('all',this)">الكل</button>
+      <button class="sf" onclick="setFilter('booklets',this)">ملازم</button>
+      <button class="sf" onclick="setFilter('exams',this)">اختبارات</button>
+      <button class="sf" onclick="setFilter('subjects',this)">مواد</button>
+    </div>
+    <div id="sr-list"></div>
+    <div id="sr-empty" class="state-box hidden">
+      <div class="state-ic">🔍</div><h3>لا نتائج</h3><p>جرب كلمة مختلفة</p>
+    </div>
+    <div id="sr-start" class="state-box">
+      <div class="state-ic">✨</div><h3>ابحث عن أي شيء</h3><p>مواد · ملازم · اختبارات</p>
+    </div>
+  </main>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 5 — FAVORITES
+══════════════════════════════════════ -->
+<div id="pg-favs" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <div class="tbar-logo"><svg width="20" height="20" viewBox="0 0 64 64" fill="none"><path d="M32 8L54 20V36L32 48L10 36V20L32 8Z" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="3"/><circle cx="32" cy="28" r="8" fill="white"/></svg></div>
+      <span class="tbar-title">المفضلة</span>
+    </div>
+  </header>
+  <main class="pg-body">
+    <div class="pg-hero" style="margin-bottom:24px">
+      <div class="big-ic">❤️</div><h1>المحفوظة</h1><p>الملازم والاختبارات التي حفظتها</p>
+    </div>
+    <div id="favs-list"></div>
+    <div id="favs-empty" class="state-box hidden">
+      <div class="state-ic">🔖</div>
+      <h3>لا توجد مفضلات بعد</h3>
+      <p>اضغط ❤️ على أي ملزمة أو اختبار لحفظه هنا</p>
+    </div>
+  </main>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 6 — PROFILE
+══════════════════════════════════════ -->
+<div id="pg-profile" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <div class="tbar-logo"><svg width="20" height="20" viewBox="0 0 64 64" fill="none"><path d="M32 8L54 20V36L32 48L10 36V20L32 8Z" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="3"/><circle cx="32" cy="28" r="8" fill="white"/></svg></div>
+      <span class="tbar-title">حسابي</span>
+    </div>
+  </header>
+  <main class="pg-body">
+    <div class="profile-hero">
+      <div class="profile-av" id="p-avatar">؟</div>
+      <h2 id="p-name">—</h2>
+      <div class="profile-chip" id="p-chip">لم تختر مرحلة</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-n" id="st-days">١</div><div class="stat-l">أيام معنا</div></div>
+      <div class="stat-box"><div class="stat-n" id="st-favs">٠</div><div class="stat-l">مفضلة</div></div>
+      <div class="stat-box"><div class="stat-n">✅</div><div class="stat-l">نشط</div></div>
+    </div>
+    <div class="psec">
+      <div class="psec-title">✏️ تعديل الاسم</div>
+      <div class="field">
+        <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input id="edit-name" type="text" placeholder="اسمك الجديد"/>
+      </div>
+      <button class="btn-main mt8" onclick="saveName()">حفظ الاسم</button>
+    </div>
+    <div class="psec">
+      <div class="psec-title">🔒 تغيير كلمة المرور</div>
+      <div class="field">
+        <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <input id="old-pass" type="password" placeholder="كلمة المرور الحالية"/>
+        <button class="eye-btn" onclick="toggleEye('old-pass','eye-op')" id="eye-op">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="field">
+        <svg class="fsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <input id="new-pass" type="password" placeholder="كلمة المرور الجديدة"/>
+        <button class="eye-btn" onclick="toggleEye('new-pass','eye-np')" id="eye-np">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="ferr" id="pass-err"></div>
+      <button class="btn-main mt8" onclick="changePass()">تغيير كلمة المرور</button>
+    </div>
+    <div class="psec danger-sec">
+      <div class="psec-title">⚠️ منطقة الخطر</div>
+      <button class="btn-danger" onclick="deleteAccount()">حذف الحساب نهائياً 🗑️</button>
+    </div>
+  </main>
+</div>
+
+
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
