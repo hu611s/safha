@@ -125,6 +125,28 @@ function toast(msg,type){
 function openModal(id){var o=el(id);if(!o)return;o.classList.remove('hidden');document.body.style.overflow='hidden';o.onclick=function(e){if(e.target===o)closeModal(id);};}
 function closeModal(id){var o=el(id);if(!o)return;o.classList.add('hidden');document.body.style.overflow='';}
 function showBottomNav(s){var n=el('bottomNav');if(n){if(s)n.classList.remove('hidden');else n.classList.add('hidden');}}
+
+/* ── نافذة تأكيد مخصصة (بديل confirm المتصفح) ── */
+function showConfirm(opts){
+  /* opts: { title, msg, icon, yesText, yesCls, onYes } */
+  var ic  = el('confirm-icon');
+  var ti  = el('confirm-title');
+  var ms  = el('confirm-msg');
+  var btn = el('confirm-yes');
+  if(!ic||!ti||!ms||!btn) return;
+
+  ic.textContent  = opts.icon  || '⚠️';
+  ti.textContent  = opts.title || 'هل أنت متأكد؟';
+  ms.textContent  = opts.msg   || '';
+  btn.textContent = opts.yesText || 'تأكيد';
+  btn.className   = 'confirm-yes ' + (opts.yesCls || '');
+
+  btn.onclick = function(){
+    closeModal('ov-confirm');
+    if(opts.onYes) opts.onYes();
+  };
+  openModal('ov-confirm');
+}
 function setNavActive(k){
   var m={home:'bnav-home',search:'bnav-search',favs:'bnav-favs',profile:'bnav-profile',settings:'bnav-settings'};
   document.querySelectorAll('.bnb').forEach(function(b){b.classList.remove('active');});
@@ -295,14 +317,22 @@ function doGuest(){
 function doLogout(){
   closeModal('ov-settings');
   setTimeout(function(){
-    if(!confirm('تسجيل الخروج؟'))return;
-    localStorage.removeItem('dz_sess');
-    curStage=null;curBranch=null;curGrade=null;isGuest=false;
-    showBottomNav(false); switchTab('login');
-    var ln=el('l-name'),lp=el('l-pass');
-    if(ln)ln.value='';if(lp)lp.value='';if(el('l-err'))el('l-err').textContent='';
-    toast('👋 تم تسجيل الخروج','info');
-    goPage('pg-auth');
+    showConfirm({
+      icon:'👋',
+      title:'تسجيل الخروج',
+      msg:'هل تريد الخروج من حسابك؟',
+      yesText:'نعم، اخرج',
+      yesCls:'confirm-warn',
+      onYes:function(){
+        localStorage.removeItem('dz_sess');
+        curStage=null;curBranch=null;curGrade=null;isGuest=false;
+        showBottomNav(false); switchTab('login');
+        var ln=el('l-name'),lp=el('l-pass');
+        if(ln)ln.value='';if(lp)lp.value='';if(el('l-err'))el('l-err').textContent='';
+        toast('👋 تم تسجيل الخروج','info');
+        goPage('pg-auth');
+      }
+    });
   },100);
 }
 
@@ -633,208 +663,321 @@ async function handleOAuthCallback(){
 }
 
 /* ══════════════════════════════════════════════
-   INTERACTIVE QUIZ — الاختبار التفاعلي
+   DUOLINGO-STYLE QUIZ — الاختبار التفاعلي
 ══════════════════════════════════════════════ */
-var quizData = null; // {name, questions:[]}
-var quizState = {   // حالة الاختبار الجارية
-  qIdx: 0,
-  answers: [],
-  score: 0,
-  started: false,
-  timer: null,
-  timeLeft: 0
+var Q = {
+  data:    null,   // {name, questions:[]}
+  answers: [],     // إجابات المستخدم
+  idx:     0,      // السؤال الحالي
+  locked:  false   // منع الضغط المتكرر أثناء الانتقال
 };
 
-// جلب بيانات الاختبار وفتح Modal
-async function startQuiz(examId, examName){
+/* ── فتح الاختبار ── */
+async function startQuiz(examId){
   try{
     var rows = await sb('exams','GET',null,'?id=eq.'+examId+'&select=name,questions');
-    var ex = rows&&rows[0];
+    var ex   = rows&&rows[0];
     if(!ex||!ex.questions){ toast('⚠️ لا توجد أسئلة','warn'); return; }
     var qs = JSON.parse(ex.questions);
     if(!qs||!qs.length){ toast('⚠️ لا توجد أسئلة','warn'); return; }
-    quizData = {name: ex.name, questions: qs};
-    quizState = {qIdx:0, answers:[], score:0, started:false, timer:null, timeLeft:0};
-    renderQuizIntro();
+    Q.data    = {name:ex.name, questions:qs};
+    Q.answers = new Array(qs.length).fill(null);
+    Q.idx     = 0;
+    Q.locked  = false;
+    _qRenderIntro();
     openModal('ov-quiz');
-  }catch(e){toast('❌ '+e.message,'err');}
+  }catch(e){ toast('❌ '+e.message,'err'); }
 }
 
-function renderQuizIntro(){
-  var q = quizData.questions;
-  var total = q.length;
-  var mcq = q.filter(function(x){return x.type!=='tf';}).length;
-  var tf  = q.filter(function(x){return x.type==='tf';}).length;
-  el('quiz-inner').innerHTML =
-    '<div class="qz-intro">'
-   +'<div class="qz-close-row"><button class="qz-close" onclick="closeModal(\'ov-quiz\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
-   +'<div class="qz-intro-ic">🎯</div>'
-   +'<h2 class="qz-intro-title">'+quizData.name+'</h2>'
-   +'<div class="qz-intro-stats">'
-   +'<div class="qz-stat"><div class="qz-stat-n">'+total+'</div><div class="qz-stat-l">سؤال</div></div>'
-   +(mcq?'<div class="qz-stat"><div class="qz-stat-n">'+mcq+'</div><div class="qz-stat-l">اختيار متعدد</div></div>':'')
-   +(tf?'<div class="qz-stat"><div class="qz-stat-n">'+tf+'</div><div class="qz-stat-l">صح / خطأ</div></div>':'')
-   +'<div class="qz-stat"><div class="qz-stat-n">'+Math.round(total*1.5)+'</div><div class="qz-stat-l">دقيقة</div></div>'
-   +'</div>'
-   +'<p class="qz-intro-hint">اقرأ كل سؤال بتمعن وأجب بثقة!</p>'
-   +'<button class="btn-main qz-start-btn" onclick="launchQuiz()">🚀 ابدأ الاختبار</button>'
-   +'</div>';
-}
-
-function launchQuiz(){
-  quizState.qIdx = 0;
-  quizState.answers = new Array(quizData.questions.length).fill(null);
-  quizState.started = true;
-  renderQuestion();
-}
-
-function renderQuestion(){
-  var qs = quizData.questions;
-  var i = quizState.qIdx;
-  var q = qs[i];
+/* ── شاشة المقدمة ── */
+function _qRenderIntro(){
+  var qs    = Q.data.questions;
   var total = qs.length;
-  var answered = quizState.answers.filter(function(a){return a!==null;}).length;
-  var pct = Math.round((i/total)*100);
+  var mcqN  = qs.filter(function(q){return q.type!=='tf';}).length;
+  var tfN   = qs.filter(function(q){return q.type==='tf';}).length;
+  var mins  = Math.max(1, Math.ceil(total * 0.6));
 
-  var html = '<div class="qz-body">'
-   +'<div class="qz-topbar">'
-   +'<button class="qz-close" onclick="confirmCloseQuiz()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
-   +'<div class="qz-prog-wrap"><div class="qz-prog-bar" style="width:'+pct+'%"></div></div>'
-   +'<div class="qz-counter">'+( i+1)+'/'+total+'</div>'
+  _qSet(
+    '<div class="dq-intro">'
+   +'<button class="dq-x" onclick="closeModal(\'ov-quiz\')" aria-label="إغلاق">'
+   +  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+   +'</button>'
+   +'<div class="dq-intro-anim">'
+   +'<div class="dq-anim-ring dq-ar1"></div>'
+   +'<div class="dq-anim-ring dq-ar2"></div>'
+   +'<div class="dq-anim-ring dq-ar3"></div>'
+   +'<div class="dq-anim-core">'
+   +'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="26" height="26"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>'
    +'</div>'
-   +'<div class="qz-question-box">'
-   +'<div class="qz-qnum">السؤال '+(i+1)+'</div>'
-   +'<div class="qz-qtext">'+q.text+'</div>'
    +'</div>'
-   +'<div class="qz-opts" id="qz-opts">';
-
-  if(q.type==='tf'){
-    var selT = quizState.answers[i]===true;
-    var selF = quizState.answers[i]===false;
-    html += '<button class="qz-opt tf-opt tf-true'+(selT?' qz-sel':'')+'" onclick="selectAnswer(true)">✅ صح</button>';
-    html += '<button class="qz-opt tf-opt tf-false'+(selF?' qz-sel':'')+'" onclick="selectAnswer(false)">❌ خطأ</button>';
-  } else {
-    var labels = ['أ','ب','ج','د'];
-    (q.opts||[]).forEach(function(opt,oi){
-      if(!opt) return;
-      var isSel = quizState.answers[i]===oi;
-      html += '<button class="qz-opt'+(isSel?' qz-sel':'')+'" onclick="selectAnswer('+oi+')">'
-            + '<span class="qz-opt-lbl">'+labels[oi]+'</span>'
-            + '<span class="qz-opt-txt">'+opt+'</span>'
-            + '</button>';
-    });
-  }
-  html += '</div>';
-
-  // أزرار التنقل
-  html += '<div class="qz-nav">';
-  if(i>0) html += '<button class="qz-nav-btn qz-prev" onclick="goQuestion('+(i-1)+')">→ السابق</button>';
-  if(i<total-1){
-    html += '<button class="qz-nav-btn qz-next" onclick="goQuestion('+(i+1)+')">التالي ←</button>';
-  } else {
-    html += '<button class="qz-nav-btn qz-finish" onclick="finishQuiz()">✔ إنهاء الاختبار</button>';
-  }
-  html += '</div></div>';
-  el('quiz-inner').innerHTML = html;
+   +'<h2 class="dq-intro-name">'+Q.data.name+'</h2>'
+   +'<div class="dq-intro-chips">'
+   +'<span class="dq-chip dq-chip-blue">'+total+' سؤال</span>'
+   +(mcqN?'<span class="dq-chip dq-chip-purple">'+mcqN+' اختيار متعدد</span>':'')
+   +(tfN?'<span class="dq-chip dq-chip-teal">'+tfN+' صح/خطأ</span>':'')
+   +'<span class="dq-chip dq-chip-amber">~'+mins+' دقيقة</span>'
+   +'</div>'
+   +'<p class="dq-intro-tip">اقرأ كل سؤال بهدوء وأجب بثقة 💪</p>'
+   +'<button class="dq-start-btn" onclick="_qLaunch()">'
+   +'<span>ابدأ الاختبار</span>'
+   +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
+   +'</button>'
+   +'</div>'
+  );
 }
 
-function selectAnswer(val){
-  quizState.answers[quizState.qIdx] = val;
-  // تلوين الإجابة المختارة
-  document.querySelectorAll('.qz-opt').forEach(function(b){b.classList.remove('qz-sel');});
-  // إعادة رسم الأزرار بعد التحديد
-  var qs = quizData.questions;
-  var i = quizState.qIdx;
-  var q = qs[i];
-  if(q.type==='tf'){
-    document.querySelectorAll('.qz-opt').forEach(function(b){
-      if(b.classList.contains('tf-true')&&val===true) b.classList.add('qz-sel');
-      if(b.classList.contains('tf-false')&&val===false) b.classList.add('qz-sel');
-    });
+/* ── تشغيل الاختبار ── */
+function _qLaunch(){
+  Q.idx    = 0;
+  Q.locked = false;
+  _qRenderQ();
+}
+
+/* ── رسم السؤال ── */
+function _qRenderQ(){
+  Q.locked = false;
+  var qs    = Q.data.questions;
+  var i     = Q.idx;
+  var q     = qs[i];
+  var total = qs.length;
+  var pct   = Math.round((i / total) * 100);
+  var LABELS= ['أ','ب','ج','د'];
+
+  /* ── بناء الخيارات ── */
+  var optsHtml = '';
+  if(q.type === 'tf'){
+    optsHtml =
+      '<button class="dq-opt dq-tf-t" onclick="_qPick(this,true)">'
+     +'<span class="dq-tf-ic">✅</span><span>صح</span>'
+     +'</button>'
+     +'<button class="dq-opt dq-tf-f" onclick="_qPick(this,false)">'
+     +'<span class="dq-tf-ic">❌</span><span>خطأ</span>'
+     +'</button>';
   } else {
-    var btns = document.querySelectorAll('.qz-opt');
-    // find clicked by val
-    btns.forEach(function(b, bi){
-      if(bi===val) b.classList.add('qz-sel');
+    var opts = (q.opts||[]).filter(function(o){return o&&o.trim();});
+    opts.forEach(function(opt, oi){
+      optsHtml +=
+        '<button class="dq-opt dq-mcq-opt" onclick="_qPick(this,'+oi+')">'
+       +'<span class="dq-opt-badge">'+LABELS[oi]+'</span>'
+       +'<span class="dq-opt-text">'+opt+'</span>'
+       +'</button>';
     });
   }
-  // انتقل للسؤال التالي تلقائياً بعد 400ms
+
+  _qSet(
+    '<div class="dq-screen">'
+
+    /* ─ شريط علوي ─ */
+   +'<div class="dq-header">'
+   +'<button class="dq-x" onclick="_qConfirmExit()" aria-label="خروج">'
+   +  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+   +'</button>'
+   +'<div class="dq-prog-track"><div class="dq-prog-fill" style="width:'+pct+'%"></div></div>'
+   +'<div class="dq-counter"><span class="dq-ci">'+(i+1)+'</span>/<span class="dq-ct">'+total+'</span></div>'
+   +'</div>'
+
+    /* ─ body: السؤال + الخيارات ─ */
+   +'<div class="dq-body">'
+
+   +'<div class="dq-q-card">'
+   +'<div class="dq-q-tag">السؤال '+(i+1)+' من '+total+'</div>'
+   +'<div class="dq-q-text">'+q.text+'</div>'
+   +'</div>'
+
+   +'<div class="dq-opts'+(q.type==='tf'?' dq-tf-opts':'')+'">'
+   +optsHtml
+   +'</div>'
+
+   +'</div>'   /* end dq-body */
+   +'</div>'   /* end dq-screen */
+  );
+
+  /* أنيميشن دخول السؤال */
+  requestAnimationFrame(function(){
+    var scr = document.querySelector('.dq-screen');
+    if(scr) scr.classList.add('dq-in');
+  });
+}
+
+/* ── اختيار إجابة ── */
+function _qPick(btn, val){
+  if(Q.locked) return;
+  Q.locked = true;
+
+  /* تحديد الزر المضغوط */
+  btn.classList.add('dq-picked');
+  Q.answers[Q.idx] = val;
+
+  /* انتقال للسؤال التالي بعد 280ms */
   setTimeout(function(){
-    if(quizState.qIdx < qs.length-1){
-      goQuestion(quizState.qIdx+1);
+    var qs = Q.data.questions;
+    if(Q.idx < qs.length - 1){
+      Q.idx++;
+      var scr = document.querySelector('.dq-screen');
+      if(scr){
+        scr.classList.add('dq-out');
+        setTimeout(function(){ _qRenderQ(); }, 200);
+      } else {
+        _qRenderQ();
+      }
+    } else {
+      _qFinish();
     }
-  }, 420);
+  }, 280);
 }
 
-function goQuestion(idx){
-  quizState.qIdx = idx;
-  renderQuestion();
+/* ── تأكيد الخروج ── */
+function _qConfirmExit(){
+  showConfirm({
+    icon:'🎯',
+    title:'الخروج من الاختبار',
+    msg:'إذا خرجت الآن ستضيع إجاباتك ولن تُحفظ النتيجة.',
+    yesText:'نعم، اخرج',
+    yesCls:'confirm-warn',
+    onYes:function(){ closeModal('ov-quiz'); }
+  });
 }
 
-function confirmCloseQuiz(){
-  if(confirm('إنهاء الاختبار والخروج؟'))closeModal('ov-quiz');
-}
-
-function finishQuiz(){
-  // حساب الدرجة
-  var qs = quizData.questions;
+/* ── إنهاء الاختبار وحساب النتيجة ── */
+function _qFinish(){
+  var qs      = Q.data.questions;
   var correct = 0;
-  var totalScore = 0;
-  var earned = 0;
-  qs.forEach(function(q,i){
-    var ans = quizState.answers[i];
-    var sc = q.score||1;
-    totalScore += sc;
-    var isCorrect = (q.type==='tf') ? (ans===q.correct) : (ans===q.correct);
-    if(isCorrect){ correct++; earned += sc; }
+  var wrong   = 0;
+  var skipped = 0;
+  qs.forEach(function(q, i){
+    var ans = Q.answers[i];
+    if(ans === null){ skipped++; return; }
+    if(ans === q.correct) correct++;
+    else wrong++;
   });
-  var pct = Math.round((earned/totalScore)*100);
-  renderQuizResult(correct, qs.length, earned, totalScore, pct);
+  var total = qs.length;
+  var pct   = Math.round((correct / total) * 100);
+  _qRenderResult(correct, wrong, skipped, total, pct);
 }
 
-function renderQuizResult(correct, total, earned, totalScore, pct){
-  var grade, icon, color;
-  if(pct>=90){grade='ممتاز! 🏆';icon='🥇';color='#22c55e';}
-  else if(pct>=75){grade='جيد جداً 🌟';icon='🥈';color='#3b82f6';}
-  else if(pct>=60){grade='جيد 👍';icon='🥉';color='#f59e0b';}
-  else if(pct>=50){grade='مقبول';icon='📗';color='#8b5cf6';}
-  else{grade='يحتاج مراجعة';icon='📚';color='#ef4444';}
+/* ── صفحة النتائج ── */
+function _qRenderResult(correct, wrong, skipped, total, pct){
+  /* رسالة تحفيزية */
+  var msg, emoji, colorClass;
+  if(pct === 100){
+    msg='أنت نجم! أجبت على كل الأسئلة بشكل صحيح 🌟'; emoji='🏆'; colorClass='dq-gold';
+  } else if(pct >= 90){
+    msg='رائع جداً! أداء مميز يستحق التقدير 🎉'; emoji='🥇'; colorClass='dq-gold';
+  } else if(pct >= 75){
+    msg='جيد جداً! واصل التعلم وستصل للقمة 💪'; emoji='🥈'; colorClass='dq-silver';
+  } else if(pct >= 60){
+    msg='جيد! أنت على الطريق الصحيح، راجع الأخطاء 📖'; emoji='🥉'; colorClass='dq-bronze';
+  } else if(pct >= 40){
+    msg='لا بأس، راجع المادة وحاول مجدداً! 📚'; emoji='💡'; colorClass='dq-warn';
+  } else {
+    msg='المحاولة الأولى ليست الأخيرة، أعد الدراسة وحاول 🔄'; emoji='🌱'; colorClass='dq-low';
+  }
 
-  // تفاصيل كل سؤال
-  var qs = quizData.questions;
-  var details = '';
-  qs.forEach(function(q,i){
-    var ans = quizState.answers[i];
-    var isCorrect = ans!==null && ans===q.correct;
-    var isSkipped = ans===null;
-    details += '<div class="qz-res-row">'
-             + '<div class="qz-res-ic">'+(isSkipped?'⬜':isCorrect?'✅':'❌')+'</div>'
-             + '<div class="qz-res-qtext">'+q.text+'</div>'
-             + '</div>';
-  });
+  /* دائرة النسبة SVG */
+  var r   = 44;
+  var cir = 2 * Math.PI * r;
+  var off = cir - (pct / 100) * cir;
+  var pctColor = pct>=75?'#22c55e':pct>=50?'#f59e0b':'#ef4444';
 
-  el('quiz-inner').innerHTML =
-    '<div class="qz-result">'
-   +'<button class="qz-close qz-result-close" onclick="closeModal(\'ov-quiz\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
-   +'<div class="qz-res-medal">'+icon+'</div>'
-   +'<h2 class="qz-res-grade" style="color:'+color+'">'+grade+'</h2>'
-   +'<div class="qz-score-circle" style="--pct:'+pct+'%;--col:'+color+'">'
-   +'<div class="qz-score-inner"><div class="qz-score-num">'+pct+'%</div><div class="qz-score-lbl">النتيجة</div></div>'
+  _qSet(
+    '<div class="dq-result">'
+
+    /* زر الإغلاق */
+   +'<button class="dq-x dq-rx" onclick="closeModal(\'ov-quiz\')">'
+   +  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+   +'</button>'
+
+    /* الإيموجي والرسالة */
+   +'<div class="dq-res-top">'
+   +'<div class="dq-res-emoji">'+emoji+'</div>'
+   +'<div class="dq-res-msg">'+msg+'</div>'
    +'</div>'
-   +'<div class="qz-res-stats">'
-   +'<div class="qz-rs"><div class="qz-rs-n" style="color:#22c55e">'+correct+'</div><div class="qz-rs-l">إجابة صحيحة</div></div>'
-   +'<div class="qz-rs"><div class="qz-rs-n" style="color:#ef4444">'+(total-correct)+'</div><div class="qz-rs-l">إجابة خاطئة</div></div>'
-   +'<div class="qz-rs"><div class="qz-rs-n" style="color:'+color+'">'+earned+'/'+totalScore+'</div><div class="qz-rs-l">الدرجة</div></div>'
+
+    /* دائرة النسبة */
+   +'<div class="dq-circle-wrap">'
+   +'<svg class="dq-ring" viewBox="0 0 100 100" width="140" height="140">'
+   +'<circle cx="50" cy="50" r="'+r+'" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="10"/>'
+   +'<circle cx="50" cy="50" r="'+r+'" fill="none" stroke="'+pctColor+'" stroke-width="10"'
+   +' stroke-dasharray="'+cir.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"'
+   +' stroke-linecap="round" transform="rotate(-90 50 50)"'
+   +' style="transition:stroke-dashoffset 1s ease .2s"/>'
+   +'</svg>'
+   +'<div class="dq-circle-inner">'
+   +'<div class="dq-pct-num" style="color:'+pctColor+'">'+pct+'%</div>'
+   +'<div class="dq-pct-lbl">النتيجة</div>'
    +'</div>'
-   +'<div class="qz-res-details">'
-   +'<div class="qz-res-det-title">تفاصيل الإجابات</div>'
-   +details
    +'</div>'
-   +'<div class="qz-res-btns">'
-   +'<button class="btn-main" onclick="launchQuiz()">🔄 إعادة الاختبار</button>'
-   +'<button class="btn-ghost qz-close-btn" onclick="closeModal(\'ov-quiz\')">✔ إغلاق</button>'
-   +'</div></div>';
+
+    /* إحصائيات */
+   +'<div class="dq-res-cards">'
+   +'<div class="dq-rc dq-rc-green"><div class="dq-rc-n">'+correct+'</div><div class="dq-rc-l">✅ صحيحة</div></div>'
+   +'<div class="dq-rc dq-rc-red"><div class="dq-rc-n">'+wrong+'</div><div class="dq-rc-l">❌ خاطئة</div></div>'
+   +(skipped?'<div class="dq-rc dq-rc-gray"><div class="dq-rc-n">'+skipped+'</div><div class="dq-rc-l">⬜ متروكة</div></div>':'')
+   +'<div class="dq-rc dq-rc-blue"><div class="dq-rc-n">'+total+'</div><div class="dq-rc-l">📋 المجموع</div></div>'
+   +'</div>'
+
+    /* أزرار */
+   +'<div class="dq-res-btns">'
+   +_qBuildReview()
+   +'<button class="dq-retry-btn" onclick="_qLaunch()">🔄 إعادة الاختبار</button>'
+   +'<button class="dq-close-btn" onclick="closeModal(\'ov-quiz\')">✔ إغلاق</button>'
+   +'</div>'
+   +'</div>'
+  );
+
+  /* أنيمي دائرة بعد رسم ─ تأخير لإعطاء متسع للـ CSS transition */
+  setTimeout(function(){
+    var ring = document.querySelector('.dq-ring circle:last-child');
+    if(ring){
+      ring.style.strokeDashoffset = off.toFixed(1);
+    }
+  }, 100);
 }
+
+
+/* ── مراجعة الأخطاء ── */
+function _qBuildReview(){
+  var qs = Q.data.questions;
+  var LABELS = ['أ','ب','ج','د'];
+  var wrongs = [];
+  qs.forEach(function(q,i){
+    var ans = Q.answers[i];
+    if(ans===null||ans===q.correct) return;
+    wrongs.push({q:q,given:ans,idx:i});
+  });
+  if(!wrongs.length) return '';
+
+  var html='<div class="dq-review">';
+  html+='<div class="dq-review-hd"><span class="dq-review-ic">🔍</span><span class="dq-review-title">مراجعة الأخطاء</span><span class="dq-review-badge">'+wrongs.length+'</span></div>';
+  wrongs.forEach(function(item){
+    var q=item.q, given=item.given, isTF=q.type==='tf';
+    var correctText=isTF?(q.correct===true?'صح ✅':'خطأ ❌'):(q.opts&&q.opts[q.correct]!=null?LABELS[q.correct]+'. '+q.opts[q.correct]:'—');
+    var givenText  =isTF?(given===true?'صح ✅':'خطأ ❌'):(q.opts&&q.opts[given]!=null?LABELS[given]+'. '+q.opts[given]:'—');
+    html+='<div class="dq-ri">';
+    html+='<div class="dq-ri-num">'+(item.idx+1)+'</div>';
+    html+='<div class="dq-ri-body">';
+    html+='<div class="dq-ri-q">'+q.text+'</div>';
+    html+='<div class="dq-ri-row dq-ri-wrong"><span class="dq-ri-lbl">إجابتك</span><span class="dq-ri-val">'+givenText+'</span></div>';
+    html+='<div class="dq-ri-row dq-ri-right"><span class="dq-ri-lbl">الصحيح</span><span class="dq-ri-val">'+correctText+'</span></div>';
+    html+='</div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+/* ── helper: inject HTML ── */
+function _qSet(html){
+  var inner = el('quiz-inner');
+  if(inner) inner.innerHTML = html;
+}
+
+/* (kept for backward compat) */
+function renderQuizResult(){}
+function renderQuestion(){}
+function launchQuiz(){ _qLaunch(); }
+function finishQuiz(){  _qFinish(); }
+function goQuestion(i){ Q.idx=i; _qRenderQ(); }
+function confirmCloseQuiz(){ _qConfirmExit(); }
 
 function renderCurriculum(subj){
   // يعرض spinner ثم يجلب من Supabase
@@ -1066,8 +1209,17 @@ async function changePass(){
   }catch(e){err.textContent='❌ '+e.message;}
 }
 
-async function deleteAccount(){
-  if(!confirm('حذف الحساب نهائياً؟ لا يمكن التراجع!'))return;
+function deleteAccount(){
+  showConfirm({
+    icon:'🗑️',
+    title:'حذف الحساب',
+    msg:'سيتم حذف حسابك وجميع بياناتك نهائياً ولا يمكن التراجع!',
+    yesText:'نعم، احذف حسابي',
+    yesCls:'confirm-danger',
+    onYes:function(){_doDeleteNow();}
+  });
+}
+async function _doDeleteNow(){
   var s=getSess();
   if(s&&s.id){
     try{
