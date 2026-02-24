@@ -177,10 +177,12 @@ function openStagePicker(mode){
   var html='';
   stages.forEach(function(st){
     var m=STAGES_META[st];
-    html+='<div class="pk-item" onclick="pickStage(\''+st+'\')">'
-        +'<div class="pk-ic" style="background:'+m.bg+'">'+m.icon+'</div>'
-        +'<div class="pk-nm">'+m.name+'</div>'
-        +'<div class="pk-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></div>'
+    html+='<div class="pk-card" onclick="pickStage(\''+st+'\')" style="background:'+m.bg+'">'
+        +'<div class="pk-ic" style="background:rgba(255,255,255,.18);font-size:1.5rem">'+m.icon+'</div>'
+        +'<div class="pk-info">'
+        +'<div class="pk-name">'+m.name+'</div>'
+        +'</div>'
+        +'<div class="pk-arr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></div>'
         +'</div>';
   });
   if(grid)grid.innerHTML=html;
@@ -330,37 +332,62 @@ function bottomNav(k){
 
 /* ── GRADE PAGE ──────────────────────────────── */
 function buildGradePage(){
-  var pg=el('pg-grade');if(!pg)return;
-  var grades=ALL_GRADES.filter(function(g){return g.stage===curStage;});
-  var hdr=el('grade-hd-title');
-  if(hdr&&STAGES_META[curStage])hdr.textContent=STAGES_META[curStage].name;
-  var grid=el('grade-grid');if(!grid)return;
-  var html='';
-  grades.forEach(function(g){
-    html+='<div class="grade-card" onclick="openGrade(\''+g.id+'\')" style="background:'+g.bg+';animation-delay:'+(grades.indexOf(g)*0.04)+'s">'
-        +'<div class="gc-ic">'+g.icon+'</div>'
-        +'<div class="gc-nm">'+g.name+'</div>'
-        +'<div class="gc-sub">'+g.sub+'</div>'
-        +'</div>';
+  var sm = STAGES_META[curStage];
+  if(!sm) return;
+
+  // تحديث الهيدر العلوي
+  var tt = el('grade-tbar-title');
+  if(tt) tt.textContent = sm.name;
+
+  // تحديث Hero
+  var hi = el('grade-hero-ic');
+  var hh = el('grade-hero-h1');
+  var hp = el('grade-hero-p');
+  if(hi) hi.textContent = sm.icon;
+  if(hh) hh.textContent = sm.name;
+  if(hp) hp.textContent = 'اختر صفك الدراسي';
+
+  // بناء بطاقات الصفوف
+  var grades = ALL_GRADES.filter(function(g){ return g.stage === curStage; });
+  var grid = el('grades-grid');
+  if(!grid) return;
+
+  var html = '';
+  grades.forEach(function(g, i){
+    html += '<div class="grade-card" onclick="openGrade(\''+g.id+'\')"'
+          + ' style="background:'+g.bg+';animation-delay:'+(i*0.06)+'s">'
+          + '<div class="gc-shine"></div>'
+          + '<div class="gc-ic">'+g.icon+'</div>'
+          + '<div class="gc-nm">'+g.name+'</div>'
+          + '<div class="gc-sub">'+g.sub+'</div>'
+          + '</div>';
   });
-  grid.innerHTML=html;
+  grid.innerHTML = html;
 }
 
 function openGrade(gid){
   var g=ALL_GRADES.find(function(x){return x.id===gid;});if(!g)return;
   curGrade=gid;
-  var isSci=['s1','s2','s3','m1','m2','m3'].indexOf(gid)!==-1;
-  var isLit=['s1','s2','s3'].indexOf(gid)!==-1;
-  var subjs=(isLit&&curBranch!=='sci')?SUBJ_LIT:SUBJ_SCI;
-  // Vocational: use sci
+
+  // تحديد المواد حسب نوع الصف
+  var subjs;
+  if(g.stage==='secondary'){
+    subjs=(curBranch==='lit')?SUBJ_LIT:SUBJ_SCI;
+  } else {
+    subjs=SUBJ_SCI;
+  }
+
+  // بناء شريط المواد
   var strip=el('sub-strip');
   if(strip){
     strip.innerHTML=subjs.map(function(s,i){
-      return'<div class="sub-item'+(i===0?' active':'')+'" onclick="openSubject(\''+s.id+'\',this)" style="animation-delay:'+(i*0.03)+'s">'
-          +'<div class="sub-ic" style="background:'+s.cover+'">'+s.emoji+'</div>'
-          +'<span>'+s.label+'</span></div>';
+      return'<button class="stab'+(i===0?' on':'')+'" onclick="openSubject(\''+s.id+'\',this)" style="animation-delay:'+(i*0.04)+'s">'
+          +'<div class="stab-sq" style="background:'+s.cover+'">'+s.emoji+'</div>'
+          +'<span class="stab-lb">'+s.label+'</span>'
+          +'</button>';
     }).join('');
   }
+
   curSubject=subjs[0].id;
   var hdr=el('class-tbar-title');if(hdr)hdr.textContent=g.name;
   var sub=el('class-tbar-sub');if(sub)sub.textContent='المواد الدراسية';
@@ -373,8 +400,8 @@ function openGrade(gid){
 
 function openSubject(sid,el_){
   curSubject=sid; curCTab='booklets';
-  document.querySelectorAll('.sub-item').forEach(function(s){s.classList.remove('active');});
-  if(el_)el_.classList.add('active');
+  document.querySelectorAll('.stab').forEach(function(s){s.classList.remove('on');});
+  if(el_)el_.classList.add('on');
   document.querySelectorAll('.ctab').forEach(function(t){t.classList.remove('active');});
   var ft=document.querySelector('.ctab');if(ft)ft.classList.add('active');
   renderContent();
