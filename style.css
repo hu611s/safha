@@ -723,6 +723,16 @@ body::after{content:'';position:fixed;width:320px;height:320px;bottom:-90px;left
 .curr-lesson{display:flex;align-items:center;gap:9px;padding:9px 16px;border-bottom:1px solid var(--cbdr);font-size:.84rem;color:var(--tx2)}
 .curr-lesson:last-child{border-bottom:none}
 .curr-lesson::before{content:'📌';font-size:.7rem}
+/* curriculum item (DB-driven) */
+.curr-item{padding:11px 16px;border-bottom:1px solid var(--cbdr)}
+.curr-item:last-child{border-bottom:none}
+.curr-item-title{font-family:var(--fd);font-size:.87rem;font-weight:800;color:var(--tx);margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.curr-item-title::before{content:"📌";font-size:.72rem}
+.curr-item-body{font-size:.8rem;color:var(--tx2);line-height:1.6;padding-right:20px}
+.curr-unit.open .curr-body{max-height:800px}
+/* curriculum book download button */
+.curr-book-btn{display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:10px 16px;border-radius:var(--r-m);font-family:var(--fd);font-size:.85rem;font-weight:700;text-decoration:none;margin-bottom:16px;box-shadow:0 4px 16px rgba(5,150,105,.3);transition:var(--tr);width:fit-content}
+.curr-book-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(5,150,105,.35)}
 
 /* Favs page items */
 .fav-item{

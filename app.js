@@ -59,41 +59,27 @@ var STAGES_META = {
   vocational:{name:'المهني',     icon:'⚙️',bg:'linear-gradient(135deg,#db2777,#be185d)'}
 };
 
-var SUBJ_SCI = [
-  {id:'arabic', label:'اللغة العربية',    emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},
-  {id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},
-  {id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},
-  {id:'math',   label:'الرياضيات',        emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},
-  {id:'chem',   label:'الكيمياء',         emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},
-  {id:'phys',   label:'الفيزياء',         emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},
-  {id:'bio',    label:'الأحياء',          emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},
-  {id:'social', label:'اجتماعيات',        emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'}
-];
-
-var SUBJ_LIT = [
-  {id:'arabic', label:'اللغة العربية',    emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},
-  {id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},
-  {id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},
-  {id:'math',   label:'الرياضيات',        emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},
-  {id:'history',label:'التاريخ',          emoji:'🏛️',cover:'linear-gradient(135deg,#ea580c,#c2410c)'},
-  {id:'geo',    label:'الجغرافيا',        emoji:'🌐',cover:'linear-gradient(135deg,#0ea5e9,#0284c7)'},
-  {id:'philo',  label:'الفلسفة',          emoji:'🧠',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},
-  {id:'social', label:'اجتماعيات',        emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'}
-];
-
-var CURRICULUM = {
-  arabic: ['الفصل الأول: النحو والصرف|الفعل، الفاعل، المفعول به، الحال، التمييز','الفصل الثاني: البلاغة|المجاز، الاستعارة، التشبيه، الكناية','الفصل الثالث: الأدب|الشعر الجاهلي، الإسلامي، العباسي'],
-  islamic:['الفصل الأول: العقيدة|التوحيد، أركان الإيمان، أسماء الله الحسنى','الفصل الثاني: الفقه|الطهارة، الصلاة، الزكاة، الصيام، الحج','الفصل الثالث: السيرة|المولد، البعثة، الهجرة، الغزوات'],
-  english:['Unit 1: Grammar|Tenses, Modals, Conditionals, Passive Voice','Unit 2: Reading|Comprehension, Inference, Critical Thinking','Unit 3: Writing|Essays, Reports, Letters, Summaries'],
-  math:   ['الوحدة الأولى: الجبر|المعادلات، المتباينات، الاقترانات','الوحدة الثانية: الهندسة|المثلثات، الدوائر، التحويلات','الوحدة الثالثة: الإحصاء|التوزيعات، الاحتمالات'],
-  chem:   ['الوحدة الأولى: التركيب الذري|الجدول الدوري، الإلكترونات','الوحدة الثانية: التفاعلات|أنواعها، الكيمياء الحرارية','الوحدة الثالثة: العضوية|الهيدروكربونات، المجاميع الوظيفية'],
-  phys:   ['الوحدة الأولى: الميكانيكا|الحركة، القوى، قوانين نيوتن','الوحدة الثانية: الكهرباء|التيار، الجهد، المقاومة','الوحدة الثالثة: الموجات|الضوء، الصوت، الأشعة'],
-  bio:    ['الوحدة الأولى: الخلية|البناء، الوظيفة، الانقسام','الوحدة الثانية: الأجهزة|الهضم، التنفس، الدورة الدموية','الوحدة الثالثة: الوراثة|الجينات، قوانين مندل'],
-  social: ['الوحدة الأولى: التاريخ|الحضارات، الإسلام، الحداثة','الوحدة الثانية: الجغرافيا|التضاريس، المناخ، السكان','الوحدة الثالثة: التربية الوطنية|الدستور، المؤسسات'],
-  history:['الوحدة الأولى: الحضارات|مصر، الرافدين، اليونان','الوحدة الثانية: العصور الوسطى|الإسلام، أوروبا','الوحدة الثالثة: الحديث|الثورات، الاستعمار'],
-  geo:    ['الوحدة الأولى: الطبيعية|التضاريس، المناخ، المياه','الوحدة الثانية: البشرية|السكان، المدن، الاقتصاد','الوحدة الثالثة: الخرائط|أنواعها، قراءتها، رسمها'],
-  philo:  ['الوحدة الأولى: المنطق|الاستدلال، القياس، الاستقراء','الوحدة الثانية: الفلسفة|سقراط، أفلاطون، أرسطو','الوحدة الثالثة: الأخلاق|النظريات الأخلاقية، القيم']
+var GRADE_SUBJECTS = {
+  'p1': [{id:'quran',label:'القرآن الكريم',emoji:'📖',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p3': [{id:'quran',label:'القرآن الكريم',emoji:'📖',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p4': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'm1': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'حاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'},{id:'ethics',label:'أخلاقية',emoji:'🧭',cover:'linear-gradient(135deg,#0ea5e9,#0284c7)'}],
+  'm3': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}],
+  's1': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'الحاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'}],
+  's3': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}],
+  'p2': [{id:'quran',label:'القرآن الكريم',emoji:'📖',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p5': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p6': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'm2': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'حاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'},{id:'ethics',label:'أخلاقية',emoji:'🧭',cover:'linear-gradient(135deg,#0ea5e9,#0284c7)'}],
+  's2': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'الحاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'}],
 };
+
+
+/* compat aliases */
+var SUBJ_SCI = GRADE_SUBJECTS['m1'];
+var SUBJ_LIT = GRADE_SUBJECTS['m3'];
+
+/* المنهج يُجلب من Supabase — curriculum_chapters + curriculum_items */
 
 /* ── نظام الاختبارات الجديد ── */
 var COURSE_NAMES  = {'1':'الكورس الأول','2':'الكورس الثاني','ns':'—','ls':'—'};
@@ -369,13 +355,8 @@ function openGrade(gid){
   var g=ALL_GRADES.find(function(x){return x.id===gid;});if(!g)return;
   curGrade=gid;
 
-  // تحديد المواد حسب نوع الصف
-  var subjs;
-  if(g.stage==='secondary'){
-    subjs=(curBranch==='lit')?SUBJ_LIT:SUBJ_SCI;
-  } else {
-    subjs=SUBJ_SCI;
-  }
+  // المواد حسب الصف المحدد
+  var subjs = GRADE_SUBJECTS[gid] || GRADE_SUBJECTS['m1'];
 
   // بناء شريط المواد
   var strip=el('sub-strip');
@@ -415,7 +396,16 @@ function switchCTab(tab,el_){
 }
 
 function getSubj(id){
-  return SUBJ_SCI.find(function(s){return s.id===id;})||SUBJ_LIT.find(function(s){return s.id===id;})||null;
+  // ابحث في مواد الصف الحالي أولاً ثم في جميع المواد
+  var cur = curGrade ? (GRADE_SUBJECTS[curGrade]||[]) : [];
+  var found = cur.find(function(s){return s.id===id;});
+  if(found) return found;
+  // fallback: ابحث في جميع القوائم
+  for(var g in GRADE_SUBJECTS){
+    var s=GRADE_SUBJECTS[g].find(function(s){return s.id===id;});
+    if(s) return s;
+  }
+  return null;
 }
 
 /* ── RENDER CONTENT (with Supabase) ──────────── */
@@ -530,20 +520,71 @@ async function loadExams(subj,head){
 function openFile(url){window.open(url,'_blank');}
 
 function renderCurriculum(subj){
-  var units=CURRICULUM[subj.id]||[];
-  if(!units.length)return'<div class="sec-lbl">المنهج غير متاح</div>';
-  var html='<div class="sec-lbl">📖 المنهج — '+subj.label+'</div><div class="curr-list">';
-  units.forEach(function(u,i){
-    var p=u.split('|'),title=p[0].trim(),lessons=p[1]?p[1].split('،'):[];
-    html+='<div class="curr-unit" id="cu-'+i+'">'
-        +'<div class="curr-head" onclick="toggleUnit('+i+')">'
-        +'<div class="curr-htitle">📚 '+title+'</div>'
-        +'<div class="curr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>'
-        +'</div><div class="curr-body">';
-    lessons.forEach(function(l){html+='<div class="curr-lesson">'+l.trim()+'</div>';});
-    html+='</div></div>';
-  });
-  return html+'</div>';
+  // يعرض spinner ثم يجلب من Supabase
+  var spinner='<div class="loading-spin"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ تحميل المنهج...</span></div>';
+  setTimeout(function(){loadCurriculumFromDB(subj);},0);
+  return '<div class="sec-lbl">📖 المنهج — '+subj.label+'</div>'+spinner;
+}
+
+async function loadCurriculumFromDB(subj){
+  var body=el('class-body');if(!body)return;
+  var head=body.querySelector('.subj-hd')?body.innerHTML.split('</div>').slice(0,2).join('</div>')+'</div>':'';
+  try{
+    var q='?subject_id=eq.'+subj.id+'&stage=eq.'+curStage+'&grade=eq.'+curGrade+'&order=sort_order.asc';
+    var chapters=(await sb('curriculum_chapters','GET',null,q))||[];
+    var chapIds=chapters.map(function(c){return c.id;});
+    var items=[];
+    if(chapIds.length){
+      var q2='?chapter_id=in.('+chapIds.join(',')+')'+'&order=sort_order.asc';
+      items=(await sb('curriculum_items','GET',null,q2))||[];
+    }
+    // كتاب المنهج PDF
+    var bookQ='?subject_id=eq.'+subj.id+'&stage=eq.'+curStage+'&grade=eq.'+curGrade;
+    var bookRows=(await sb('curriculum_books','GET',null,bookQ))||[];
+    var book=bookRows[0]||null;
+
+    var html='<div class="sec-lbl">📖 المنهج — '+subj.label+'</div>';
+
+    // زر كتاب المنهج
+    if(book&&book.file_url){
+      html+='<a href="'+book.file_url+'" target="_blank" class="curr-book-btn">'
+          +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/></svg>'
+          +'📥 تحميل كتاب المنهج</a>';
+    }
+
+    if(!chapters.length){
+      html+='<div class="state-box"><div class="state-ic">📖</div><h3>المنهج قيد الإعداد</h3><p>سيُضاف المنهج قريباً</p></div>';
+      body.innerHTML=html;return;
+    }
+
+    html+='<div class="curr-list">';
+    chapters.forEach(function(ch,ci){
+      var chItems=items.filter(function(it){return it.chapter_id===ch.id;});
+      html+='<div class="curr-unit" id="cu-'+ci+'">'
+          +'<div class="curr-head" onclick="toggleUnit('+ci+')">'
+          +'<div class="curr-htitle">📚 '+ch.title+'</div>'
+          +'<div class="curr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>'
+          +'</div><div class="curr-body">';
+      if(chItems.length){
+        chItems.forEach(function(it){
+          html+='<div class="curr-item">'
+              +'<div class="curr-item-title">'+it.label+'</div>';
+          if(it.content){
+            html+='<div class="curr-item-body">'+it.content.replace(/\n/g,'<br>')+'</div>';
+          }
+          html+='</div>';
+        });
+      }else{
+        html+='<div class="curr-lesson" style="color:var(--tx3);font-style:italic">لا يوجد محتوى بعد</div>';
+      }
+      html+='</div></div>';
+    });
+    html+='</div>';
+    body.innerHTML=html;
+  }catch(e){
+    body.innerHTML='<div class="sec-lbl">📖 المنهج — '+subj.label+'</div>'
+                 +'<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ في التحميل</h3><p>'+e.message+'</p></div>';
+  }
 }
 
 function toggleUnit(i){var u=el('cu-'+i);if(u)u.classList.toggle('open');}

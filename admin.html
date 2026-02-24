@@ -91,6 +91,20 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .btn-icon{width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--card2);border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;transition:var(--tr)}
 .btn-icon svg{width:13px;height:13px;stroke:var(--tx2)}
 .btn-icon:hover{border-color:var(--bdr2)}.btn-icon:hover svg{stroke:var(--tx)}
+
+/* ── Curriculum Admin CSS ── */
+.cur-chapter{background:var(--card2);border:1.5px solid var(--bdr);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.cur-chap-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(102,126,234,.06);border-bottom:1px solid var(--bdr)}
+.cur-chap-title{font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:800;color:var(--tx)}
+.cur-chap-btns{display:flex;align-items:center;gap:6px}
+.cur-items-list{display:flex;flex-direction:column}
+.cur-item-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--bdr);transition:background .15s}
+.cur-item-row:last-child{border-bottom:none}
+.cur-item-row:hover{background:rgba(255,255,255,.03)}
+.cur-item-info{flex:1}
+.cur-item-label{font-size:.82rem;font-weight:700;color:var(--tx);margin-bottom:2px}
+.cur-item-preview{font-size:.71rem;color:var(--tx3);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cur-item-btns{display:flex;gap:5px;flex-shrink:0}
 .tbl-wrap{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r-l);overflow:hidden;margin-bottom:20px}
 .tbl-filters{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:9px;flex-wrap:wrap;align-items:center}
 .tbl-search{display:flex;align-items:center;gap:7px;background:var(--card2);border:1px solid var(--bdr);border-radius:var(--r);padding:0 11px;flex:1;min-width:160px}
@@ -241,6 +255,9 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>الاختبارات
         <span class="ni-badge" id="nb-ex">0</span>
       </div>
+      <div class="ni" onclick="navTo('curriculum',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="12" y1="6" x2="16" y2="6"/><line x1="12" y1="10" x2="16" y2="10"/><line x1="12" y1="14" x2="16" y2="14"/></svg>المنهج
+      </div>
       <div class="nav-sec">المستخدمون</div>
       <div class="ni" onclick="navTo('users',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>المستخدمون
@@ -320,6 +337,71 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
           </div>
           <table><thead><tr><th>الاختبار</th><th>الكورس</th><th>النوع</th><th class="hide-mob">المادة</th><th>الحالة</th><th>إجراءات</th></tr></thead>
           <tbody id="ex-tb"></tbody></table>
+        </div>
+      </div>
+
+      <!-- CURRICULUM -->
+      <div class="pg" id="pg-curriculum">
+        <div class="sec-hd">
+          <div class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/></svg>
+            إدارة المناهج
+          </div>
+        </div>
+
+        <!-- فلاتر اختيار الصف والمادة -->
+        <div class="tbl-wrap" style="margin-bottom:16px">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--bdr)">
+            <span style="font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:800;color:#fff">🎯 اختر الصف والمادة</span>
+          </div>
+          <div style="padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+            <div style="flex:1;min-width:140px">
+              <label style="display:block;font-size:.75rem;color:var(--tx3);margin-bottom:5px">المرحلة</label>
+              <select class="tbl-sel" id="cur-stage" onchange="curUpdateGrades()" style="width:100%">
+                <option value="">اختر المرحلة</option>
+                <option value="primary">الابتدائية</option>
+                <option value="middle">المتوسطة</option>
+                <option value="secondary">الإعدادية</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:140px">
+              <label style="display:block;font-size:.75rem;color:var(--tx3);margin-bottom:5px">الصف</label>
+              <select class="tbl-sel" id="cur-grade" onchange="curUpdateSubjects()" style="width:100%">
+                <option value="">اختر الصف</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:140px">
+              <label style="display:block;font-size:.75rem;color:var(--tx3);margin-bottom:5px">المادة</label>
+              <select class="tbl-sel" id="cur-subject" onchange="loadCurriculumAdmin()" style="width:100%">
+                <option value="">اختر المادة</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- محتوى المنهج -->
+        <div id="cur-content" style="display:none">
+
+          <!-- كتاب المنهج PDF -->
+          <div class="tbl-wrap" style="margin-bottom:14px">
+            <div style="padding:13px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between">
+              <span style="font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:800;color:#fff">📕 كتاب المنهج</span>
+              <button class="btn btn-ghost" style="padding:5px 12px;font-size:.75rem" onclick="openBookModal()">+ رفع/تعديل الكتاب</button>
+            </div>
+            <div id="cur-book-info" style="padding:12px 16px;color:var(--tx3);font-size:.8rem">لا يوجد كتاب مرفوع بعد</div>
+          </div>
+
+          <!-- الفصول والتسميات -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <span style="font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:800;color:var(--tx)">📚 الفصول والمحتوى</span>
+            <button class="btn btn-pri" style="padding:7px 14px;font-size:.78rem" onclick="openChapterModal()">+ إضافة فصل</button>
+          </div>
+          <div id="cur-chapters-list"></div>
+        </div>
+
+        <div id="cur-empty" style="text-align:center;padding:40px;color:var(--tx3)">
+          <div style="font-size:3rem;margin-bottom:12px">📖</div>
+          <div style="font-size:.9rem">اختر المرحلة والصف والمادة لبدء إدارة المنهج</div>
         </div>
       </div>
 
@@ -633,7 +715,7 @@ function navTo(id,el){
   if(el)el.classList.add('active');
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active')});
   var pg=g('pg-'+id);if(pg)pg.classList.add('active');
-  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',users:'المستخدمون',settings:'الإعدادات'};
+  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',curriculum:'المناهج',users:'المستخدمون',settings:'الإعدادات'};
   g('pg-title').textContent=t[id]||id;
   g('pg-bc').textContent='لوحة التحكم / '+(t[id]||id);
   closeSidebar();
@@ -1179,6 +1261,364 @@ function showToast(msg,type){
   t.style.background=c[type]||c.info;t.textContent=msg;
   t.classList.remove('hidden','show');void t.offsetWidth;t.classList.add('show');
   clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.classList.add('hidden');},400);},3200);
+}
+</script>
+</body>
+</html>
+<!-- ══════════════════════════════════════
+     CURRICULUM MODALS
+══════════════════════════════════════ -->
+
+<!-- Modal: كتاب المنهج -->
+<div class="ov hidden" id="ov-book">
+  <div class="modal">
+    <div class="m-hd">
+      <div class="m-title">📕 <span id="book-m-title">رفع كتاب المنهج</span></div>
+      <button class="m-close" onclick="closeOv('ov-book')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="book-id"/>
+      <div class="fr"><label>عنوان الكتاب</label><input class="fi" id="book-title" placeholder="مثال: كتاب الرياضيات — الصف السادس"/></div>
+      <div class="fr">
+        <label>رفع ملف PDF</label>
+        <div class="fdrop" id="book-drop">
+          <input type="file" accept=".pdf" onchange="onFile('book',this)"/>
+          <span class="fd-ic">📕</span>
+          <div class="fd-title">اسحب PDF هنا أو اضغط</div>
+          <div class="fd-sub">حجم أقصى 50MB</div>
+          <div class="fd-prev" id="book-fp"></div>
+        </div>
+        <div class="prog-wrap" id="book-pw"><div class="prog-bar"><div class="prog-fill" id="book-pf"></div></div><div class="prog-lbl" id="book-pl">جارٍ الرفع...</div></div>
+      </div>
+      <div class="fr"><label>أو رابط PDF مباشر</label><input class="fi" id="book-url" type="url" placeholder="https://..."/></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-pri" onclick="saveBook()">💾 حفظ الكتاب</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-book')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: إضافة/تعديل فصل -->
+<div class="ov hidden" id="ov-chapter">
+  <div class="modal">
+    <div class="m-hd">
+      <div class="m-title">📚 <span id="chap-m-title">إضافة فصل</span></div>
+      <button class="m-close" onclick="closeOv('ov-chapter')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="chap-id"/>
+      <div class="fr"><label>اسم الفصل *</label><input class="fi" id="chap-title" placeholder="مثال: الفصل الأول: الأعداد الصحيحة"/></div>
+      <div class="fr"><label>الترتيب</label><input class="fi" id="chap-order" type="number" min="1" value="1" placeholder="1"/></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-pri" onclick="saveChapter()">💾 حفظ الفصل</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-chapter')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: إضافة/تعديل تسمية -->
+<div class="ov hidden" id="ov-item">
+  <div class="modal">
+    <div class="m-hd">
+      <div class="m-title">🏷️ <span id="item-m-title">إضافة تسمية</span></div>
+      <button class="m-close" onclick="closeOv('ov-item')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="item-id"/>
+      <input type="hidden" id="item-chap-id"/>
+      <div class="fr"><label>اسم التسمية *</label><input class="fi" id="item-label" placeholder="مثال: الجمع والطرح"/></div>
+      <div class="fr"><label>المحتوى <span style="color:var(--tx3);font-weight:400">(اختياري)</span></label>
+        <textarea class="fta" id="item-content" placeholder="اكتب شرحاً أو ملاحظات أو محتوى التسمية..." style="min-height:120px"></textarea>
+      </div>
+      <div class="fr"><label>الترتيب</label><input class="fi" id="item-order" type="number" min="1" value="1"/></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-pri" onclick="saveItem()">💾 حفظ التسمية</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-item')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   CURRICULUM ADMIN — قسم إدارة المناهج
+══════════════════════════════════════════════ */
+
+var GRADES_BY_STAGE = {
+  primary:   [{id:'p1',name:'أول ابتدائي'},{id:'p2',name:'ثاني ابتدائي'},{id:'p3',name:'ثالث ابتدائي'},{id:'p4',name:'رابع ابتدائي'},{id:'p5',name:'خامس ابتدائي'},{id:'p6',name:'سادس ابتدائي'}],
+  middle:    [{id:'m1',name:'أول متوسط'},{id:'m2',name:'ثاني متوسط'},{id:'m3',name:'ثالث متوسط'}],
+  secondary: [{id:'s1',name:'رابع إعدادي'},{id:'s2',name:'خامس إعدادي'},{id:'s3',name:'سادس إعدادي'}]
+};
+
+var GRADE_SUBJECTS_ADM = {
+  p1:  [{id:'quran',name:'القرآن الكريم'},{id:'reading',name:'القراءة'},{id:'math',name:'الرياضيات'},{id:'english',name:'اللغة الإنكليزية'},{id:'science',name:'العلوم'}],
+  p2:  [{id:'quran',name:'القرآن الكريم'},{id:'reading',name:'القراءة'},{id:'math',name:'الرياضيات'},{id:'english',name:'اللغة الإنكليزية'},{id:'science',name:'العلوم'}],
+  p3:  [{id:'quran',name:'القرآن الكريم'},{id:'reading',name:'القراءة'},{id:'math',name:'الرياضيات'},{id:'english',name:'اللغة الإنكليزية'},{id:'science',name:'العلوم'}],
+  p4:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'social',name:'الاجتماعيات'},{id:'math',name:'الرياضيات'},{id:'science',name:'العلوم'}],
+  p5:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'social',name:'الاجتماعيات'},{id:'math',name:'الرياضيات'},{id:'science',name:'العلوم'}],
+  p6:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'social',name:'الاجتماعيات'},{id:'math',name:'الرياضيات'},{id:'science',name:'العلوم'}],
+  m1:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'math',name:'الرياضيات'},{id:'social',name:'الاجتماعيات'},{id:'bio',name:'أحياء'},{id:'chem',name:'كيمياء'},{id:'phys',name:'فيزياء'},{id:'cs',name:'حاسوب'},{id:'ethics',name:'أخلاقية'}],
+  m2:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'math',name:'الرياضيات'},{id:'social',name:'الاجتماعيات'},{id:'bio',name:'أحياء'},{id:'chem',name:'كيمياء'},{id:'phys',name:'فيزياء'},{id:'cs',name:'حاسوب'},{id:'ethics',name:'أخلاقية'}],
+  m3:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'math',name:'الرياضيات'},{id:'social',name:'الاجتماعيات'},{id:'bio',name:'أحياء'},{id:'chem',name:'كيمياء'},{id:'phys',name:'فيزياء'}],
+  s1:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'math',name:'رياضيات'},{id:'bio',name:'أحياء'},{id:'chem',name:'كيمياء'},{id:'phys',name:'فيزياء'},{id:'cs',name:'الحاسوب'}],
+  s2:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'math',name:'رياضيات'},{id:'bio',name:'أحياء'},{id:'chem',name:'كيمياء'},{id:'phys',name:'فيزياء'},{id:'cs',name:'الحاسوب'}],
+  s3:  [{id:'islamic',name:'التربية الإسلامية'},{id:'arabic',name:'اللغة العربية'},{id:'english',name:'اللغة الإنكليزية'},{id:'math',name:'رياضيات'},{id:'bio',name:'أحياء'},{id:'chem',name:'كيمياء'},{id:'phys',name:'فيزياء'}]
+};
+
+var curAdmGrade = '', curAdmSubject = '', curAdmStage = '';
+var curChapters = [], curItems = [], curBookData = null;
+
+/* ── فلاتر الاختيار ── */
+function curUpdateGrades(){
+  var stage = g('cur-stage').value;
+  curAdmStage = stage;
+  var sel = g('cur-grade');
+  sel.innerHTML = '<option value="">اختر الصف</option>';
+  (GRADES_BY_STAGE[stage]||[]).forEach(function(gr){
+    sel.innerHTML += '<option value="'+gr.id+'">'+gr.name+'</option>';
+  });
+  g('cur-subject').innerHTML = '<option value="">اختر المادة</option>';
+  g('cur-content').style.display = 'none';
+  g('cur-empty').style.display = 'block';
+  curAdmGrade = ''; curAdmSubject = '';
+}
+
+function curUpdateSubjects(){
+  var grade = g('cur-grade').value;
+  curAdmGrade = grade;
+  var sel = g('cur-subject');
+  sel.innerHTML = '<option value="">اختر المادة</option>';
+  (GRADE_SUBJECTS_ADM[grade]||[]).forEach(function(s){
+    sel.innerHTML += '<option value="'+s.id+'">'+s.name+'</option>';
+  });
+  g('cur-content').style.display = 'none';
+  g('cur-empty').style.display = 'block';
+  curAdmSubject = '';
+}
+
+async function loadCurriculumAdmin(){
+  var subj = g('cur-subject').value;
+  if(!subj){ g('cur-content').style.display='none'; g('cur-empty').style.display='block'; return; }
+  curAdmSubject = subj;
+  g('cur-content').style.display = 'block';
+  g('cur-empty').style.display = 'none';
+  g('cur-chapters-list').innerHTML = '<div style="padding:20px;text-align:center;color:var(--tx3)">⏳ جارٍ التحميل...</div>';
+
+  try{
+    // كتاب المنهج
+    var bookQ = '?subject_id=eq.'+curAdmSubject+'&stage=eq.'+curAdmStage+'&grade=eq.'+curAdmGrade;
+    var bookRows = await db('curriculum_books','GET',null,bookQ)||[];
+    curBookData = bookRows[0]||null;
+    var bookEl = g('cur-book-info');
+    if(curBookData && curBookData.file_url){
+      bookEl.innerHTML = '📕 <strong style="color:var(--tx)">'+(curBookData.title||'الكتاب المرفوع')+'</strong>'
+        +' &nbsp;<a href="'+curBookData.file_url+'" target="_blank" class="btn btn-ghost" style="padding:3px 10px;font-size:.72rem">👁 معاينة</a>'
+        +' &nbsp;<button class="btn btn-ghost" style="padding:3px 10px;font-size:.72rem;color:var(--red)" onclick="deleteBook()">🗑 حذف</button>';
+    } else {
+      bookEl.innerHTML = '<span style="color:var(--tx3)">لا يوجد كتاب مرفوع بعد</span>';
+    }
+
+    // الفصول
+    var chapQ = '?subject_id=eq.'+curAdmSubject+'&stage=eq.'+curAdmStage+'&grade=eq.'+curAdmGrade+'&order=sort_order.asc';
+    curChapters = await db('curriculum_chapters','GET',null,chapQ)||[];
+
+    var itemIds = curChapters.map(function(c){return c.id;});
+    curItems = [];
+    if(itemIds.length){
+      curItems = await db('curriculum_items','GET',null,'?chapter_id=in.('+itemIds.join(',')+')'+'&order=sort_order.asc')||[];
+    }
+    renderChaptersAdmin();
+  }catch(e){
+    g('cur-chapters-list').innerHTML = '<div style="padding:20px;color:var(--red)">خطأ: '+e.message+'</div>';
+  }
+}
+
+function renderChaptersAdmin(){
+  var list = g('cur-chapters-list');
+  if(!curChapters.length){
+    list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--tx3);border:2px dashed var(--bdr);border-radius:12px">لا توجد فصول بعد — اضغط "+ إضافة فصل"</div>';
+    return;
+  }
+  var html = '';
+  curChapters.forEach(function(ch){
+    var chItems = curItems.filter(function(it){return it.chapter_id===ch.id;});
+    html += '<div class="cur-chapter" id="chap-'+ch.id+'">';
+    html += '<div class="cur-chap-hd">';
+    html += '<div class="cur-chap-title">📚 '+ch.title+'</div>';
+    html += '<div class="cur-chap-btns">';
+    html += '<button class="btn btn-ghost" style="padding:4px 10px;font-size:.72rem" onclick="openItemModal(\''+ch.id+'\')">+ تسمية</button>';
+    html += '<button class="btn-icon" onclick="openChapterModal(\''+ch.id+'\',\''+ch.title.replace(/'/g,'&#39;')+'\','+ch.sort_order+')" title="تعديل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+    html += '<button class="btn-icon" style="border-color:rgba(239,68,68,.2)" onclick="deleteChapter(\''+ch.id+'\')" title="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+    html += '</div></div>';
+
+    if(chItems.length){
+      html += '<div class="cur-items-list">';
+      chItems.forEach(function(it){
+        html += '<div class="cur-item-row" id="item-'+it.id+'">';
+        html += '<div class="cur-item-info">';
+        html += '<div class="cur-item-label">🏷️ '+it.label+'</div>';
+        if(it.content) html += '<div class="cur-item-preview">'+it.content.replace(/\n/g,' ').slice(0,80)+(it.content.length>80?'...':'')+'</div>';
+        html += '</div>';
+        html += '<div class="cur-item-btns">';
+        html += '<button class="btn-icon" onclick="openItemModal(\''+it.chapter_id+'\',\''+it.id+'\',\''+it.label.replace(/'/g,'&#39;')+'\',\''+it.sort_order+'\')" title="تعديل">';
+        html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+        html += '<button class="btn-icon" style="border-color:rgba(239,68,68,.2)" onclick="deleteItem(\''+it.id+'\')" title="حذف">';
+        html += '<svg viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div style="padding:10px 16px;color:var(--tx3);font-size:.78rem;font-style:italic">لا توجد تسميات — اضغط "+ تسمية" لإضافة محتوى</div>';
+    }
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+/* ── كتاب المنهج ── */
+function openBookModal(){
+  g('book-id').value = curBookData ? curBookData.id : '';
+  g('book-title').value = curBookData ? (curBookData.title||'') : '';
+  g('book-url').value = (curBookData && curBookData.file_url && !files.book) ? curBookData.file_url : '';
+  g('book-m-title').textContent = curBookData ? 'تعديل كتاب المنهج' : 'رفع كتاب المنهج';
+  var fp = g('book-fp'); if(fp) fp.innerHTML='';
+  files.book = null;
+  openOv('ov-book');
+}
+
+async function saveBook(){
+  var title = g('book-title').value.trim();
+  var manualUrl = g('book-url').value.trim();
+  if(!title){ showToast('⚠️ أدخل عنوان الكتاب','warn'); return; }
+  var btn = g('ov-book').querySelector('.btn-pri');
+  if(btn){ btn.textContent='⏳ جارٍ الحفظ...'; btn.disabled=true; }
+  try{
+    var fileUrl = manualUrl;
+    if(files.book){
+      fileUrl = await upload(files.book,'curriculum');
+    }
+    if(!fileUrl){ showToast('⚠️ ارفع ملف أو أدخل رابطاً','warn'); return; }
+
+    var payload = { subject_id:curAdmSubject, stage:curAdmStage, grade:curAdmGrade, title:title, file_url:fileUrl, updated_at:new Date().toISOString() };
+    var existId = g('book-id').value;
+    if(existId){
+      await db('curriculum_books','PATCH',payload,'?id=eq.'+existId);
+    } else {
+      payload.created_at = new Date().toISOString();
+      await db('curriculum_books','POST',payload);
+    }
+    showToast('✅ تم حفظ الكتاب','ok');
+    closeOv('ov-book');
+    files.book = null;
+    loadCurriculumAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(btn){ btn.textContent='💾 حفظ الكتاب'; btn.disabled=false; }
+}
+
+async function deleteBook(){
+  if(!curBookData || !confirm('حذف الكتاب نهائياً؟')) return;
+  try{
+    await db('curriculum_books','DELETE',null,'?id=eq.'+curBookData.id);
+    showToast('🗑️ تم الحذف','info');
+    loadCurriculumAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+}
+
+/* ── الفصول ── */
+function openChapterModal(id, title, order){
+  g('chap-id').value = id||'';
+  g('chap-title').value = title||'';
+  g('chap-order').value = order||( curChapters.length+1 );
+  g('chap-m-title').textContent = id ? 'تعديل الفصل' : 'إضافة فصل جديد';
+  openOv('ov-chapter');
+}
+
+async function saveChapter(){
+  var title = g('chap-title').value.trim();
+  var order = parseInt(g('chap-order').value)||1;
+  if(!title){ showToast('⚠️ أدخل اسم الفصل','warn'); return; }
+  if(!curAdmSubject){ showToast('⚠️ اختر المادة أولاً','warn'); return; }
+  var btn = g('ov-chapter').querySelector('.btn-pri');
+  if(btn){ btn.textContent='⏳...'; btn.disabled=true; }
+  try{
+    var id = g('chap-id').value;
+    var payload = { subject_id:curAdmSubject, stage:curAdmStage, grade:curAdmGrade, title:title, sort_order:order };
+    if(id){
+      await db('curriculum_chapters','PATCH',payload,'?id=eq.'+id);
+      showToast('✅ تم تعديل الفصل','ok');
+    } else {
+      payload.created_at = new Date().toISOString();
+      await db('curriculum_chapters','POST',payload);
+      showToast('✅ تم إضافة الفصل','ok');
+    }
+    closeOv('ov-chapter');
+    loadCurriculumAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(btn){ btn.textContent='💾 حفظ الفصل'; btn.disabled=false; }
+}
+
+async function deleteChapter(id){
+  if(!confirm('حذف هذا الفصل وجميع تسمياته؟')) return;
+  try{
+    await db('curriculum_items','DELETE',null,'?chapter_id=eq.'+id);
+    await db('curriculum_chapters','DELETE',null,'?id=eq.'+id);
+    showToast('🗑️ تم حذف الفصل','info');
+    loadCurriculumAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+}
+
+/* ── التسميات ── */
+function openItemModal(chapId, id, label, order){
+  g('item-chap-id').value = chapId||'';
+  g('item-id').value = id||'';
+  g('item-label').value = label||'';
+  g('item-order').value = order||(curItems.filter(function(i){return i.chapter_id===chapId;}).length+1);
+  // تحميل المحتوى الحالي إذا تعديل
+  if(id){
+    var it = curItems.find(function(i){return i.id===id;});
+    g('item-content').value = it ? (it.content||'') : '';
+  } else {
+    g('item-content').value = '';
+  }
+  g('item-m-title').textContent = id ? 'تعديل التسمية' : 'إضافة تسمية';
+  openOv('ov-item');
+}
+
+async function saveItem(){
+  var chapId = g('item-chap-id').value;
+  var label = g('item-label').value.trim();
+  var content = g('item-content').value.trim();
+  var order = parseInt(g('item-order').value)||1;
+  if(!label){ showToast('⚠️ أدخل اسم التسمية','warn'); return; }
+  if(!chapId){ showToast('⚠️ خطأ: لا يوجد فصل','err'); return; }
+  var btn = g('ov-item').querySelector('.btn-pri');
+  if(btn){ btn.textContent='⏳...'; btn.disabled=true; }
+  try{
+    var id = g('item-id').value;
+    var payload = { chapter_id:chapId, label:label, content:content||null, sort_order:order };
+    if(id){
+      await db('curriculum_items','PATCH',payload,'?id=eq.'+id);
+      showToast('✅ تم تعديل التسمية','ok');
+    } else {
+      payload.created_at = new Date().toISOString();
+      await db('curriculum_items','POST',payload);
+      showToast('✅ تم إضافة التسمية','ok');
+    }
+    closeOv('ov-item');
+    loadCurriculumAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(btn){ btn.textContent='💾 حفظ التسمية'; btn.disabled=false; }
+}
+
+async function deleteItem(id){
+  if(!confirm('حذف هذه التسمية؟')) return;
+  try{
+    await db('curriculum_items','DELETE',null,'?id=eq.'+id);
+    showToast('🗑️ تم الحذف','info');
+    loadCurriculumAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
 }
 </script>
 </body>
