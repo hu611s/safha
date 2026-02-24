@@ -498,10 +498,15 @@ async function loadExams(subj,head){
         html+='<div class="exam-info"><div class="exam-name">'+ex.name+'</div>';
         html+='<div class="exam-meta">'+ex.subject_name+(ex.academic_year?' — '+ex.academic_year:'')+'</div></div>';
         html+='<div class="exam-actions">';
+        // أولاً: زر الاختبار التفاعلي إن وُجدت أسئلة
+        var hasQuiz=ex.questions&&ex.questions!=='null'&&ex.questions!=='[]';
+        if(hasQuiz){
+          html+='<button class="btn-quiz" onclick="startQuiz(\''+ex.id+'\',\''+safe+'\')">🎯 ابدأ الاختبار</button>';
+        }
         if(ex.file_url){
           html+='<a class="btn-exam" href="'+ex.file_url+'" target="_blank">⬇ تحميل</a>';
-        }else{
-          html+='<button class="btn-exam" disabled style="opacity:.45">غير متاح</button>';
+        }else if(!hasQuiz){
+          html+='<button class="btn-exam" style="opacity:.38;cursor:default" disabled>غير متاح</button>';
         }
         var favFill=isFav?'#f43f5e':'none';
         var favCls='exam-fav'+(isFav?' saved':'');
@@ -518,6 +523,318 @@ async function loadExams(subj,head){
 }
 
 function openFile(url){window.open(url,'_blank');}
+
+/* ══════════════════════════════════════════════
+   THEMES — نظام الثيمات المتعددة
+══════════════════════════════════════════════ */
+var THEMES = [
+  {id:'purple', name:'بنفسجي كلاسيكي', bg:'linear-gradient(145deg,#667eea,#764ba2)',  pri:'linear-gradient(135deg,#667eea,#764ba2)',  pri_c:'#667eea'},
+  {id:'blue',   name:'أزرق المحيط',    bg:'linear-gradient(145deg,#0ea5e9,#0284c7)',  pri:'linear-gradient(135deg,#0ea5e9,#0284c7)',  pri_c:'#0ea5e9'},
+  {id:'teal',   name:'فيروزي هادئ',   bg:'linear-gradient(145deg,#14b8a6,#0d9488)',  pri:'linear-gradient(135deg,#14b8a6,#0d9488)',  pri_c:'#14b8a6'},
+  {id:'green',  name:'أخضر النعمة',   bg:'linear-gradient(145deg,#22c55e,#15803d)',  pri:'linear-gradient(135deg,#22c55e,#15803d)',  pri_c:'#22c55e'},
+  {id:'rose',   name:'وردي الفجر',    bg:'linear-gradient(145deg,#f43f5e,#be185d)',  pri:'linear-gradient(135deg,#f43f5e,#be185d)',  pri_c:'#f43f5e'},
+  {id:'orange', name:'برتقالي الشروق',bg:'linear-gradient(145deg,#f97316,#c2410c)',  pri:'linear-gradient(135deg,#f97316,#c2410c)',  pri_c:'#f97316'},
+  {id:'amber',  name:'ذهبي الغروب',  bg:'linear-gradient(145deg,#f59e0b,#b45309)',  pri:'linear-gradient(135deg,#f59e0b,#b45309)',  pri_c:'#f59e0b'},
+  {id:'indigo', name:'نيلي عميق',     bg:'linear-gradient(145deg,#6366f1,#4f46e5)',  pri:'linear-gradient(135deg,#6366f1,#4f46e5)',  pri_c:'#6366f1'},
+  {id:'dark',   name:'أسود أنيق',     bg:'linear-gradient(145deg,#1e1b4b,#312e81)',  pri:'linear-gradient(135deg,#4f46e5,#3730a3)',  pri_c:'#818cf8'},
+  {id:'crimson',name:'أحمر الجمر',    bg:'linear-gradient(145deg,#dc2626,#991b1b)',  pri:'linear-gradient(135deg,#dc2626,#991b1b)',  pri_c:'#f87171'},
+];
+
+var curThemeId = 'purple';
+
+function openThemePicker(){
+  var grid = el('theme-grid');
+  if(grid){
+    var html = '';
+    THEMES.forEach(function(t){
+      var isActive = t.id === curThemeId;
+      html += '<div class="theme-card'+(isActive?' active':'')+'" onclick="applyTheme(\''+t.id+'\')" style="background:'+t.bg+'">'
+            + '<div class="theme-check">'+(isActive?'✓':'')+'</div>'
+            + '<div class="theme-name">'+t.name+'</div>'
+            + '</div>';
+    });
+    grid.innerHTML = html;
+  }
+  openModal('ov-themes');
+}
+
+function applyTheme(id){
+  var t = THEMES.find(function(x){return x.id===id;});
+  if(!t) return;
+  curThemeId = id;
+  var root = document.documentElement;
+  root.style.setProperty('--bg',  t.bg);
+  root.style.setProperty('--pri', t.pri);
+  root.style.setProperty('--pri-c', t.pri_c);
+  localStorage.setItem('dz_theme_id', id);
+  var nm = el('set-theme-name'); if(nm) nm.textContent = t.name;
+  // تحديث grid
+  document.querySelectorAll('.theme-card').forEach(function(c){
+    c.classList.remove('active');
+    c.querySelector('.theme-check').textContent='';
+  });
+  var active = document.querySelector('.theme-card[onclick*="\''+id+'\'"]');
+  if(active){ active.classList.add('active'); active.querySelector('.theme-check').textContent='✓'; }
+  toast('🎨 '+t.name,'ok');
+  closeModal('ov-themes');
+}
+
+function loadSavedTheme(){
+  var savedId = localStorage.getItem('dz_theme_id');
+  if(savedId && savedId !== 'purple') applyTheme(savedId);
+  var savedDark = localStorage.getItem('dz_theme');
+  if(savedDark==='dark'){ isDark=true; document.documentElement.setAttribute('data-theme','dark'); }
+  // تحديث اسم الثيم الحالي
+  var t = THEMES.find(function(x){return x.id===(savedId||'purple');});
+  var nm = el('set-theme-name'); if(nm&&t) nm.textContent = t.name;
+}
+
+/* ══════════════════════════════════════════════
+   GOOGLE LOGIN — تسجيل الدخول بـ Google
+══════════════════════════════════════════════ */
+function doGoogleLogin(){
+  // Supabase OAuth - يحتاج تفعيل Google Provider في Supabase Dashboard
+  var url = SB_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(window.location.origin + window.location.pathname);
+  window.location.href = url;
+}
+
+// معالجة callback من Google بعد التوجيه
+async function handleOAuthCallback(){
+  var hash = window.location.hash;
+  if(!hash || !hash.includes('access_token')) return false;
+  var params = new URLSearchParams(hash.substring(1));
+  var token = params.get('access_token');
+  if(!token) return false;
+  try{
+    // جلب بيانات المستخدم من Supabase Auth
+    var r = await fetch(SB_URL+'/auth/v1/user', {
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
+    });
+    var user = await r.json();
+    if(!user||!user.email) return false;
+    var email = user.email;
+    var displayName = (user.user_metadata&&user.user_metadata.full_name) || email.split('@')[0];
+    var username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g,'') + '_g';
+    // تحقق أو أنشئ المستخدم
+    var rows = await sb('users','GET',null,'?username=eq.'+encodeURIComponent(username)+'&select=id,username,display_name,stage,branch');
+    var dbUser = rows&&rows[0];
+    if(!dbUser){
+      var created = await sb('users','POST',{username:username,password:'google_oauth',display_name:displayName,joined_at:new Date().toISOString(),last_login:new Date().toISOString()});
+      dbUser = created&&created[0];
+    } else {
+      await sb('users','PATCH',{last_login:new Date().toISOString()},'?id=eq.'+dbUser.id);
+    }
+    // حفظ الجلسة
+    var sess = {id:dbUser?dbUser.id:'',name:displayName,stage:dbUser?dbUser.stage:null,branch:dbUser?dbUser.branch:null,joined:Date.now(),isGoogle:true};
+    setSess(sess);
+    window.history.replaceState(null,'',window.location.pathname);
+    return sess;
+  }catch(e){console.error('OAuth error:',e);return false;}
+}
+
+/* ══════════════════════════════════════════════
+   INTERACTIVE QUIZ — الاختبار التفاعلي
+══════════════════════════════════════════════ */
+var quizData = null; // {name, questions:[]}
+var quizState = {   // حالة الاختبار الجارية
+  qIdx: 0,
+  answers: [],
+  score: 0,
+  started: false,
+  timer: null,
+  timeLeft: 0
+};
+
+// جلب بيانات الاختبار وفتح Modal
+async function startQuiz(examId, examName){
+  try{
+    var rows = await sb('exams','GET',null,'?id=eq.'+examId+'&select=name,questions');
+    var ex = rows&&rows[0];
+    if(!ex||!ex.questions){ toast('⚠️ لا توجد أسئلة','warn'); return; }
+    var qs = JSON.parse(ex.questions);
+    if(!qs||!qs.length){ toast('⚠️ لا توجد أسئلة','warn'); return; }
+    quizData = {name: ex.name, questions: qs};
+    quizState = {qIdx:0, answers:[], score:0, started:false, timer:null, timeLeft:0};
+    renderQuizIntro();
+    openModal('ov-quiz');
+  }catch(e){toast('❌ '+e.message,'err');}
+}
+
+function renderQuizIntro(){
+  var q = quizData.questions;
+  var total = q.length;
+  var mcq = q.filter(function(x){return x.type!=='tf';}).length;
+  var tf  = q.filter(function(x){return x.type==='tf';}).length;
+  el('quiz-inner').innerHTML =
+    '<div class="qz-intro">'
+   +'<div class="qz-close-row"><button class="qz-close" onclick="closeModal(\'ov-quiz\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
+   +'<div class="qz-intro-ic">🎯</div>'
+   +'<h2 class="qz-intro-title">'+quizData.name+'</h2>'
+   +'<div class="qz-intro-stats">'
+   +'<div class="qz-stat"><div class="qz-stat-n">'+total+'</div><div class="qz-stat-l">سؤال</div></div>'
+   +(mcq?'<div class="qz-stat"><div class="qz-stat-n">'+mcq+'</div><div class="qz-stat-l">اختيار متعدد</div></div>':'')
+   +(tf?'<div class="qz-stat"><div class="qz-stat-n">'+tf+'</div><div class="qz-stat-l">صح / خطأ</div></div>':'')
+   +'<div class="qz-stat"><div class="qz-stat-n">'+Math.round(total*1.5)+'</div><div class="qz-stat-l">دقيقة</div></div>'
+   +'</div>'
+   +'<p class="qz-intro-hint">اقرأ كل سؤال بتمعن وأجب بثقة!</p>'
+   +'<button class="btn-main qz-start-btn" onclick="launchQuiz()">🚀 ابدأ الاختبار</button>'
+   +'</div>';
+}
+
+function launchQuiz(){
+  quizState.qIdx = 0;
+  quizState.answers = new Array(quizData.questions.length).fill(null);
+  quizState.started = true;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  var qs = quizData.questions;
+  var i = quizState.qIdx;
+  var q = qs[i];
+  var total = qs.length;
+  var answered = quizState.answers.filter(function(a){return a!==null;}).length;
+  var pct = Math.round((i/total)*100);
+
+  var html = '<div class="qz-body">'
+   +'<div class="qz-topbar">'
+   +'<button class="qz-close" onclick="confirmCloseQuiz()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
+   +'<div class="qz-prog-wrap"><div class="qz-prog-bar" style="width:'+pct+'%"></div></div>'
+   +'<div class="qz-counter">'+( i+1)+'/'+total+'</div>'
+   +'</div>'
+   +'<div class="qz-question-box">'
+   +'<div class="qz-qnum">السؤال '+(i+1)+'</div>'
+   +'<div class="qz-qtext">'+q.text+'</div>'
+   +'</div>'
+   +'<div class="qz-opts" id="qz-opts">';
+
+  if(q.type==='tf'){
+    var selT = quizState.answers[i]===true;
+    var selF = quizState.answers[i]===false;
+    html += '<button class="qz-opt tf-opt tf-true'+(selT?' qz-sel':'')+'" onclick="selectAnswer(true)">✅ صح</button>';
+    html += '<button class="qz-opt tf-opt tf-false'+(selF?' qz-sel':'')+'" onclick="selectAnswer(false)">❌ خطأ</button>';
+  } else {
+    var labels = ['أ','ب','ج','د'];
+    (q.opts||[]).forEach(function(opt,oi){
+      if(!opt) return;
+      var isSel = quizState.answers[i]===oi;
+      html += '<button class="qz-opt'+(isSel?' qz-sel':'')+'" onclick="selectAnswer('+oi+')">'
+            + '<span class="qz-opt-lbl">'+labels[oi]+'</span>'
+            + '<span class="qz-opt-txt">'+opt+'</span>'
+            + '</button>';
+    });
+  }
+  html += '</div>';
+
+  // أزرار التنقل
+  html += '<div class="qz-nav">';
+  if(i>0) html += '<button class="qz-nav-btn qz-prev" onclick="goQuestion('+(i-1)+')">→ السابق</button>';
+  if(i<total-1){
+    html += '<button class="qz-nav-btn qz-next" onclick="goQuestion('+(i+1)+')">التالي ←</button>';
+  } else {
+    html += '<button class="qz-nav-btn qz-finish" onclick="finishQuiz()">✔ إنهاء الاختبار</button>';
+  }
+  html += '</div></div>';
+  el('quiz-inner').innerHTML = html;
+}
+
+function selectAnswer(val){
+  quizState.answers[quizState.qIdx] = val;
+  // تلوين الإجابة المختارة
+  document.querySelectorAll('.qz-opt').forEach(function(b){b.classList.remove('qz-sel');});
+  // إعادة رسم الأزرار بعد التحديد
+  var qs = quizData.questions;
+  var i = quizState.qIdx;
+  var q = qs[i];
+  if(q.type==='tf'){
+    document.querySelectorAll('.qz-opt').forEach(function(b){
+      if(b.classList.contains('tf-true')&&val===true) b.classList.add('qz-sel');
+      if(b.classList.contains('tf-false')&&val===false) b.classList.add('qz-sel');
+    });
+  } else {
+    var btns = document.querySelectorAll('.qz-opt');
+    // find clicked by val
+    btns.forEach(function(b, bi){
+      if(bi===val) b.classList.add('qz-sel');
+    });
+  }
+  // انتقل للسؤال التالي تلقائياً بعد 400ms
+  setTimeout(function(){
+    if(quizState.qIdx < qs.length-1){
+      goQuestion(quizState.qIdx+1);
+    }
+  }, 420);
+}
+
+function goQuestion(idx){
+  quizState.qIdx = idx;
+  renderQuestion();
+}
+
+function confirmCloseQuiz(){
+  if(confirm('إنهاء الاختبار والخروج؟'))closeModal('ov-quiz');
+}
+
+function finishQuiz(){
+  // حساب الدرجة
+  var qs = quizData.questions;
+  var correct = 0;
+  var totalScore = 0;
+  var earned = 0;
+  qs.forEach(function(q,i){
+    var ans = quizState.answers[i];
+    var sc = q.score||1;
+    totalScore += sc;
+    var isCorrect = (q.type==='tf') ? (ans===q.correct) : (ans===q.correct);
+    if(isCorrect){ correct++; earned += sc; }
+  });
+  var pct = Math.round((earned/totalScore)*100);
+  renderQuizResult(correct, qs.length, earned, totalScore, pct);
+}
+
+function renderQuizResult(correct, total, earned, totalScore, pct){
+  var grade, icon, color;
+  if(pct>=90){grade='ممتاز! 🏆';icon='🥇';color='#22c55e';}
+  else if(pct>=75){grade='جيد جداً 🌟';icon='🥈';color='#3b82f6';}
+  else if(pct>=60){grade='جيد 👍';icon='🥉';color='#f59e0b';}
+  else if(pct>=50){grade='مقبول';icon='📗';color='#8b5cf6';}
+  else{grade='يحتاج مراجعة';icon='📚';color='#ef4444';}
+
+  // تفاصيل كل سؤال
+  var qs = quizData.questions;
+  var details = '';
+  qs.forEach(function(q,i){
+    var ans = quizState.answers[i];
+    var isCorrect = ans!==null && ans===q.correct;
+    var isSkipped = ans===null;
+    details += '<div class="qz-res-row">'
+             + '<div class="qz-res-ic">'+(isSkipped?'⬜':isCorrect?'✅':'❌')+'</div>'
+             + '<div class="qz-res-qtext">'+q.text+'</div>'
+             + '</div>';
+  });
+
+  el('quiz-inner').innerHTML =
+    '<div class="qz-result">'
+   +'<button class="qz-close qz-result-close" onclick="closeModal(\'ov-quiz\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
+   +'<div class="qz-res-medal">'+icon+'</div>'
+   +'<h2 class="qz-res-grade" style="color:'+color+'">'+grade+'</h2>'
+   +'<div class="qz-score-circle" style="--pct:'+pct+'%;--col:'+color+'">'
+   +'<div class="qz-score-inner"><div class="qz-score-num">'+pct+'%</div><div class="qz-score-lbl">النتيجة</div></div>'
+   +'</div>'
+   +'<div class="qz-res-stats">'
+   +'<div class="qz-rs"><div class="qz-rs-n" style="color:#22c55e">'+correct+'</div><div class="qz-rs-l">إجابة صحيحة</div></div>'
+   +'<div class="qz-rs"><div class="qz-rs-n" style="color:#ef4444">'+(total-correct)+'</div><div class="qz-rs-l">إجابة خاطئة</div></div>'
+   +'<div class="qz-rs"><div class="qz-rs-n" style="color:'+color+'">'+earned+'/'+totalScore+'</div><div class="qz-rs-l">الدرجة</div></div>'
+   +'</div>'
+   +'<div class="qz-res-details">'
+   +'<div class="qz-res-det-title">تفاصيل الإجابات</div>'
+   +details
+   +'</div>'
+   +'<div class="qz-res-btns">'
+   +'<button class="btn-main" onclick="launchQuiz()">🔄 إعادة الاختبار</button>'
+   +'<button class="btn-ghost qz-close-btn" onclick="closeModal(\'ov-quiz\')">✔ إغلاق</button>'
+   +'</div></div>';
+}
 
 function renderCurriculum(subj){
   // يعرض spinner ثم يجلب من Supabase
@@ -781,8 +1098,16 @@ document.addEventListener('DOMContentLoaded',function(){
   buildParticles();
   buildSearchIndex();
 
-  var th=localStorage.getItem('dz_theme');
-  if(th==='dark'){isDark=true;document.documentElement.setAttribute('data-theme','dark');}
+  loadSavedTheme();
+  // Handle Google OAuth callback
+  handleOAuthCallback().then(function(sess){
+    if(sess){
+      isGuest=false; curStage=sess.stage||null; curBranch=sess.branch||null;
+      updatePills(sess.name); showBottomNav(true);
+      if(!curStage) openStagePicker('first');
+      else{buildGradePage();goPage('pg-grade');setNavActive('home');}
+    }
+  });
 
   var s=getSess();
   if(s&&s.name){
