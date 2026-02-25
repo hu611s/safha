@@ -313,10 +313,12 @@ body::after{content:'';position:fixed;width:320px;height:320px;bottom:-90px;left
 }
 .tbar-l,.tbar-r{display:flex;align-items:center;gap:9px}
 .tbar-logo{
-  width:30px;height:30px;border-radius:var(--r-s);
+  width:24px;height:24px;border-radius:var(--r-s);
   background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  overflow:hidden;padding:2px;
 }
+.tbar-logo img,.tbar-logo-img{width:100%;height:100%;object-fit:contain;border-radius:2px}
 .tbar-title{font-family:var(--fd);font-size:.97rem;font-weight:800;color:var(--txw);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
 .tbar-sub{font-size:.7rem;color:var(--txw2)}
 
@@ -366,12 +368,14 @@ body::after{content:'';position:fixed;width:320px;height:320px;bottom:-90px;left
 /* Brand */
 .auth-brand{width:100%;display:flex;align-items:center;gap:12px}
 .brand-logo{
-  width:50px;height:50px;border-radius:var(--r-m);
+  width:38px;height:38px;border-radius:var(--r-m);
   background:rgba(255,255,255,.22);
   border:1.5px solid rgba(255,255,255,.4);
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,.15);
+  overflow:hidden;padding:3px;
 }
+.brand-logo img{width:100%;height:100%;object-fit:contain;border-radius:5px}
 .anim-float{animation:floatY 3.5s ease-in-out infinite}
 .brand-text{}
 .brand-name{font-family:var(--fd);font-size:1.4rem;font-weight:900;color:#fff;line-height:1;text-shadow:0 2px 10px rgba(0,0,0,.18)}

@@ -1,0 +1,26 @@
+{
+  "name": "دوروز أكاديمي",
+  "short_name": "دوروز",
+  "description": "منصتك الدراسية الشاملة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
