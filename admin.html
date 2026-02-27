@@ -258,12 +258,21 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
       <div class="ni" onclick="navTo('curriculum',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="12" y1="6" x2="16" y2="6"/><line x1="12" y1="10" x2="16" y2="10"/><line x1="12" y1="14" x2="16" y2="14"/></svg>المنهج
       </div>
+      <div class="nav-sec">المدرسون</div>
+      <div class="ni" onclick="navTo('teachers',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>المدرسون
+        <span class="ni-badge" id="nb-teachers">0</span>
+      </div>
       <div class="nav-sec">المستخدمون</div>
       <div class="ni" onclick="navTo('users',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>المستخدمون
         <span class="ni-badge" id="nb-us">0</span>
       </div>
       <div class="nav-sec">الإدارة</div>
+      <div class="ni" onclick="navTo('notifications',this)" id="nav-notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>الإشعارات
+        <span class="ni-badge" id="nb-notifs">0</span>
+      </div>
       <div class="ni" onclick="navTo('settings',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>الإعدادات
       </div>
@@ -406,6 +415,97 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
       </div>
 
       <!-- USERS -->
+      <!-- ══ TEACHERS PAGE ══ -->
+      <div class="pg" id="pg-teachers">
+        <div class="sec-hd">
+          <div class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            المدرسون
+          </div>
+          <button class="btn btn-pri" onclick="openAddTeacher()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة مدرس
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-filters">
+            <div class="tbl-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input type="text" placeholder="بحث عن مدرس..." oninput="filterTeachers(this.value)"/>
+            </div>
+          </div>
+          <div id="teachers-admin-list">
+            <div class="tbl-empty">جارٍ التحميل...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TEACHER CHAPTERS ADMIN PAGE ══ -->
+      <div class="pg" id="pg-teacher-chapters-admin">
+        <div class="sec-hd">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-ghost" onclick="navTo('teachers',null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+              رجوع
+            </button>
+            <div class="sec-title" id="tchap-admin-title">فصول المدرس</div>
+          </div>
+          <button class="btn btn-pri" onclick="openAddChapter()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة فصل
+          </button>
+        </div>
+        <div id="admin-teacher-hero" class="tbl-wrap" style="padding:16px;display:flex;align-items:center;gap:12px;margin-bottom:0"></div>
+        <div class="tbl-wrap" style="margin-top:16px">
+          <div id="chapters-admin-list">
+            <div class="tbl-empty">جارٍ التحميل...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ LECTURES ADMIN PAGE ══ -->
+      <div class="pg" id="pg-lectures-admin">
+        <div class="sec-hd">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-ghost" id="lec-admin-back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+              رجوع
+            </button>
+            <div class="sec-title" id="lec-admin-title">محاضرات الفصل</div>
+          </div>
+          <button class="btn btn-pri" onclick="openAddLecture()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة محاضرة
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div id="lectures-admin-list">
+            <div class="tbl-empty">جارٍ التحميل...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ LECTURE STATS PAGE ══ -->
+      <div class="pg" id="pg-lec-stats">
+        <div class="sec-hd">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-ghost" id="lec-stats-back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+              رجوع
+            </button>
+            <div class="sec-title" id="lec-stats-title">إحصائيات المحاضرة</div>
+          </div>
+          <button class="btn btn-ghost" onclick="refreshLecStats()">🔄 تحديث</button>
+        </div>
+        <div class="tbl-wrap" style="margin-bottom:16px">
+          <div style="padding:14px 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="lec-stats-summary"></div>
+        </div>
+        <div class="tbl-wrap">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--bdr);font-family:Tajawal,sans-serif;font-size:.85rem;font-weight:800;color:#fff">👥 تفاصيل المشاهدين</div>
+          <div id="lec-stats-list"><div class="tbl-empty">جارٍ التحميل...</div></div>
+        </div>
+      </div>
+
       <div class="pg" id="pg-users">
         <div class="sec-hd">
           <div class="sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>المستخدمون</div>
@@ -419,8 +519,8 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
               <th>المستخدم</th>
               <th class="hide-mob">اسم الدخول</th>
               <th class="hide-mob">المرحلة</th>
+              <th class="hide-mob">الصف</th>
               <th class="hide-mob">تاريخ التسجيل</th>
-              <th class="hide-mob">آخر دخول</th>
               <th>إجراءات</th>
             </tr></thead>
           <tbody id="us-tb"></tbody></table>
@@ -440,6 +540,19 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
             <button class="btn btn-pri" style="width:100%;justify-content:center;padding:11px" onclick="saveSettings()">💾 حفظ الإعدادات</button>
           </div>
         </div>
+      </div>
+
+
+      <!-- NOTIFICATIONS ADMIN -->
+      <div class="pg hidden" id="pg-notifications">
+        <div class="pg-hd">
+          <h2>إدارة الإشعارات</h2>
+          <button class="btn btn-pri" onclick="openAddNotif()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة إشعار
+          </button>
+        </div>
+        <div id="notifs-admin-list"><div class="tbl-empty">جارٍ التحميل...</div></div>
       </div>
 
     </div>
@@ -649,6 +762,19 @@ async function upload(file, folder){
   if(!r.ok){ var t=await r.text(); throw new Error('رفع الملف فشل: '+t); }
   return SB+'/storage/v1/object/public/files/'+fname;
 }
+// Alias with progress callback support
+async function uploadFile(file, path, onProgress){
+  if(onProgress) onProgress(20);
+  var r = await fetch(SB+'/storage/v1/object/files/'+path, {
+    method:'POST',
+    headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':file.type||'application/octet-stream'},
+    body:file
+  });
+  if(onProgress) onProgress(90);
+  if(!r.ok){ var t=await r.text(); throw new Error('رفع الملف فشل: '+t); }
+  if(onProgress) onProgress(100);
+  return SB+'/storage/v1/object/public/files/'+path;
+}
 
 /* ══ DATA ══ */
 var EMOJIS=['📝','📚','📖','🔬','⚗️','🧪','🔭','💡','🎓','📐','📏','✏️','📄','📋','🏫','🎒','🖋','📌','💼','🏆','⭐','🌟','💫','🌍','🌐','💻','🖥','📱','🔢','🎯'];
@@ -715,12 +841,14 @@ function navTo(id,el){
   if(el)el.classList.add('active');
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active')});
   var pg=g('pg-'+id);if(pg)pg.classList.add('active');
-  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',curriculum:'المناهج',users:'المستخدمون',settings:'الإعدادات'};
+  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',curriculum:'المناهج',users:'المستخدمون',settings:'الإعدادات',teachers:'المدرسون',notifications:'الإشعارات','teacher-chapters-admin':'فصول المدرس','lectures-admin':'محاضرات الفصل','lec-stats':'إحصائيات المحاضرة'};
   g('pg-title').textContent=t[id]||id;
   g('pg-bc').textContent='لوحة التحكم / '+(t[id]||id);
   closeSidebar();
   if(id==='dash')loadDash();
   if(id==='users')loadUsers();
+  if(id==='teachers')loadTeachersAdmin();
+  if(id==='notifications')loadNotifsAdmin();
 }
 function openSidebar(){g('sidebar').classList.add('open');g('soOv').classList.add('show')}
 function closeSidebar(){g('sidebar').classList.remove('open');g('soOv').classList.remove('show')}
@@ -1134,8 +1262,8 @@ function renderUsers(data){
       +'</div></td>'
       +'<td class="hide-mob" style="color:var(--tx2);font-family:monospace;font-size:.78rem">'+u.username+'</td>'
       +'<td class="hide-mob"><span class="badge b-blue">'+stageLabel+'</span></td>'
+      +'<td class="hide-mob" style="color:var(--tx3);font-size:.78rem">'+(u.grade||'—')+'</td>'
       +'<td class="hide-mob" style="color:var(--tx3);font-size:.72rem">'+joined+'</td>'
-      +'<td class="hide-mob" style="color:var(--tx3);font-size:.72rem">'+lastLogin+'</td>'
       +'<td><button class="btn-icon" style="border-color:rgba(239,68,68,.2)" onclick="delUser(\''+safeId+'\',\''+safeNm+'\')" title="حذف">'
       +'<svg viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>'
       +'</button></td>'
@@ -1263,6 +1391,246 @@ function showToast(msg,type){
   clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.classList.add('hidden');},400);},3200);
 }
 </script>
+
+<!-- ══ TEACHER MODAL ══ -->
+<div class="ov hidden" id="ov-teacher">
+  <div class="modal" style="max-width:440px">
+    <div class="m-hd">
+      <div class="m-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <span id="teacher-modal-title">إضافة مدرس</span>
+      </div>
+      <button class="m-close" onclick="closeOv('ov-teacher')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="teacher-edit-id"/>
+      <div class="fr">
+        <label>اسم المدرس *</label>
+        <input class="fi" id="teacher-name" placeholder="مثال: أ. أحمد محمد"/>
+      </div>
+      <div class="fr">
+        <label>المرحلة *</label>
+        <select class="fi" id="teacher-stage" onchange="teacherStageChanged()">
+          <option value="">اختر المرحلة</option>
+          <option value="primary">الابتدائية</option>
+          <option value="middle">المتوسطة</option>
+          <option value="secondary">الإعدادية</option>
+        </select>
+      </div>
+      <div class="fr">
+        <label>الصف *</label>
+        <select class="fi" id="teacher-grade-sel" onchange="teacherGradeChanged()">
+          <option value="">اختر الصف</option>
+        </select>
+      </div>
+      <div class="fr">
+        <label>المادة / التخصص *</label>
+        <select class="fi" id="teacher-subject-sel">
+          <option value="">اختر المادة</option>
+        </select>
+      </div>
+      <div class="fr">
+        <label>تفاصيل إضافية (اختياري)</label>
+        <input class="fi" id="teacher-subject" placeholder="مثال: كيمياء عضوية — معهد الفيصل"/>
+      </div>
+      <div class="fr">
+        <label>صورة المدرس</label>
+        <div class="fdrop" id="teacher-photo-drop">
+          <input type="file" accept="image/*" onchange="handleTeacherPhoto(this)"/>
+          <span class="fd-ic">🖼️</span>
+          <div class="fd-title">اسحب صورة أو انقر للاختيار</div>
+          <div class="fd-sub">JPG, PNG — مستطيل مربع مفضل</div>
+        </div>
+        <div class="fd-prev" id="teacher-photo-prev">
+          <img id="teacher-photo-thumb" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>
+          <span class="fd-pn" id="teacher-photo-name">—</span>
+        </div>
+        <div class="prog-wrap" id="teacher-photo-prog">
+          <div class="prog-bar"><div class="prog-fill" id="teacher-photo-fill"></div></div>
+          <div class="prog-lbl" id="teacher-photo-lbl">جارٍ الرفع...</div>
+        </div>
+        <div class="fr" style="margin-top:8px;margin-bottom:0">
+          <label style="margin-bottom:4px">أو رابط الصورة مباشرة</label>
+          <input class="fi" id="teacher-photo-url" placeholder="https://..."/>
+        </div>
+      </div>
+      <div class="fr">
+        <label>الترتيب</label>
+        <input class="fi" id="teacher-sort" type="number" value="1" placeholder="1"/>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-pri" onclick="saveTeacher()" style="flex:1;justify-content:center">💾 حفظ</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-teacher')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHAPTER MODAL ══ -->
+<div class="ov hidden" id="ov-chapter">
+  <div class="modal" style="max-width:480px">
+    <div class="m-hd">
+      <div class="m-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        <span id="chapter-modal-title">إضافة فصل</span>
+      </div>
+      <button class="m-close" onclick="closeOv('ov-chapter')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="chapter-edit-id"/>
+      <div class="fr">
+        <label>عنوان الفصل *</label>
+        <input class="fi" id="chapter-title" placeholder="مثال: الفصل الأول — المعادلات"/>
+      </div>
+      <div class="fr">
+        <label>صورة الغلاف (1920×1080) *</label>
+        <div class="fdrop" id="chapter-cover-drop">
+          <input type="file" accept="image/*" onchange="handleChapterCover(this)"/>
+          <span class="fd-ic">🖼️</span>
+          <div class="fd-title">اسحب صورة الغلاف أو انقر</div>
+          <div class="fd-sub">مقاس 1920×1080 بكسل — JPG أو PNG</div>
+        </div>
+        <div class="fd-prev" id="chapter-cover-prev">
+          <img id="chapter-cover-thumb" style="width:80px;height:45px;object-fit:cover;border-radius:6px"/>
+          <span class="fd-pn" id="chapter-cover-name">—</span>
+        </div>
+        <div class="prog-wrap" id="chapter-cover-prog">
+          <div class="prog-bar"><div class="prog-fill" id="chapter-cover-fill"></div></div>
+          <div class="prog-lbl" id="chapter-cover-lbl">جارٍ الرفع...</div>
+        </div>
+        <div class="fr" style="margin-top:8px;margin-bottom:0">
+          <label style="margin-bottom:4px">أو رابط مباشر</label>
+          <input class="fi" id="chapter-cover-url" placeholder="https://..."/>
+        </div>
+      </div>
+      <div class="fr">
+        <label>الترتيب</label>
+        <input class="fi" id="chapter-sort" type="number" value="1"/>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-pri" onclick="saveChapterAdmin()" style="flex:1;justify-content:center">💾 حفظ</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-cur-chapter')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LECTURE MODAL ══ -->
+<div class="ov hidden" id="ov-lecture">
+  <div class="modal" style="max-width:480px">
+    <div class="m-hd">
+      <div class="m-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <span id="lec-modal-title">إضافة محاضرة</span>
+      </div>
+      <button class="m-close" onclick="closeOv('ov-lecture')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="lec-edit-id"/>
+      <div class="fr">
+        <label>عنوان المحاضرة *</label>
+        <input class="fi" id="lec-title" placeholder="مثال: المحاضرة الأولى — مقدمة"/>
+      </div>
+      <div class="fr">
+        <label>رابط الفيديو (YouTube / أي رابط مباشر)</label>
+        <input class="fi" id="lec-video-url" placeholder="https://youtu.be/... أو https://...mp4"/>
+        <div style="margin-top:8px">
+          <label style="margin-bottom:6px">أو ارفع ملف فيديو مباشرة</label>
+          <div class="fdrop" id="lec-video-drop">
+            <input type="file" accept="video/*" onchange="handleLectureVideo(this)"/>
+            <span class="fd-ic">🎬</span>
+            <div class="fd-title">اسحب ملف الفيديو أو انقر للاختيار</div>
+            <div class="fd-sub">MP4, WebM — سيرفع إلى التخزين تلقائياً</div>
+          </div>
+          <div class="prog-wrap" id="lec-vid-prog">
+            <div class="prog-bar"><div class="prog-fill" id="lec-vid-fill"></div></div>
+            <div class="prog-lbl" id="lec-vid-lbl">جارٍ الرفع...</div>
+          </div>
+        </div>
+      </div>
+      <div class="fr">
+        <label>مدة المحاضرة (اختياري)</label>
+        <input class="fi" id="lec-duration" placeholder="مثال: 45:30"/>
+      </div>
+      <div class="fr">
+        <label>ملاحظات (اختياري)</label>
+        <textarea class="fta" id="lec-notes" placeholder="ملاحظات إضافية..."></textarea>
+      </div>
+      <div class="fr">
+        <label>الترتيب</label>
+        <input class="fi" id="lec-sort" type="number" value="1"/>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-pri" onclick="saveLectureAdmin()" style="flex:1;justify-content:center">💾 حفظ</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-lecture')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NOTIFICATION MODAL ══ -->
+<div class="ov hidden" id="ov-notif">
+  <div class="modal" style="max-width:480px">
+    <div class="m-hd">
+      <div class="m-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span id="notif-modal-title">إضافة إشعار</span>
+      </div>
+      <button class="m-close" onclick="closeOv('ov-notif')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="m-body">
+      <div class="fr">
+        <label>عنوان الإشعار *</label>
+        <input class="fi" id="notif-title" placeholder="مثال: تمت إضافة محاضرة جديدة"/>
+      </div>
+      <div class="fr">
+        <label>نص الإشعار</label>
+        <textarea class="fi" id="notif-body" rows="2" placeholder="تفاصيل اختيارية..." style="resize:vertical;min-height:64px"></textarea>
+      </div>
+      <div class="fr">
+        <label>نوع الإشعار</label>
+        <select class="fi" id="notif-type">
+          <option value="general">🔔 عام</option>
+          <option value="lecture">📹 محاضرة جديدة</option>
+          <option value="exam">📝 اختبار جديد</option>
+          <option value="booklet">📚 ملزمة جديدة</option>
+        </select>
+      </div>
+      <div class="fr" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label>المرحلة المستهدفة</label>
+          <select class="fi" id="notif-target-stage">
+            <option value="">🌐 الكل</option>
+            <option value="primary">الابتدائية</option>
+            <option value="middle">المتوسطة</option>
+            <option value="secondary">الثانوية</option>
+            <option value="vocational">المهنية</option>
+          </select>
+        </div>
+        <div>
+          <label>الصف المستهدف</label>
+          <input class="fi" id="notif-target-grade" placeholder="مثال: m1 أو اتركه فارغاً"/>
+        </div>
+      </div>
+      <div class="fr" style="flex-direction:row;align-items:center;gap:10px">
+        <input type="checkbox" id="notif-active" checked style="width:18px;height:18px"/>
+        <label for="notif-active" style="margin:0;font-size:.85rem">نشر الإشعار فوراً</label>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-pri" onclick="saveNotif()" style="flex:1;justify-content:center">💾 حفظ الإشعار</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-notif')">إلغاء</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 <!-- ══════════════════════════════════════
@@ -1299,12 +1667,12 @@ function showToast(msg,type){
   </div>
 </div>
 
-<!-- Modal: إضافة/تعديل فصل -->
-<div class="ov hidden" id="ov-chapter">
+<!-- Modal: إضافة/تعديل فصل (منهج) -->
+<div class="ov hidden" id="ov-cur-chapter">
   <div class="modal">
     <div class="m-hd">
       <div class="m-title">📚 <span id="chap-m-title">إضافة فصل</span></div>
-      <button class="m-close" onclick="closeOv('ov-chapter')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <button class="m-close" onclick="closeOv('ov-cur-chapter')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="m-body">
       <input type="hidden" id="chap-id"/>
@@ -1313,7 +1681,7 @@ function showToast(msg,type){
     </div>
     <div class="m-foot">
       <button class="btn btn-pri" onclick="saveChapter()">💾 حفظ الفصل</button>
-      <button class="btn btn-ghost" onclick="closeOv('ov-chapter')">إلغاء</button>
+      <button class="btn btn-ghost" onclick="closeOv('ov-cur-chapter')">إلغاء</button>
     </div>
   </div>
 </div>
@@ -1532,7 +1900,7 @@ function openChapterModal(id, title, order){
   g('chap-title').value = title||'';
   g('chap-order').value = order||( curChapters.length+1 );
   g('chap-m-title').textContent = id ? 'تعديل الفصل' : 'إضافة فصل جديد';
-  openOv('ov-chapter');
+  openOv('ov-cur-chapter');
 }
 
 async function saveChapter(){
@@ -1540,7 +1908,7 @@ async function saveChapter(){
   var order = parseInt(g('chap-order').value)||1;
   if(!title){ showToast('⚠️ أدخل اسم الفصل','warn'); return; }
   if(!curAdmSubject){ showToast('⚠️ اختر المادة أولاً','warn'); return; }
-  var btn = g('ov-chapter').querySelector('.btn-pri');
+  var btn = g('ov-cur-chapter').querySelector('.btn-pri');
   if(btn){ btn.textContent='⏳...'; btn.disabled=true; }
   try{
     var id = g('chap-id').value;
@@ -1553,7 +1921,7 @@ async function saveChapter(){
       await db('curriculum_chapters','POST',payload);
       showToast('✅ تم إضافة الفصل','ok');
     }
-    closeOv('ov-chapter');
+    closeOv('ov-cur-chapter');
     loadCurriculumAdmin();
   }catch(e){ showToast('❌ '+e.message,'err'); }
   if(btn){ btn.textContent='💾 حفظ الفصل'; btn.disabled=false; }
@@ -1620,6 +1988,801 @@ async function deleteItem(id){
     loadCurriculumAdmin();
   }catch(e){ showToast('❌ '+e.message,'err'); }
 }
+
+/* ══════════════════════════════════════════════
+   TEACHERS ADMIN — إدارة المدرسين
+══════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════
+   TEACHER GRADE/SUBJECT HELPERS
+══════════════════════════════════════════════ */
+var TEACHER_GRADES = {
+  'primary':   [{id:'p1',name:'أول ابتدائي'},{id:'p2',name:'ثاني ابتدائي'},{id:'p3',name:'ثالث ابتدائي'},{id:'p4',name:'رابع ابتدائي'},{id:'p5',name:'خامس ابتدائي'},{id:'p6',name:'سادس ابتدائي'}],
+  'middle':    [{id:'m1',name:'أول متوسط'},{id:'m2',name:'ثاني متوسط'},{id:'m3',name:'ثالث متوسط'}],
+  'secondary': [{id:'s1',name:'رابع إعدادي'},{id:'s2',name:'خامس إعدادي'},{id:'s3',name:'سادس إعدادي'}]
+};
+var TEACHER_SUBJECTS = {
+  'p1':['القرآن الكريم','القراءة','الرياضيات','اللغة الإنكليزية','العلوم'],
+  'p2':['القرآن الكريم','القراءة','الرياضيات','اللغة الإنكليزية','العلوم'],
+  'p3':['القرآن الكريم','القراءة','الرياضيات','اللغة الإنكليزية','العلوم'],
+  'p4':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الاجتماعيات','الرياضيات','العلوم'],
+  'p5':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الاجتماعيات','الرياضيات','العلوم'],
+  'p6':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الاجتماعيات','الرياضيات','العلوم'],
+  'm1':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الرياضيات','الاجتماعيات','أحياء','كيمياء','فيزياء','حاسوب','أخلاقية'],
+  'm2':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الرياضيات','الاجتماعيات','أحياء','كيمياء','فيزياء','حاسوب','أخلاقية'],
+  'm3':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الرياضيات','الاجتماعيات','أحياء','كيمياء','فيزياء','حاسوب','أخلاقية'],
+  's1':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الرياضيات','الاجتماعيات','أحياء','كيمياء','فيزياء','حاسوب','أخلاقية'],
+  's2':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الرياضيات','الاجتماعيات','أحياء','كيمياء','فيزياء','حاسوب','أخلاقية'],
+  's3':['التربية الإسلامية','اللغة العربية','اللغة الإنكليزية','الرياضيات','الاجتماعيات','أحياء','كيمياء','فيزياء','حاسوب','أخلاقية']
+};
+var STAGE_NAMES_AR = {primary:'الابتدائية',middle:'المتوسطة',secondary:'الإعدادية'};
+
+function teacherStageChanged(){
+  var stage = document.getElementById('teacher-stage').value;
+  var gradeSel = document.getElementById('teacher-grade-sel');
+  var subjSel = document.getElementById('teacher-subject-sel');
+  gradeSel.innerHTML = '<option value="">اختر الصف</option>';
+  subjSel.innerHTML = '<option value="">اختر المادة</option>';
+  if(!stage) return;
+  (TEACHER_GRADES[stage]||[]).forEach(function(g){
+    var opt = document.createElement('option');
+    opt.value = g.id; opt.textContent = g.name;
+    gradeSel.appendChild(opt);
+  });
+}
+
+function teacherGradeChanged(){
+  var gid = document.getElementById('teacher-grade-sel').value;
+  var subjSel = document.getElementById('teacher-subject-sel');
+  subjSel.innerHTML = '<option value="">اختر المادة</option>';
+  if(!gid) return;
+  (TEACHER_SUBJECTS[gid]||[]).forEach(function(s){
+    var opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    subjSel.appendChild(opt);
+  });
+}
+
+var _teachersList = [];
+var _curTeacherAdmin = null;
+
+async function loadTeachersAdmin(){
+  var list = document.getElementById('teachers-admin-list');
+  if(!list) return;
+  list.innerHTML = '<div class="tbl-empty">جارٍ التحميل...</div>';
+  try{
+    var rows = (await db('teachers','GET',null,'?order=sort_order.asc,created_at.asc')) || [];
+    _teachersList = rows;
+    renderTeachersAdminList(rows);
+    // Update badge
+    var nb = document.getElementById('nb-teachers');
+    if(nb) nb.textContent = rows.length;
+  }catch(e){
+    list.innerHTML = '<div class="tbl-empty">❌ '+e.message+'</div>';
+  }
+}
+
+function renderTeachersAdminList(rows){
+  var list = document.getElementById('teachers-admin-list');
+  if(!list) return;
+  if(!rows.length){
+    list.innerHTML = '<div class="tbl-empty">لا يوجد مدرسون بعد — اضغط "إضافة مدرس" للبدء</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>المدرس</th><th>المادة</th><th>المرحلة / الصف</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody>';
+  rows.forEach(function(t){
+    var avatarHtml = t.photo_url
+      ? '<img src="'+t.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
+      : '<span style="font-size:1.2rem">👨‍🏫</span>';
+    html += '<tr>';
+    html += '<td><div style="display:flex;align-items:center;gap:10px">';
+    html += '<div class="td-ic" style="border-radius:50%;overflow:hidden;background:rgba(102,126,234,.1)">'+avatarHtml+'</div>';
+    html += '<div><div class="td-nm">'+t.name+'</div><div class="td-sub">'+(t.subject_name||'')+'</div></div></div></td>';
+    html += '<td><span class="badge b-blue">'+(t.subject_name||'—')+'</span></td>';
+    html += '<td><div style="font-size:.78rem;line-height:1.5"><span class="badge b-blue">'+(t.stage ? STAGE_NAMES_AR[t.stage]||t.stage : '—')+'</span><br>'+(t.grade_label||'—')+'</div></td>';
+    html += '<td><span class="badge '+(t.is_visible?'b-grn':'b-red')+'">'+(t.is_visible?'ظاهر':'مخفي')+'</span></td>';
+    html += '<td><div class="tbl-actions">';
+    html += '<button class="btn-icon" title="فصول المدرس" data-tid="'+t.id+'" data-tname="'+t.name.replace(/"/g,'&quot;')+'" onclick="openTeacherChapsAdmin(this.dataset.tid,this.dataset.tname)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></button>';
+    html += '<button class="btn-icon" title="تعديل" data-tid="'+t.id+'" onclick="editTeacher(this.dataset.tid)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+    html += '<button class="btn-icon" title="'+(t.is_visible?'إخفاء':'إظهار')+'" data-tid="'+t.id+'" data-tvis="'+t.is_visible+'" onclick="toggleTeacherBtn(this)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">'+(t.is_visible?'<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>':'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>')+'</svg></button>';
+    html += '<button class="btn-icon" title="حذف" data-tid="'+t.id+'" onclick="deleteTeacher(this.dataset.tid)" style="border-color:rgba(239,68,68,.2)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+    html += '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  list.innerHTML = html;
+}
+function filterTeachers(q){
+  var filtered = _teachersList.filter(function(t){
+    return t.name.toLowerCase().includes(q.toLowerCase()) || t.subject_name.toLowerCase().includes(q.toLowerCase());
+  });
+  renderTeachersAdminList(filtered);
+}
+
+function openAddTeacher(){
+  document.getElementById('teacher-modal-title').textContent = 'إضافة مدرس';
+  document.getElementById('teacher-edit-id').value = '';
+  document.getElementById('teacher-name').value = '';
+  document.getElementById('teacher-subject').value = '';
+  document.getElementById('teacher-sort').value = '1';
+  document.getElementById('teacher-photo-url').value = '';
+  // reset cascade selects
+  var stageEl = document.getElementById('teacher-stage');
+  var gradeEl = document.getElementById('teacher-grade-sel');
+  var subjEl  = document.getElementById('teacher-subject-sel');
+  if(stageEl) stageEl.value = '';
+  if(gradeEl){ gradeEl.innerHTML = '<option value="">اختر الصف</option>'; }
+  if(subjEl){  subjEl.innerHTML  = '<option value="">اختر المادة</option>'; }
+  var prev = document.getElementById('teacher-photo-prev');
+  if(prev) prev.classList.remove('show');
+  var prog = document.getElementById('teacher-photo-prog');
+  if(prog) prog.classList.remove('show');
+  openOv('ov-teacher');
+}
+
+function editTeacher(id){
+  var t = _teachersList.find(function(x){return x.id===id;});
+  if(!t) return;
+  document.getElementById('teacher-modal-title').textContent = 'تعديل مدرس';
+  document.getElementById('teacher-edit-id').value = t.id;
+  document.getElementById('teacher-name').value = t.name||'';
+  document.getElementById('teacher-subject').value = t.subject_name||'';
+  document.getElementById('teacher-sort').value = t.sort_order||1;
+  document.getElementById('teacher-photo-url').value = t.photo_url||'';
+
+  // Populate cascade selects with saved data
+  var stageEl = document.getElementById('teacher-stage');
+  if(stageEl && t.stage){
+    stageEl.value = t.stage;
+    teacherStageChanged(); // populate grades
+    var gradeEl = document.getElementById('teacher-grade-sel');
+    if(gradeEl && t.grade_id){
+      gradeEl.value = t.grade_id;
+      teacherGradeChanged(); // populate subjects
+      var subjEl = document.getElementById('teacher-subject-sel');
+      if(subjEl && t.subject_name) subjEl.value = t.subject_name;
+    }
+  } else if(stageEl){
+    stageEl.value = '';
+    var gradeEl2 = document.getElementById('teacher-grade-sel');
+    var subjEl2  = document.getElementById('teacher-subject-sel');
+    if(gradeEl2) gradeEl2.innerHTML = '<option value="">اختر الصف</option>';
+    if(subjEl2)  subjEl2.innerHTML  = '<option value="">اختر المادة</option>';
+  }
+
+  var prev = document.getElementById('teacher-photo-prev');
+  if(prev && t.photo_url){
+    prev.classList.add('show');
+    var thumb = document.getElementById('teacher-photo-thumb');
+    if(thumb) thumb.src = t.photo_url;
+    var nm = document.getElementById('teacher-photo-name');
+    if(nm) nm.textContent = 'صورة موجودة';
+  } else if(prev){
+    prev.classList.remove('show');
+  }
+  openOv('ov-teacher');
+}
+
+async function saveTeacher(){
+  var btn = document.querySelector('#ov-teacher .btn-pri');
+  var id = (document.getElementById('teacher-edit-id')||{}).value||'';
+  var nameEl    = document.getElementById('teacher-name');
+  var subjectEl = document.getElementById('teacher-subject');
+  var stageEl   = document.getElementById('teacher-stage');
+  var gradeSelEl= document.getElementById('teacher-grade-sel');
+  var subjSelEl = document.getElementById('teacher-subject-sel');
+  var sortEl    = document.getElementById('teacher-sort');
+  var photoEl   = document.getElementById('teacher-photo-url');
+
+  if(!nameEl){ showToast('❌ خطأ: الحقول غير موجودة','err'); return; }
+
+  var name      = nameEl.value.trim();
+  var stage     = stageEl   ? stageEl.value   : '';
+  var gradeId   = gradeSelEl? gradeSelEl.value : '';
+  var subjSel   = subjSelEl ? subjSelEl.value  : '';
+  var subjectExtra = subjectEl ? subjectEl.value.trim() : '';
+  var sort      = sortEl ? (parseInt(sortEl.value)||1) : 1;
+  var photoUrl  = photoEl ? photoEl.value.trim() : '';
+
+  if(!name){ showToast('⚠️ أدخل اسم المدرس','warn'); return; }
+  if(!stage){ showToast('⚠️ اختر المرحلة','warn'); return; }
+  if(!gradeId){ showToast('⚠️ اختر الصف','warn'); return; }
+  if(!subjSel){ showToast('⚠️ اختر المادة','warn'); return; }
+
+  // Build grade_label from data
+  var gradeObj = (TEACHER_GRADES[stage]||[]).find(function(g){return g.id===gradeId;});
+  var gradeName = gradeObj ? gradeObj.name : gradeId;
+  var stageName = STAGE_NAMES_AR[stage] || stage;
+  var gradeLabel = gradeName + ' — ' + stageName;
+
+  // subject_name = selected subject + optional extra details
+  var subjectName = subjSel + (subjectExtra ? ' — ' + subjectExtra : '');
+
+  if(btn){ btn.textContent='⏳ جارٍ الحفظ...'; btn.disabled=true; }
+
+  var payload = {
+    name:         name,
+    subject_name: subjectName,
+    grade_label:  gradeLabel,
+    stage:        stage,
+    grade_id:     gradeId,
+    photo_url:    photoUrl||null,
+    sort_order:   sort,
+    updated_at:   new Date().toISOString()
+  };
+
+  try{
+    if(id){
+      var res = await db('teachers','PATCH',payload,'?id=eq.'+id);
+      showToast('✅ تم تحديث بيانات المدرس','ok');
+    } else {
+      var insertPayload = Object.assign({is_visible:true, created_at:new Date().toISOString()}, payload);
+      var res = await db('teachers','POST',insertPayload);
+      showToast('✅ تمت إضافة المدرس بنجاح','ok');
+    }
+    closeOv('ov-teacher');
+    await loadTeachersAdmin();
+  }catch(e){
+    console.error('saveTeacher error:', e);
+    showToast('❌ فشل الحفظ: '+e.message,'err');
+  }
+  if(btn){ btn.textContent='💾 حفظ'; btn.disabled=false; }
+}
+
+function toggleTeacherBtn(btn){
+  var tid = btn.dataset.tid;
+  var tvis = btn.dataset.tvis === 'true';
+  toggleTeacher(tid, tvis);
+}
+
+async function toggleTeacher(id, current){
+  try{
+    await db('teachers','PATCH',{is_visible:!current},'?id=eq.'+id);
+    showToast(current?'👁 تم الإخفاء':'✅ تم الإظهار','ok');
+    loadTeachersAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+}
+
+async function deleteTeacher(id){
+  if(!confirm('حذف هذا المدرس وجميع فصوله ومحاضراته؟')) return;
+  try{
+    await db('teachers','DELETE',null,'?id=eq.'+id);
+    showToast('🗑️ تم الحذف','info');
+    loadTeachersAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+}
+
+async function handleTeacherPhoto(input){
+  var file = input.files[0];
+  if(!file) return;
+  var prog = document.getElementById('teacher-photo-prog');
+  var fill = document.getElementById('teacher-photo-fill');
+  var lbl = document.getElementById('teacher-photo-lbl');
+  var prev = document.getElementById('teacher-photo-prev');
+  var thumb = document.getElementById('teacher-photo-thumb');
+  var nameEl = document.getElementById('teacher-photo-name');
+  if(prog) prog.classList.add('show');
+  if(lbl) lbl.textContent = 'جارٍ الرفع...';
+  if(fill) fill.style.width = '30%';
+  try{
+    var ext = file.name.split('.').pop().toLowerCase();
+    var path = 'teachers/'+Date.now()+'.'+ext;
+    var url = await uploadFile(file, path, function(pct){
+      if(fill) fill.style.width = pct+'%';
+      if(lbl) lbl.textContent = pct+'%';
+    });
+    document.getElementById('teacher-photo-url').value = url;
+    if(prev){ prev.classList.add('show'); }
+    if(thumb){ thumb.src = url; }
+    if(nameEl){ nameEl.textContent = file.name; }
+    showToast('✅ تم رفع الصورة','ok');
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(prog) prog.classList.remove('show');
+}
+
+/* ══ TEACHER CHAPTERS ADMIN ══ */
+var _curTeacherAdminId = null;
+var _chaptersList = [];
+
+function openTeacherChapsAdmin(tid, tname){
+  _curTeacherAdminId = tid;
+  var title = document.getElementById('tchap-admin-title');
+  if(title) title.textContent = 'فصول '+tname;
+
+  // Teacher hero
+  var hero = document.getElementById('admin-teacher-hero');
+  if(hero){
+    var t = _teachersList.find(function(x){return x.id===tid;});
+    if(t){
+      var avatarHtml = t.photo_url
+        ? '<img src="'+t.photo_url+'" style="width:50px;height:50px;border-radius:50%;object-fit:cover">'
+        : '<div style="width:50px;height:50px;border-radius:50%;background:rgba(102,126,234,.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem">👨‍🏫</div>';
+      hero.innerHTML = avatarHtml + '<div><div style="font-family:Tajawal,sans-serif;font-size:.95rem;font-weight:900;color:#fff">'+t.name+'</div><div style="font-size:.73rem;color:var(--tx2)">'+t.subject_name+(t.grade_label?' — '+t.grade_label:'')+'</div></div>';
+    }
+  }
+
+  navTo('teacher-chapters-admin', null);
+  loadChapsAdmin(tid);
+}
+
+async function loadChapsAdmin(tid){
+  var list = document.getElementById('chapters-admin-list');
+  if(!list) return;
+  list.innerHTML = '<div class="tbl-empty">جارٍ التحميل...</div>';
+  try{
+    var rows = (await db('teacher_chapters','GET',null,'?teacher_id=eq.'+tid+'&order=sort_order.asc,created_at.asc')) || [];
+    _chaptersList = rows;
+    renderChapsAdminList(rows);
+  }catch(e){
+    list.innerHTML = '<div class="tbl-empty">❌ '+e.message+'</div>';
+  }
+}
+
+function renderChapsAdminList(rows){
+  var list = document.getElementById('chapters-admin-list');
+  if(!list) return;
+  if(!rows.length){
+    list.innerHTML = '<div class="tbl-empty">لا توجد فصول — اضغط "إضافة فصل" للبدء</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>الغلاف</th><th>عنوان الفصل</th><th>المحاضرات</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody>';
+  rows.forEach(function(ch){
+    var coverHtml = ch.cover_url
+      ? '<img src="'+ch.cover_url+'" style="width:80px;height:45px;object-fit:cover;border-radius:6px">'
+      : '<div style="width:80px;height:45px;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:1.2rem">📁</div>';
+    var safeTitle = ch.title.replace(/"/g,'&quot;');
+    html += '<tr>';
+    html += '<td>'+coverHtml+'</td>';
+    html += '<td><div class="td-nm">'+ch.title+'</div></td>';
+    html += '<td><span class="badge b-blue">'+(ch.lecture_count||0)+' محاضرة</span></td>';
+    html += '<td><span class="badge '+(ch.is_visible?'b-grn':'b-red')+'">'+(ch.is_visible?'ظاهر':'مخفي')+'</span></td>';
+    html += '<td><div class="tbl-actions">';
+    html += '<button class="btn-icon" title="محاضرات الفصل" data-cid="'+ch.id+'" data-ctitle="'+safeTitle+'" onclick="openLecturesAdmin(this.dataset.cid,this.dataset.ctitle)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></button>';
+    html += '<button class="btn-icon" title="تعديل" data-cid="'+ch.id+'" onclick="editChapter(this.dataset.cid)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+    html += '<button class="btn-icon" title="حذف" data-cid="'+ch.id+'" onclick="deleteChapterAdmin(this.dataset.cid)" style="border-color:rgba(239,68,68,.2)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+    html += '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  list.innerHTML = html;
+}
+function openAddChapter(){
+  document.getElementById('chapter-modal-title').textContent = 'إضافة فصل';
+  document.getElementById('chapter-edit-id').value = '';
+  document.getElementById('chapter-title').value = '';
+  document.getElementById('chapter-sort').value = '1';
+  document.getElementById('chapter-cover-url').value = '';
+  var prev = document.getElementById('chapter-cover-prev');
+  if(prev) prev.classList.remove('show');
+  openOv('ov-chapter');
+}
+
+function editChapter(id){
+  var ch = _chaptersList.find(function(x){return x.id===id;});
+  if(!ch) return;
+  document.getElementById('chapter-modal-title').textContent = 'تعديل فصل';
+  document.getElementById('chapter-edit-id').value = ch.id;
+  document.getElementById('chapter-title').value = ch.title||'';
+  document.getElementById('chapter-sort').value = ch.sort_order||1;
+  document.getElementById('chapter-cover-url').value = ch.cover_url||'';
+  var prev = document.getElementById('chapter-cover-prev');
+  if(prev && ch.cover_url){
+    prev.classList.add('show');
+    var thumb = document.getElementById('chapter-cover-thumb');
+    if(thumb) thumb.src = ch.cover_url;
+    var nm = document.getElementById('chapter-cover-name');
+    if(nm) nm.textContent = 'صورة موجودة';
+  }
+  openOv('ov-chapter');
+}
+
+async function saveChapterAdmin(){
+  var btn = document.querySelector('#ov-chapter .btn-pri');
+  var id = document.getElementById('chapter-edit-id').value;
+  var title = document.getElementById('chapter-title').value.trim();
+  var sort = parseInt(document.getElementById('chapter-sort').value)||1;
+  var coverUrl = document.getElementById('chapter-cover-url').value.trim();
+  if(!title){ showToast('⚠️ أدخل عنوان الفصل','warn'); return; }
+  if(btn){ btn.textContent='جارٍ الحفظ...'; btn.disabled=true; }
+  var payload = {title:title, sort_order:sort, cover_url:coverUrl||null, updated_at:new Date().toISOString()};
+  try{
+    if(id){
+      await db('teacher_chapters','PATCH',payload,'?id=eq.'+id);
+      showToast('✅ تم التحديث','ok');
+    } else {
+      await db('teacher_chapters','POST',Object.assign({teacher_id:_curTeacherAdminId,is_visible:true,lecture_count:0,created_at:new Date().toISOString()},payload));
+      showToast('✅ تمت الإضافة','ok');
+    }
+    closeOv('ov-chapter');
+    loadChapsAdmin(_curTeacherAdminId);
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(btn){ btn.textContent='💾 حفظ'; btn.disabled=false; }
+}
+
+async function deleteChapterAdmin(id){
+  if(!confirm('حذف هذا الفصل وجميع محاضراته؟')) return;
+  try{
+    await db('teacher_chapters','DELETE',null,'?id=eq.'+id);
+    showToast('🗑️ تم الحذف','info');
+    loadChapsAdmin(_curTeacherAdminId);
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+}
+
+async function handleChapterCover(input){
+  var file = input.files[0];
+  if(!file) return;
+  var prog = document.getElementById('chapter-cover-prog');
+  var fill = document.getElementById('chapter-cover-fill');
+  var lbl = document.getElementById('chapter-cover-lbl');
+  var prev = document.getElementById('chapter-cover-prev');
+  var thumb = document.getElementById('chapter-cover-thumb');
+  var nameEl = document.getElementById('chapter-cover-name');
+  if(prog) prog.classList.add('show');
+  if(lbl) lbl.textContent = 'جارٍ الرفع...';
+  try{
+    var ext = file.name.split('.').pop().toLowerCase();
+    var path = 'chapters/'+Date.now()+'.'+ext;
+    var url = await uploadFile(file, path, function(pct){
+      if(fill) fill.style.width = pct+'%';
+      if(lbl) lbl.textContent = pct+'%';
+    });
+    document.getElementById('chapter-cover-url').value = url;
+    if(prev){ prev.classList.add('show'); }
+    if(thumb){ thumb.src = url; }
+    if(nameEl){ nameEl.textContent = file.name; }
+    showToast('✅ تم رفع الصورة','ok');
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(prog) prog.classList.remove('show');
+}
+
+/* ══ LECTURES ADMIN ══ */
+var _curChapAdminId = null;
+var _lecturesList = [];
+
+function openLecturesAdmin(chid, chtitle){
+  _curChapAdminId = chid;
+  var title = document.getElementById('lec-admin-title');
+  if(title) title.textContent = chtitle;
+  var backBtn = document.getElementById('lec-admin-back');
+  if(backBtn) backBtn.onclick = function(){ navTo('teacher-chapters-admin', null); };
+  navTo('lectures-admin', null);
+  loadLecturesAdmin(chid);
+}
+
+async function loadLecturesAdmin(chid){
+  var list = document.getElementById('lectures-admin-list');
+  if(!list) return;
+  list.innerHTML = '<div class="tbl-empty">جارٍ التحميل...</div>';
+  try{
+    var rows = (await db('lectures','GET',null,'?chapter_id=eq.'+chid+'&order=sort_order.asc,created_at.asc')) || [];
+    _lecturesList = rows;
+    // Fetch view counts for each lecture
+    if(rows.length){
+      var ids = rows.map(function(r){return r.id;}).join(',');
+      try{
+        var views = (await db('lecture_views','GET',null,'?lecture_id=in.('+ids+')&select=lecture_id')) || [];
+        var vcMap = {};
+        views.forEach(function(v){ vcMap[v.lecture_id] = (vcMap[v.lecture_id]||0)+1; });
+        rows.forEach(function(r){ r._viewsCount = vcMap[r.id]||0; });
+      }catch(e2){ /* ignore if table doesn't exist yet */ }
+    }
+    renderLecturesAdminList(rows);
+  }catch(e){
+    list.innerHTML = '<div class="tbl-empty">❌ '+e.message+'</div>';
+  }
+}
+
+/* ══ LECTURE STATS ══ */
+var _curLecStatsId = null;
+var _curLecStatsTitle = '';
+
+async function openLecStats(lid, ltitle){
+  _curLecStatsId = lid;
+  _curLecStatsTitle = ltitle;
+  var titleEl = document.getElementById('lec-stats-title');
+  if(titleEl) titleEl.textContent = 'إحصائيات: '+ltitle;
+  var backBtn = document.getElementById('lec-stats-back');
+  if(backBtn) backBtn.onclick = function(){ navTo('lectures-admin', null); };
+  navTo('lec-stats', null);
+  await refreshLecStats();
+}
+
+async function refreshLecStats(){
+  if(!_curLecStatsId) return;
+  var summary = document.getElementById('lec-stats-summary');
+  var listEl = document.getElementById('lec-stats-list');
+  if(listEl) listEl.innerHTML = '<div class="tbl-empty">جارٍ التحميل...</div>';
+  try{
+    var views = (await db('lecture_views','GET',null,'?lecture_id=eq.'+_curLecStatsId+'&order=last_watched.desc')) || [];
+    var total = views.length;
+    var completed = views.filter(function(v){return v.watch_pct>=90;}).length;
+    var avgPct = total ? Math.round(views.reduce(function(s,v){return s+(v.watch_pct||0);},0)/total) : 0;
+
+    if(summary){
+      summary.innerHTML =
+        '<div style="padding:12px;background:rgba(102,126,234,.08);border:1px solid rgba(102,126,234,.2);border-radius:10px;text-align:center">'
+          +'<div style="font-family:Tajawal,sans-serif;font-size:1.8rem;font-weight:900;color:#a5b4fc">'+total+'</div>'
+          +'<div style="font-size:.73rem;color:var(--tx2)">إجمالي المشاهدين</div></div>'
+        +'<div style="padding:12px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18);border-radius:10px;text-align:center">'
+          +'<div style="font-family:Tajawal,sans-serif;font-size:1.8rem;font-weight:900;color:#86efac">'+completed+'</div>'
+          +'<div style="font-size:.73rem;color:var(--tx2)">أتمّوا المشاهدة (90%+)</div></div>'
+        +'<div style="padding:12px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);border-radius:10px;text-align:center">'
+          +'<div style="font-family:Tajawal,sans-serif;font-size:1.8rem;font-weight:900;color:#fcd34d">'+avgPct+'%</div>'
+          +'<div style="font-size:.73rem;color:var(--tx2)">متوسط نسبة المشاهدة</div></div>';
+    }
+
+    if(!listEl) return;
+    if(!views.length){
+      listEl.innerHTML = '<div class="tbl-empty">لا توجد مشاهدات بعد لهذه المحاضرة</div>';
+      return;
+    }
+    var html = '<table><thead><tr><th>المستخدم</th><th>نسبة المشاهدة</th><th>آخر مشاهدة</th><th>الحالة</th></tr></thead><tbody>';
+    views.forEach(function(v){
+      var pct = v.watch_pct||0;
+      var bar = '<div style="display:flex;align-items:center;gap:8px">'
+        +'<div style="flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden">'
+          +'<div style="height:100%;width:'+pct+'%;background:'+(pct>=90?'#22c55e':pct>=50?'#f59e0b':'#667eea')+';border-radius:3px;transition:width .3s"></div>'
+        +'</div>'
+        +'<span style="font-size:.75rem;font-weight:700;color:'+(pct>=90?'#86efac':pct>=50?'#fcd34d':'#a5b4fc')+'">'+pct+'%</span>'
+        +'</div>';
+      var status = pct>=90?'<span class="badge b-grn">أتمّها ✓</span>':pct>=50?'<span class="badge b-ora">متابع</span>':'<span class="badge b-blue">بدأها</span>';
+      var lastW = v.last_watched ? new Date(v.last_watched).toLocaleDateString('ar-IQ')+' '+new Date(v.last_watched).toLocaleTimeString('ar-IQ',{hour:'2-digit',minute:'2-digit'}) : '—';
+      html += '<tr>';
+      html += '<td><div style="font-weight:700;color:var(--tx)">'+( v.display_name||v.username||'—' )+'</div><div style="font-size:.68rem;color:var(--tx3)">'+v.username+'</div></td>';
+      html += '<td>'+bar+'</td>';
+      html += '<td style="font-size:.73rem;color:var(--tx3)">'+lastW+'</td>';
+      html += '<td>'+status+'</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    listEl.innerHTML = html;
+  }catch(e){
+    if(listEl) listEl.innerHTML = '<div class="tbl-empty" style="color:var(--red)">❌ '+e.message+'</div>';
+  }
+}
+
+function renderLecturesAdminList(rows){
+  var list = document.getElementById('lectures-admin-list');
+  if(!list) return;
+  if(!rows.length){
+    list.innerHTML = '<div class="tbl-empty">لا توجد محاضرات — اضغط "إضافة محاضرة"</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>#</th><th>عنوان المحاضرة</th><th>المدة</th><th>المشاهدات</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody>';
+  rows.forEach(function(lec, i){
+    var vc = lec._viewsCount||0;
+    var safeLecId = lec.id;
+    var safeTitle = lec.title.replace(/'/g,"\'");
+    var vBadge = vc > 0
+      ? '<span class="badge b-pur" style="cursor:pointer" onclick="openLecStats(\'' + safeLecId + '\',\'' + safeTitle + '\')" title="عرض الإحصائيات">👁 '+vc+' مشاهد</span>'
+      : '<span class="badge" style="background:rgba(255,255,255,.05);color:var(--tx3)">0</span>';
+    html += '<tr>';
+    html += '<td><div class="td-nm">'+(i+1)+'</div></td>';
+    html += '<td><div class="td-nm">'+lec.title+'</div><div class="td-sub" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+lec.video_url+'</div></td>';
+    html += '<td>'+(lec.duration||'—')+'</td>';
+    html += '<td>'+vBadge+'</td>';
+    html += '<td><span class="badge '+(lec.is_visible?'b-grn':'b-red')+'">'+(lec.is_visible?'ظاهر':'مخفي')+'</span></td>';
+    html += '<td><div class="tbl-actions">';
+    html += '<button class="btn-icon" title="إحصائيات" style="border-color:rgba(168,85,247,.25)" onclick="openLecStats(\'' + safeLecId + '\',\'' + safeTitle + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#d8b4fe" stroke-width="2" width="13" height="13"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></button>';
+    html += '<button class="btn-icon" title="تعديل" onclick="editLecture(\'' + safeLecId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+    html += '<button class="btn-icon" title="حذف" onclick="deleteLecture(\'' + safeLecId + '\')" style="border-color:rgba(239,68,68,.2)"><svg viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+    html += '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  list.innerHTML = html;
+}
+function openAddLecture(){
+  document.getElementById('lec-modal-title').textContent = 'إضافة محاضرة';
+  document.getElementById('lec-edit-id').value = '';
+  document.getElementById('lec-title').value = '';
+  document.getElementById('lec-video-url').value = '';
+  document.getElementById('lec-duration').value = '';
+  document.getElementById('lec-sort').value = (_lecturesList.length+1);
+  openOv('ov-lecture');
+}
+
+function editLecture(id){
+  var lec = _lecturesList.find(function(x){return x.id===id;});
+  if(!lec) return;
+  document.getElementById('lec-modal-title').textContent = 'تعديل محاضرة';
+  document.getElementById('lec-edit-id').value = lec.id;
+  document.getElementById('lec-title').value = lec.title||'';
+  document.getElementById('lec-video-url').value = lec.video_url||'';
+  document.getElementById('lec-duration').value = lec.duration||'';
+  document.getElementById('lec-sort').value = lec.sort_order||1;
+  openOv('ov-lecture');
+}
+
+async function handleLectureVideo(input){
+  var file = input.files[0];
+  if(!file) return;
+  var prog = document.getElementById('lec-vid-prog');
+  var fill = document.getElementById('lec-vid-fill');
+  var lbl = document.getElementById('lec-vid-lbl');
+  if(prog) prog.classList.add('show');
+  if(lbl) lbl.textContent = 'جارٍ رفع الفيديو... 0%';
+  try{
+    var ext = file.name.split('.').pop().toLowerCase()||'mp4';
+    var path = 'videos/'+Date.now()+'.'+ext;
+    // Simulate progress since we can't track XHR progress with fetch
+    var pct = 0;
+    var iv = setInterval(function(){
+      pct = Math.min(pct+3, 90);
+      if(fill) fill.style.width = pct+'%';
+      if(lbl) lbl.textContent = 'جارٍ رفع الفيديو... '+pct+'%';
+    }, 300);
+    var r = await fetch(SB+'/storage/v1/object/files/'+path, {
+      method:'POST',
+      headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':file.type||'video/mp4'},
+      body:file
+    });
+    clearInterval(iv);
+    if(!r.ok){ var t=await r.text(); throw new Error('رفع الفيديو فشل: '+t); }
+    var url = SB+'/storage/v1/object/public/files/'+path;
+    if(fill) fill.style.width='100%';
+    if(lbl) lbl.textContent='✅ تم الرفع!';
+    document.getElementById('lec-video-url').value = url;
+    showToast('✅ تم رفع الفيديو بنجاح','ok');
+    setTimeout(function(){ if(prog) prog.classList.remove('show'); if(fill) fill.style.width='0%'; }, 2000);
+  }catch(e){
+    if(prog) prog.classList.remove('show');
+    showToast('❌ '+e.message,'err');
+  }
+}
+
+async function saveLectureAdmin(){
+  var btn = document.querySelector('#ov-lecture .btn-pri');
+  var id = document.getElementById('lec-edit-id').value;
+  var title = document.getElementById('lec-title').value.trim();
+  var videoUrl = document.getElementById('lec-video-url').value.trim();
+  var duration = document.getElementById('lec-duration').value.trim();
+  var sort = parseInt(document.getElementById('lec-sort').value)||1;
+  if(!title){ showToast('⚠️ أدخل عنوان المحاضرة','warn'); return; }
+  if(!videoUrl){ showToast('⚠️ أدخل رابط الفيديو أو ارفع ملف فيديو','warn'); return; }
+  if(btn){ btn.textContent='جارٍ الحفظ...'; btn.disabled=true; }
+  var payload = {title:title, video_url:videoUrl, duration:duration||null, sort_order:sort, updated_at:new Date().toISOString()};
+  try{
+    if(id){
+      await db('lectures','PATCH',payload,'?id=eq.'+id);
+      showToast('✅ تم التحديث','ok');
+    } else {
+      await db('lectures','POST',Object.assign({chapter_id:_curChapAdminId,is_visible:true,created_at:new Date().toISOString()},payload));
+      // Update lecture count
+      var cnt = _lecturesList.length + 1;
+      await db('teacher_chapters','PATCH',{lecture_count:cnt},'?id=eq.'+_curChapAdminId);
+      showToast('✅ تمت الإضافة','ok');
+    }
+    closeOv('ov-lecture');
+    loadLecturesAdmin(_curChapAdminId);
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(btn){ btn.textContent='💾 حفظ'; btn.disabled=false; }
+}
+
+async function deleteLecture(id){
+  if(!confirm('حذف هذه المحاضرة؟')) return;
+  try{
+    await db('lectures','DELETE',null,'?id=eq.'+id);
+    var cnt = Math.max(0, _lecturesList.length - 1);
+    await db('teacher_chapters','PATCH',{lecture_count:cnt},'?id=eq.'+_curChapAdminId);
+    showToast('🗑️ تم الحذف','info');
+    loadLecturesAdmin(_curChapAdminId);
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+}
+
+
+/* ══ NOTIFICATIONS ADMIN ══ */
+var _notifsList = [];
+var _editNotifId = null;
+
+async function loadNotifsAdmin(){
+  var list = g('notifs-admin-list');
+  if(!list) return;
+  list.innerHTML = '<div class="tbl-empty">جارٍ التحميل...</div>';
+  try{
+    var rows = (await db('notifications','GET',null,'?order=created_at.desc')) || [];
+    _notifsList = rows;
+    renderNotifsAdminList(rows);
+    if(g('nb-notifs')) g('nb-notifs').textContent = rows.length;
+  }catch(e){ list.innerHTML = '<div class="tbl-empty">❌ '+e.message+'</div>'; }
+}
+
+function renderNotifsAdminList(rows){
+  var list = g('notifs-admin-list');
+  if(!list) return;
+  if(!rows.length){ list.innerHTML = '<div class="tbl-empty">لا توجد إشعارات بعد</div>'; return; }
+  var html = '<table><thead><tr><th>العنوان</th><th>النوع</th><th>المستهدف</th><th>الحالة</th><th>التاريخ</th><th>الإجراءات</th></tr></thead><tbody>';
+  rows.forEach(function(n){
+    var typeLabel = {lecture:'📹 محاضرة',exam:'📝 اختبار',booklet:'📚 ملزمة',general:'🔔 عام'}[n.type]||n.type;
+    var target = (n.target_stage||'') + (n.target_grade?' / '+n.target_grade:'') || '🌐 للجميع';
+    var date = new Date(n.created_at).toLocaleDateString('ar-IQ');
+    html += '<tr>';
+    html += '<td><div class="td-nm">'+n.title+'</div>'+(n.body?'<div class="td-sm">'+n.body+'</div>':'')+'</td>';
+    html += '<td>'+typeLabel+'</td>';
+    html += '<td>'+target+'</td>';
+    html += '<td><span class="badge '+(n.is_active?'b-grn':'b-red')+'">'+(n.is_active?'نشط':'مخفي')+'</span></td>';
+    html += '<td>'+date+'</td>';
+    html += '<td><div class="tbl-actions">';
+    html += '<button class="btn-icon" title="تعديل" data-nid="'+n.id+'" onclick="editNotif(this.dataset.nid)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+    html += '<button class="btn-icon" title="حذف" data-nid="'+n.id+'" onclick="deleteNotif(this.dataset.nid)" style="border-color:rgba(239,68,68,.2)">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+    html += '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  list.innerHTML = html;
+}
+
+function openAddNotif(){
+  _editNotifId = null;
+  g('notif-modal-title').textContent = 'إضافة إشعار';
+  g('notif-title').value = '';
+  g('notif-body').value = '';
+  g('notif-type').value = 'general';
+  g('notif-target-stage').value = '';
+  g('notif-target-grade').value = '';
+  g('notif-active').checked = true;
+  openOv('ov-notif');
+}
+
+function editNotif(id){
+  var n = _notifsList.find(function(x){return x.id===id;});
+  if(!n) return;
+  _editNotifId = id;
+  g('notif-modal-title').textContent = 'تعديل إشعار';
+  g('notif-title').value = n.title||'';
+  g('notif-body').value = n.body||'';
+  g('notif-type').value = n.type||'general';
+  g('notif-target-stage').value = n.target_stage||'';
+  g('notif-target-grade').value = n.target_grade||'';
+  g('notif-active').checked = !!n.is_active;
+  openOv('ov-notif');
+}
+
+async function saveNotif(){
+  var btn = document.querySelector('#ov-notif .btn-pri');
+  var title = g('notif-title').value.trim();
+  var body = g('notif-body').value.trim();
+  var type = g('notif-type').value;
+  var targetStage = g('notif-target-stage').value;
+  var targetGrade = g('notif-target-grade').value;
+  var isActive = g('notif-active').checked;
+  if(!title){ showToast('⚠️ أدخل عنوان الإشعار','warn'); return; }
+  if(btn){ btn.textContent='جارٍ الحفظ...'; btn.disabled=true; }
+  var payload = {
+    title: title,
+    body: body||null,
+    type: type,
+    target_stage: targetStage||null,
+    target_grade: targetGrade||null,
+    is_active: isActive,
+    updated_at: new Date().toISOString()
+  };
+  try{
+    if(_editNotifId){
+      await db('notifications','PATCH',payload,'?id=eq.'+_editNotifId);
+      showToast('✅ تم التحديث','ok');
+    } else {
+      await db('notifications','POST',Object.assign({created_at:new Date().toISOString()},payload));
+      showToast('✅ تمت الإضافة','ok');
+    }
+    closeOv('ov-notif');
+    loadNotifsAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+  if(btn){ btn.textContent='💾 حفظ'; btn.disabled=false; }
+}
+
+async function deleteNotif(id){
+  if(!confirm('حذف هذا الإشعار؟')) return;
+  try{
+    await db('notifications','DELETE',null,'?id=eq.'+id);
+    showToast('🗑️ تم الحذف','info');
+    loadNotifsAdmin();
+  }catch(e){ showToast('❌ '+e.message,'err'); }
+}
+
 </script>
-</body>
-</html>

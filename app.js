@@ -60,24 +60,33 @@ var STAGES_META = {
 };
 
 var GRADE_SUBJECTS = {
-  'p1': [{id:'quran',label:'القرآن الكريم',emoji:'📖',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
-  'p3': [{id:'quran',label:'القرآن الكريم',emoji:'📖',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
-  'p4': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
-  'm1': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'حاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'},{id:'ethics',label:'أخلاقية',emoji:'🧭',cover:'linear-gradient(135deg,#0ea5e9,#0284c7)'}],
-  'm3': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}],
-  's1': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'الحاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'}],
-  's3': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}],
-  'p2': [{id:'quran',label:'القرآن الكريم',emoji:'📖',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
-  'p5': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
-  'p6': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
-  'm2': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'حاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'},{id:'ethics',label:'أخلاقية',emoji:'🧭',cover:'linear-gradient(135deg,#0ea5e9,#0284c7)'}],
-  's2': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'الحاسوب',emoji:'💻',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'}],
+  'p1': [{id:'quran',label:'القرآن الكريم',emoji:'📖',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p3': [{id:'quran',label:'القرآن الكريم',emoji:'📖',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p4': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',img:'https://i.ibb.co/PZfJrBFV/world.png',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'm1': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',img:'https://i.ibb.co/PZfJrBFV/world.png',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',img:'https://i.ibb.co/PZF7Pq0y/plant-cell.png',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',img:'https://i.ibb.co/8vJcqSz/flask.png',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',img:'https://i.ibb.co/fVb4tY2H/science.png',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'حاسوب',emoji:'💻',img:'https://i.ibb.co/DD5N8Kwv/warning.png',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'},{id:'ethics',label:'أخلاقية',emoji:'🧭',img:'https://i.ibb.co/Z6CpCq32/engagement.png',cover:'linear-gradient(135deg,#0ea5e9,#0284c7)'}],
+  'm3': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',img:'https://i.ibb.co/PZfJrBFV/world.png',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',img:'https://i.ibb.co/PZF7Pq0y/plant-cell.png',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',img:'https://i.ibb.co/8vJcqSz/flask.png',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',img:'https://i.ibb.co/fVb4tY2H/science.png',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}],
+  's1': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',img:'https://i.ibb.co/PZF7Pq0y/plant-cell.png',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',img:'https://i.ibb.co/8vJcqSz/flask.png',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',img:'https://i.ibb.co/fVb4tY2H/science.png',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'الحاسوب',emoji:'💻',img:'https://i.ibb.co/DD5N8Kwv/warning.png',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'}],
+  's3': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',img:'https://i.ibb.co/PZF7Pq0y/plant-cell.png',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',img:'https://i.ibb.co/8vJcqSz/flask.png',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',img:'https://i.ibb.co/fVb4tY2H/science.png',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}],
+  'p2': [{id:'quran',label:'القرآن الكريم',emoji:'📖',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#047857)'},{id:'reading',label:'القراءة',emoji:'📚',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p5': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',img:'https://i.ibb.co/PZfJrBFV/world.png',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'p6': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',img:'https://i.ibb.co/PZfJrBFV/world.png',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'science',label:'العلوم',emoji:'🔬',cover:'linear-gradient(135deg,#22c55e,#15803d)'}],
+  'm2': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'الرياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'social',label:'الاجتماعيات',emoji:'🗺️',img:'https://i.ibb.co/PZfJrBFV/world.png',cover:'linear-gradient(135deg,#ec4899,#be185d)'},{id:'bio',label:'أحياء',emoji:'🌿',img:'https://i.ibb.co/PZF7Pq0y/plant-cell.png',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',img:'https://i.ibb.co/8vJcqSz/flask.png',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',img:'https://i.ibb.co/fVb4tY2H/science.png',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'حاسوب',emoji:'💻',img:'https://i.ibb.co/DD5N8Kwv/warning.png',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'},{id:'ethics',label:'أخلاقية',emoji:'🧭',img:'https://i.ibb.co/Z6CpCq32/engagement.png',cover:'linear-gradient(135deg,#0ea5e9,#0284c7)'}],
+  's2': [{id:'islamic',label:'التربية الإسلامية',emoji:'🕌',img:'https://i.ibb.co/qLn2PQh0/quran-1.png',cover:'linear-gradient(135deg,#059669,#065f46)'},{id:'arabic',label:'اللغة العربية',emoji:'📝',img:'https://i.ibb.co/nsLRP3Dq/date.png',cover:'linear-gradient(135deg,#ef4444,#b91c1c)'},{id:'english',label:'اللغة الإنكليزية',emoji:'🌍',img:'https://i.ibb.co/bjXSHtDL/eng.png',cover:'linear-gradient(135deg,#3b82f6,#1d4ed8)'},{id:'math',label:'رياضيات',emoji:'🔢',img:'https://i.ibb.co/XfFVtdzC/calculator.png',cover:'linear-gradient(135deg,#667eea,#764ba2)'},{id:'bio',label:'أحياء',emoji:'🌿',img:'https://i.ibb.co/PZF7Pq0y/plant-cell.png',cover:'linear-gradient(135deg,#22c55e,#15803d)'},{id:'chem',label:'كيمياء',emoji:'⚗️',img:'https://i.ibb.co/8vJcqSz/flask.png',cover:'linear-gradient(135deg,#f59e0b,#d97706)'},{id:'phys',label:'فيزياء',emoji:'⚡',img:'https://i.ibb.co/fVb4tY2H/science.png',cover:'linear-gradient(135deg,#8b5cf6,#6d28d9)'},{id:'cs',label:'الحاسوب',emoji:'💻',img:'https://i.ibb.co/DD5N8Kwv/warning.png',cover:'linear-gradient(135deg,#6366f1,#4f46e5)'}],
 };
 
 
 /* compat aliases */
 var SUBJ_SCI = GRADE_SUBJECTS['m1'];
 var SUBJ_LIT = GRADE_SUBJECTS['m3'];
+
+/* ── subject icon helper ── */
+function subjIcon(s, cls){
+  cls = cls||'';
+  if(s.img) return '<img src="'+s.img+'" class="subj-png-icon'+( cls?' '+cls:'' )+'" alt="'+s.label+'" loading="lazy">'
+             +'<span class="subj-emoji-fallback" style="display:none">'+s.emoji+'</span>';
+  return s.emoji;
+}
+
 
 /* المنهج يُجلب من Supabase — curriculum_chapters + curriculum_items */
 
@@ -117,7 +126,7 @@ function goPage(pid){
 }
 function toast(msg,type){
   var t=el('toast'); if(!t)return;
-  var c={ok:'linear-gradient(135deg,#059669,#047857)',err:'linear-gradient(135deg,#dc2626,#b91c1c)',info:'linear-gradient(135deg,#1e1b4b,#312e81)',warn:'linear-gradient(135deg,#ea580c,#c2410c)'};
+  var c={ok:'linear-gradient(135deg,#22c55e,#16a34a)',err:'linear-gradient(135deg,#ef4444,#dc2626)',info:'linear-gradient(135deg,#2563eb,#4f46e5)',warn:'linear-gradient(135deg,#f59e0b,#d97706)'};
   t.style.background=c[type]||c.info; t.textContent=msg;
   t.classList.remove('hidden','show'); void t.offsetWidth; t.classList.add('show');
   clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.classList.add('hidden');},400);},2800);
@@ -148,7 +157,7 @@ function showConfirm(opts){
   openModal('ov-confirm');
 }
 function setNavActive(k){
-  var m={home:'bnav-home',search:'bnav-search',favs:'bnav-favs',profile:'bnav-profile',settings:'bnav-settings'};
+  var m={home:'bnav-home',search:'bnav-search',favs:'bnav-favs',teachers:'bnav-teachers',settings:'bnav-settings'};
   document.querySelectorAll('.bnb').forEach(function(b){b.classList.remove('active');});
   var t=el(m[k]); if(t)t.classList.add('active');
 }
@@ -166,8 +175,24 @@ function syncSettingsUI(){
   if(us)us.textContent=(curStage&&STAGES_META[curStage])?STAGES_META[curStage].name:'لم تختر مرحلة';
   var lbl=el('set-theme-lbl');if(lbl)lbl.textContent=isDark?'الوضع الليلي':'الوضع النهاري';
 }
+function pickAuthStage(stageId){
+  /* تحديد البطاقة المختارة بصرياً */
+  document.querySelectorAll('.asp-card').forEach(function(c){
+    c.classList.toggle('asp-active', c.dataset.stage === stageId);
+  });
+  /* حفظ الاختيار مؤقتاً ليُرسل مع التسجيل أو الدخول */
+  window._pendingStage = stageId;
+}
+
 function askChangeStage(){closeModal('ov-settings');setTimeout(function(){openModal('ov-changestage');},200);}
-function doChangeStage(){closeModal('ov-changestage');setTimeout(function(){openStagePicker('change');},200);}
+function doChangeStage(){
+  // Clear current grade so user must pick a new one for the new stage
+  curGrade = null;
+  var s = getSess();
+  if(s){ s.grade = null; setSess(s); }
+  closeModal('ov-changestage');
+  setTimeout(function(){ openStagePicker('change'); }, 200);
+}
 function toggleTheme(){
   isDark=!isDark;
   document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
@@ -178,23 +203,107 @@ function toggleTheme(){
 
 /* ── STAGE PICKER ────────────────────────────── */
 function openStagePicker(mode){
+  window._pickerMode = mode||'first';
   var title=el('picker-title'),sub=el('picker-sub'),grid=el('picker-grid');
   if(title)title.textContent=mode==='change'?'اختر مرحلة جديدة':'اختر مرحلتك الدراسية';
   if(sub)sub.textContent='اختر مرحلتك لعرض المحتوى المناسب';
+  buildStagePickerCards(grid);
+  openModal('ov-picker');
+}
+
+function buildStagePickerCards(grid){
+  if(!grid)return;
   var stages=['primary','middle','secondary','vocational'];
-  var html='';
+  var stageMeta={
+    primary:   {name:'الابتدائية', sub:'الصفوف الأول — السادس',  icon:'🌱', grad:'linear-gradient(135deg,#22c55e,#16a34a)', glow:'rgba(34,197,94,.28)'},
+    middle:    {name:'المتوسطة',   sub:'الصفوف الأول — الثالث',  icon:'📘', grad:'linear-gradient(135deg,#3b82f6,#4f46e5)', glow:'rgba(59,130,246,.28)'},
+    secondary: {name:'الإعدادية',  sub:'الرابع — السادس إعدادي', icon:'🔬', grad:'linear-gradient(135deg,#f97316,#ea580c)', glow:'rgba(249,115,22,.28)'},
+    vocational:{name:'المهني',     sub:'الفروع المهنية والتقنية', icon:'⚙️', grad:'linear-gradient(135deg,#8b5cf6,#6d28d9)', glow:'rgba(139,92,246,.28)'}
+  };
+  var html='<div class="stage-cards-grid">';
   stages.forEach(function(st){
-    var m=STAGES_META[st];
-    html+='<div class="pk-card" onclick="pickStage(\''+st+'\')" style="background:'+m.bg+'">'
-        +'<div class="pk-ic" style="background:rgba(255,255,255,.18);font-size:1.5rem">'+m.icon+'</div>'
-        +'<div class="pk-info">'
-        +'<div class="pk-name">'+m.name+'</div>'
+    var m=stageMeta[st]||STAGES_META[st];
+    html+='<div class="stage-pick-card" onclick="pickerSelectStage(\''+st+'\')">'
+        +'<div class="spc-glow" style="background:'+m.glow+'"></div>'
+        +'<div class="spc-icon-wrap" style="background:'+m.grad+'">'+m.icon+'</div>'
+        +'<div class="spc-body">'
+        +'<div class="spc-name">'+m.name+'</div>'
+        +'<div class="spc-sub">'+m.sub+'</div>'
         +'</div>'
-        +'<div class="pk-arr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></div>'
+        +'<div class="spc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg></div>'
         +'</div>';
   });
-  if(grid)grid.innerHTML=html;
-  openModal('ov-picker');
+  html+='</div>';
+  grid.innerHTML=html;
+}
+
+/* Called when a stage card is tapped inside the picker modal */
+function pickerSelectStage(stageId){
+  var grid=el('picker-grid');
+  var title=el('picker-title');
+  var sub=el('picker-sub');
+  var stageMeta={
+    primary:   {name:'الابتدائية', grad:'linear-gradient(135deg,#22c55e,#16a34a)'},
+    middle:    {name:'المتوسطة',   grad:'linear-gradient(135deg,#3b82f6,#4f46e5)'},
+    secondary: {name:'الإعدادية',  grad:'linear-gradient(135deg,#f97316,#ea580c)'},
+    vocational:{name:'المهني',     grad:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}
+  };
+  var m=stageMeta[stageId]||STAGES_META[stageId];
+  if(!m)return;
+
+  if(title)title.textContent='اختر صفك الدراسي';
+  if(sub)sub.textContent='مرحلة '+m.name;
+
+  var grades=ALL_GRADES.filter(function(g){return g.stage===stageId;});
+
+  var backFn = "buildStagePickerCards(el('picker-grid'));el('picker-title').textContent='\u0627\u062e\u062a\u0631 \u0645\u0631\u062d\u0644\u062a\u0643 \u0627\u0644\u062f\u0631\u0627\u0633\u064a\u0629';el('picker-sub').textContent='\u0627\u062e\u062a\u0631 \u0645\u0631\u062d\u0644\u062a\u0643 \u0644\u0639\u0631\u0636 \u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u0646\u0627\u0633\u0628'";
+  var html='<div class="grade-picker-back">'
+    +'<button class="grade-back-btn" onclick="'+backFn+'">'
+    +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>'
+    +'\u0627\u0644\u0639\u0648\u062f\u0629 \u0644\u0644\u0645\u0631\u0627\u062d\u0644</button>'
+    +'<div class="grade-stage-chip" style="background:'+m.grad+'">'+m.name+'</div>'
+    +'</div>';
+
+  html+='<div class="grade-cards-grid">';
+  grades.forEach(function(g){
+    var lbl = g.name;
+    html+='<div class="grade-pick-card" onclick="pickerSelectGrade(\''+stageId+'\',\''+g.id+'\')">'
+        +'<div class="gpc-icon" style="background:'+g.bg+'">'+g.icon+'</div>'
+        +'<div class="gpc-name">'+lbl+'</div>'
+        +'</div>';
+  });
+  html+='</div>';
+
+  if(grid){ grid.innerHTML=html; grid.classList.add('grade-anim'); }
+}
+
+/* Called when a grade button is tapped inside the picker modal */
+async function pickerSelectGrade(stageId, gradeId){
+  curStage=stageId; curGrade=gradeId; curBranch=null;
+  var gradeObj=ALL_GRADES.find(function(g){return g.id===gradeId;});
+
+  // Mark selected
+  document.querySelectorAll('.grade-picker-btn').forEach(function(b){b.classList.remove('gpb-active');});
+  event && event.target && event.target.classList.add('gpb-active');
+
+  // Save to DB
+  var s=getSess();
+  if(s){
+    s.stage=stageId; s.grade=gradeId; s.branch=null;
+    setSess(s);
+    if(s.id){
+      try{ await sb('users','PATCH',{stage:stageId,grade:gradeId,branch:null},'?id=eq.'+s.id); }catch(e){}
+    }
+  }
+
+  closeModal('ov-picker');
+  syncSettingsUI && syncSettingsUI();
+  toast('✅ '+(gradeObj?gradeObj.name:'الصف')+' — جاهز','ok');
+  setTimeout(function(){
+    buildGradePage();
+    openGradeSubjectsGrid(gradeId);
+    setNavActive('home');
+  }, 260);
 }
 
 async function pickStage(stageId){
@@ -243,11 +352,30 @@ async function doLogin(){
     else{
       var u=rows[0];
       try{await sb('users','PATCH',{last_login:new Date().toISOString()},'?id=eq.'+u.id);}catch(e){}
-      setSess({id:u.id,name:u.display_name,stage:u.stage||null,branch:u.branch||null,joined:new Date(u.joined_at).getTime()});
-      isGuest=false; curStage=u.stage||null; curBranch=u.branch||null;
+      var chosenStage=u.stage||window._pendingStage||null;
+      setSess({id:u.id,name:u.display_name,stage:chosenStage,grade:u.grade||null,branch:u.branch||null,joined:new Date(u.joined_at).getTime()});
+      curGrade=u.grade||null;
+      isGuest=false; curStage=chosenStage; curBranch=u.branch||null;
+      /* حفظ المرحلة في قاعدة البيانات إن كانت مختارة من الـ picker */
+      if(chosenStage&&!u.stage){try{await sb('users','PATCH',{stage:chosenStage},'?id=eq.'+u.id);}catch(e){}}
+      window._pendingStage=null;
       updatePills(u.display_name); showBottomNav(true);
       toast('👋 أهلاً '+u.display_name,'ok');
-      if(!curStage){openStagePicker('first');}else{buildGradePage();goPage('pg-grade');setNavActive('home');}
+      if(!curStage){
+        openStagePicker('first');
+      } else if(curGrade){
+        var gradeObj = ALL_GRADES.find(function(g){return g.id===curGrade;});
+        if(gradeObj && gradeObj.stage === curStage){
+          buildGradePage();
+          setTimeout(function(){ openGradeSubjectsGrid(curGrade); }, 120);
+          setNavActive('home');
+        } else {
+          curGrade = null;
+          buildGradePage(); goPage('pg-grade'); setNavActive('home');
+        }
+      } else {
+        buildGradePage(); goPage('pg-grade'); setNavActive('home');
+      }
     }
   }catch(e){err.textContent='⚠️ خطأ: '+e.message;}
   if(btn){btn.textContent='دخول';btn.disabled=false;}
@@ -294,12 +422,19 @@ async function doRegister(){
     }
     var u=rows[0];
     // حفظ الجلسة محلياً
-    setSess({id:u.id,name:u.display_name,stage:null,branch:null,joined:Date.now()});
-    isGuest=false; curStage=null; curBranch=null;
+    var regStage=window._pendingStage||null;
+    if(regStage){try{await sb('users','PATCH',{stage:regStage},'?id=eq.'+u.id);}catch(e){}}
+    window._pendingStage=null;
+    setSess({id:u.id,name:u.display_name,stage:regStage,branch:null,joined:Date.now()});
+    isGuest=false; curStage=regStage; curBranch=null;
     updatePills(u.display_name);
     showBottomNav(true);
     toast('🎉 أهلاً '+u.display_name+'! حسابك جاهز','ok');
-    openStagePicker('first');
+    if(!curStage){
+      openStagePicker('first');
+    } else {
+      buildGradePage(); goPage('pg-grade'); setNavActive('home');
+    }
   }catch(e){
     console.error('Register error:',e);
     err.textContent='⚠️ خطأ: '+e.message;
@@ -393,7 +528,7 @@ function openGrade(gid){
   if(strip){
     strip.innerHTML=subjs.map(function(s,i){
       return'<button class="stab'+(i===0?' on':'')+'" onclick="openSubject(\''+s.id+'\',this)" style="animation-delay:'+(i*0.04)+'s">'
-          +'<div class="stab-sq" style="background:'+s.cover+'">'+s.emoji+'</div>'
+          +'<div class="stab-sq" style="background:'+s.cover+'">'+ subjIcon(s) +'</div>'
           +'<span class="stab-lb">'+s.label+'</span>'
           +'</button>';
     }).join('');
@@ -443,7 +578,7 @@ function renderContent(){
   var subj=getSubj(curSubject);if(!subj)return;
   var labels={booklets:'الملازم الدراسية',exams:'الاختبارات',favs:'مكتبتي',curriculum:'المنهج الدراسي'};
   var head='<div class="subj-hd">'
-          +'<div class="subj-hd-ic" style="background:'+subj.cover+'">'+subj.emoji+'</div>'
+          +'<div class="subj-hd-ic" style="background:'+subj.cover+'">'+ subjIcon(subj) +'</div>'
           +'<div><div class="subj-hd-name">'+subj.label+'</div>'
           +'<div class="subj-hd-hint">'+labels[curCTab]+'</div></div></div>';
 
@@ -1106,7 +1241,7 @@ function buildFavsPage(){
     html+='<div class="fav-item">'
         +'<div class="fav-ic" style="background:'+f.cover+'">'+f.emoji+'</div>'
         +'<div class="fav-info"><div class="fav-name">'+f.name+'</div><div class="fav-meta">'+f.meta+' · '+f.type+'</div></div>'
-        +'<span class="fav-type" style="background:'+(f.type==='ملزمة'?'#22c55e':'#667eea')+'">'+f.type+'</span>'
+        +'<span class="fav-type" style="background:'+(f.type==='ملزمة'?'#16a34a':'#2563eb')+'">'+f.type+'</span>'
         +'<button class="fav-del" onclick="removeFav(\''+f.id+'\')">'
         +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>'
         +'</button></div>';
@@ -1119,7 +1254,7 @@ function buildSearchIndex(){
   searchIdx=[];
   var allSubj=SUBJ_SCI.concat(SUBJ_LIT.filter(function(s){return!SUBJ_SCI.find(function(x){return x.id===s.id;});}));
   allSubj.forEach(function(s){
-    searchIdx.push({type:'subjects',name:s.label,emoji:s.emoji,cover:s.cover,meta:'مادة دراسية'});
+    searchIdx.push({type:'subjects',name:s.label,emoji:s.emoji,img:s.img,cover:s.cover,meta:'مادة دراسية'});
   });
   ALL_GRADES.forEach(function(g){
     searchIdx.push({type:'grade',name:g.name,emoji:g.icon,cover:g.bg,meta:'صف — '+STAGES_META[g.stage].name});
@@ -1154,7 +1289,7 @@ function doSearch(q){
     html+='<div class="sr-item" style="animation-delay:'+(i*0.03)+'s">'
         +'<div class="sr-ic" style="background:'+item.cover+'">'+item.emoji+'</div>'
         +'<div class="sr-info"><div class="sr-name">'+hl+'</div><div class="sr-meta">'+item.meta+'</div></div>'
-        +'<span class="sr-tag" style="background:'+(tc[item.type]||'#667eea')+'">'+tn[item.type]+'</span>'
+        +'<span class="sr-tag" style="background:'+(tc[item.type]||'#2563eb')+'">'+tn[item.type]+'</span>'
         +'</div>';
   });
   list.innerHTML=html;
@@ -1256,8 +1391,22 @@ document.addEventListener('DOMContentLoaded',function(){
     if(sess){
       isGuest=false; curStage=sess.stage||null; curBranch=sess.branch||null;
       updatePills(sess.name); showBottomNav(true);
-      if(!curStage) openStagePicker('first');
-      else{buildGradePage();goPage('pg-grade');setNavActive('home');}
+      if(!curStage){
+        openStagePicker('first');
+      } else if(sess.grade){
+        curGrade = sess.grade;
+        var gradeObj = ALL_GRADES.find(function(g){return g.id===curGrade;});
+        if(gradeObj && gradeObj.stage === curStage){
+          buildGradePage();
+          setTimeout(function(){ openGradeSubjectsGrid(curGrade); }, 120);
+          setNavActive('home');
+        } else {
+          curGrade = null;
+          buildGradePage(); goPage('pg-grade'); setNavActive('home');
+        }
+      } else {
+        buildGradePage(); goPage('pg-grade'); setNavActive('home');
+      }
     }
   });
 
@@ -1265,9 +1414,27 @@ document.addEventListener('DOMContentLoaded',function(){
   if(s&&s.name){
     isGuest=false;
     curStage=s.stage||null;curBranch=s.branch||null;
+    curGrade=s.grade||null;
     updatePills(s.name);showBottomNav(true);
-    if(!curStage){openStagePicker('first');}
-    else{buildGradePage();goPage('pg-grade');setNavActive('home');}
+    if(!curStage){
+      openStagePicker('first');
+    } else if(curGrade){
+      // التحقق أن الصف المحفوظ ينتمي للمرحلة الحالية
+      var gradeObj = ALL_GRADES.find(function(g){return g.id===curGrade;});
+      if(gradeObj && gradeObj.stage === curStage){
+        // المرحلة والصف متطابقان — انتقل مباشرة لمواد الصف
+        buildGradePage();
+        setTimeout(function(){ openGradeSubjectsGrid(curGrade); }, 120);
+        setNavActive('home');
+      } else {
+        // الصف لا ينتمي للمرحلة — اختر صفاً جديداً
+        curGrade = null;
+        buildGradePage(); goPage('pg-grade'); setNavActive('home');
+      }
+    } else {
+      // المرحلة محفوظة لكن الصف لم يُحدد — اختر الصف
+      buildGradePage(); goPage('pg-grade'); setNavActive('home');
+    }
   }else{
     showBottomNav(false);goPage('pg-auth');
   }
@@ -1279,3 +1446,773 @@ document.addEventListener('DOMContentLoaded',function(){
     else if(fr&&!fr.classList.contains('hidden'))doRegister();
   });
 });
+
+/* ══════════════════════════════════════════════
+   SUBJECTS GRID — عرض المواد على شكل شبكة
+══════════════════════════════════════════════ */
+var curSDetTab = 'exams';
+
+function openGradeSubjectsGrid(gid){
+  var g = ALL_GRADES.find(function(x){return x.id===gid;});
+  if(!g) return;
+  curGrade = gid;
+
+  var subjs = GRADE_SUBJECTS[gid] || GRADE_SUBJECTS['m1'];
+
+  // عنوان الصفحة
+  var tt = el('subjects-tbar-title');
+  var ts = el('subjects-tbar-sub');
+  if(tt) tt.textContent = g.name;
+  if(ts) ts.textContent = 'المواد الدراسية';
+
+  // زر الرجوع
+  var bb = el('subjects-back-btn');
+  if(bb) bb.onclick = function(){ goPage('pg-grade'); };
+
+  var grid = el('subj-grid');
+  if(!grid) return;
+  var html = '';
+  subjs.forEach(function(s, i){
+    html += '<div class="subj-card" onclick="openSubjDetail(\''+s.id+'\')" style="background:'+s.cover+';animation-delay:'+(i*0.06)+'s">'
+          + '<div class="subj-card-shine"></div>'
+          + '<div class="subj-card-emoji">'+ subjIcon(s) +'</div>'
+          + '<div class="subj-card-name">'+s.label+'</div>'
+          + '</div>';
+  });
+  grid.innerHTML = html;
+  goPage('pg-subjects');
+}
+
+function openSubjDetail(sid){
+  curSubject = sid;
+  curSDetTab = 'exams';
+  var subj = getSubj(sid);
+  if(!subj) return;
+
+  var tt = el('sdet-tbar-title');
+  var ts = el('sdet-tbar-sub');
+  if(tt) tt.textContent = subj.label;
+  if(ts){ if(subj.img){ ts.innerHTML = '<img src="'+subj.img+'" class="subj-png-icon" style="width:18px;height:18px;vertical-align:middle;margin-left:4px" alt=""> '+subj.label; } else { ts.textContent = subj.emoji + ' ' + subj.label; } }
+
+  // reset tabs
+  document.querySelectorAll('#pg-subj-detail .ctab').forEach(function(t,i){ t.classList.toggle('active', i===0); });
+
+  renderSDetContent();
+  goPage('pg-subj-detail');
+}
+
+function switchSDetTab(tab, el_){
+  curSDetTab = tab;
+  document.querySelectorAll('#pg-subj-detail .ctab').forEach(function(t){ t.classList.remove('active'); });
+  if(el_) el_.classList.add('active');
+  renderSDetContent();
+}
+
+function renderSDetContent(){
+  var subj = getSubj(curSubject);
+  if(!subj) return;
+  var body = el('sdet-body');
+  if(!body) return;
+
+  var spinner = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
+
+  var tabNames={'exams':'الاختبارات','booklets':'الملازم','curriculum':'المنهج','subj-teachers':'المدرسون'};
+  var head = '<div class="subj-hd">'
+           + '<div class="subj-hd-ic" style="background:'+subj.cover+'">'+(subj.img?'<img src="'+subj.img+'" style="width:36px;height:36px;object-fit:contain" alt="'+subj.label+'">':subj.emoji)+'</div>'
+           + '<div><div class="subj-hd-name">'+subj.label+'</div>'
+           + '<div class="subj-hd-hint">'+(tabNames[curSDetTab]||'')+'</div></div></div>';
+
+  body.innerHTML = head + spinner;
+
+  if(curSDetTab==='exams')      loadExams(subj, head);
+  else if(curSDetTab==='booklets') loadBooklets(subj, head);
+  else if(curSDetTab==='subj-teachers') loadSubjTeachers(subj, head);
+  else { body.innerHTML = head + renderCurriculum(subj); }
+}
+
+/* ── SUBJECT TEACHERS TAB ─────────────────────── */
+async function loadSubjTeachers(subj, head){
+  var body = el('sdet-body');
+  if(!body) return;
+  var spinner = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5a7bf5" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
+  body.innerHTML = head + spinner;
+  try{
+    // Load teachers matching subject + stage + grade
+    var q = '?is_visible=eq.true&order=sort_order.asc,created_at.asc';
+    if(curStage) q += '&stage=eq.'+curStage;
+    if(curGrade) q += '&grade_id=eq.'+curGrade;
+    // Match subject name
+    var allTeachers = (await sb('teachers','GET',null,q)) || [];
+    var teachers = allTeachers.filter(function(t){
+      if(!t.subject_name) return false;
+      var tn = t.subject_name.toLowerCase().replace(/\s/g,'');
+      var sn = subj.label.toLowerCase().replace(/\s/g,'');
+      return tn.includes(sn) || sn.includes(tn);
+    });
+
+    if(!teachers.length){
+      body.innerHTML = head + '<div class="state-box"><div class="state-ic">👨‍🏫</div><h3>لا يوجد مدرسون لهذه المادة بعد</h3><p>سيُضافون قريباً</p></div>';
+      return;
+    }
+
+    // For each teacher get lecture count
+    var teacherIds = teachers.map(function(t){return t.id;});
+    var chapRows = [];
+    try{
+      chapRows = (await sb('teacher_chapters','GET',null,'?teacher_id=in.('+teacherIds.join(',')+')'+'&is_visible=eq.true')) || [];
+    }catch(e){ chapRows = []; }
+
+    // Count lectures per teacher via chapter counts
+    var lecCountByTeacher = {};
+    teachers.forEach(function(t){ lecCountByTeacher[t.id] = 0; });
+    chapRows.forEach(function(ch){
+      if(lecCountByTeacher[ch.teacher_id] !== undefined){
+        lecCountByTeacher[ch.teacher_id] += (ch.lecture_count||0);
+      }
+    });
+
+    var html = head + '<div class="teachers-subj-grid">';
+    teachers.forEach(function(t, i){
+      var avatarHtml = t.photo_url
+        ? '<img src="'+t.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display=\'none\'">'
+        : '<div style="display:flex;align-items:center;justify-content:center;font-size:2rem;width:100%;height:100%">👨‍🏫</div>';
+      var lecCount = lecCountByTeacher[t.id] || 0;
+      html += '<div class="teacher-card" style="animation-delay:'+(i*0.06)+'s" data-tid="'+t.id+'" data-tname="'+t.name.replace(/"/g,'&quot;')+'" data-tphoto="'+(t.photo_url||'')+'" data-tsubj="'+(t.subject_name||'')+'" data-tgrade="'+(t.grade_label||'')+'">';
+      html += '<div class="teacher-avatar">'+avatarHtml+'</div>';
+      html += '<div class="teacher-name">'+t.name+'</div>';
+      html += '<div class="teacher-meta">'+(t.subject_name||'')+'</div>';
+      html += '<div class="teacher-lec-cnt">📹 '+lecCount+' محاضرة</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    body.innerHTML = html;
+
+    // Attach click handlers
+    body.querySelectorAll('.teacher-card').forEach(function(card){
+      card.onclick = function(){
+        openTeacher(card.dataset.tid, card.dataset.tname, card.dataset.tphoto, card.dataset.tsubj, card.dataset.tgrade);
+      };
+    });
+  }catch(e){
+    body.innerHTML = head + '<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ في التحميل</h3><p>'+e.message+'</p></div>';
+  }
+}
+
+/* Override openGrade: save grade to DB then show subjects */
+var _origOpenGrade = openGrade;
+openGrade = function(gid){
+  pickGradeAndSave(gid);
+};
+
+/* ══════════════════════════════════════════════
+   GRADE PICKER — حفظ الصف تلقائياً
+══════════════════════════════════════════════ */
+async function pickGradeAndSave(gid){
+  curGrade = gid;
+  var s = getSess();
+  if(s && s.id){
+    s.grade = gid;
+    setSess(s);
+    try{ await sb('users','PATCH',{grade:gid},'?id=eq.'+s.id); }catch(e){}
+  }
+  syncSettingsUI();
+  openGradeSubjectsGrid(gid);
+}
+
+/* ══════════════════════════════════════════════
+   STAGE PICKER — بعد اختيار المرحلة تظهر الصفوف
+══════════════════════════════════════════════ */
+/* Override pickStage: save stage, clear old grade, show grade grid */
+var _origPickStage = pickStage;
+pickStage = async function(stageId){
+  curStage = stageId; curBranch = null;
+  curGrade = null;  // ALWAYS reset grade when changing stage
+  var s = getSess();
+  if(s){
+    s.stage = stageId; s.branch = null; s.grade = null;
+    setSess(s);
+    if(s.id){
+      try{ await sb('users','PATCH',{stage:stageId,branch:null,grade:null},'?id=eq.'+s.id); }catch(e){}
+    }
+  }
+  closeModal('ov-picker');
+  // Always show grade selection after picking stage
+  setTimeout(function(){
+    buildGradePage();
+    goPage('pg-grade');
+    setNavActive('home');
+  }, 200);
+};
+
+/* ══════════════════════════════════════════════
+   PROFILE — عرض المرحلة والصف
+══════════════════════════════════════════════ */
+var _origBuildProfile = buildProfile;
+buildProfile = function(){
+  _origBuildProfile();
+  var s = getSess();
+  if(!s) return;
+  var chip = el('p-chip');
+  if(chip){
+    var stageName = (curStage && STAGES_META[curStage]) ? STAGES_META[curStage].name : '';
+    var gradeObj = curGrade ? ALL_GRADES.find(function(g){return g.id===curGrade;}) : null;
+    var gradeName = gradeObj ? gradeObj.name : '';
+    if(stageName && gradeName) chip.textContent = stageName + ' — ' + gradeName;
+    else if(stageName) chip.textContent = stageName;
+    else chip.textContent = 'لم تختر مرحلة';
+  }
+  // load saved grade
+  if(!curGrade && s.grade){
+    curGrade = s.grade;
+  }
+};
+
+
+/* ══════════════════════════════════════════════
+   SETTINGS syncSettingsUI — إضافة الصف
+══════════════════════════════════════════════ */
+var _origSyncSettingsUI = syncSettingsUI;
+syncSettingsUI = function(){
+  _origSyncSettingsUI();
+  var us = el('set-ustage');
+  if(us){
+    var stageName = (curStage && STAGES_META[curStage]) ? STAGES_META[curStage].name : '';
+    var gradeObj = curGrade ? ALL_GRADES.find(function(g){return g.id===curGrade;}) : null;
+    var gradeName = gradeObj ? gradeObj.name : '';
+    if(stageName && gradeName) us.textContent = stageName + ' — ' + gradeName;
+    else if(stageName) us.textContent = stageName;
+    else us.textContent = 'لم تختر مرحلة';
+  }
+};
+
+/* ══════════════════════════════════════════════
+   BOTTOM NAV — إضافة المدرسين
+══════════════════════════════════════════════ */
+var _origBottomNav = bottomNav;
+bottomNav = function(k){
+  if(k==='teachers'){ setNavActive('teachers'); buildTeachersPage(); goPage('pg-teachers'); return; }
+  if(k==='settings'){ openSettings(); return; }
+  // 'profile' still works but via settings now
+  if(k==='profile'){ openSettings(); return; }
+  setNavActive(k);
+  _origBottomNav(k);
+};
+
+/* ══════════════════════════════════════════════
+   TEACHERS — المدرسون
+══════════════════════════════════════════════ */
+async function buildTeachersPage(){
+  var grid = el('teachers-grid');
+  if(!grid) return;
+  grid.innerHTML = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
+  try{
+    // فلترة المدرسين حسب مرحلة وصف الطالب
+    var q = '?is_visible=eq.true&order=sort_order.asc,created_at.asc';
+    if(curStage) q += '&stage=eq.'+curStage;
+    if(curGrade) q += '&grade_id=eq.'+curGrade;
+    var rows = (await sb('teachers','GET',null,q)) || [];
+
+    // إذا لم يوجد مدرسون مخصصون للصف، اعرض مدرسي المرحلة فقط
+    if(!rows.length && curGrade && curStage){
+      var q2 = '?is_visible=eq.true&order=sort_order.asc,created_at.asc';
+      if(curStage) q2 += '&stage=eq.'+curStage;
+      rows = (await sb('teachers','GET',null,q2)) || [];
+    }
+
+    if(!rows.length){
+      var gradeObj = curGrade ? ALL_GRADES.find(function(g){return g.id===curGrade;}) : null;
+      var stageN = (curStage && STAGES_META[curStage]) ? STAGES_META[curStage].name : '';
+      var gradeN = gradeObj ? gradeObj.name : '';
+      var hint = (stageN||gradeN) ? ' لـ '+(gradeN||stageN) : '';
+      grid.innerHTML = '<div class="state-box"><div class="state-ic">👨‍🏫</div><h3>لا يوجد مدرسون'+hint+' بعد</h3><p>سيُضافون قريباً</p></div>';
+      return;
+    }
+    var html = '';
+    rows.forEach(function(t, i){
+      var avatarHtml = t.photo_url
+        ? '<img src="'+t.photo_url+'" style="width:100%;height:100%;object-fit:cover">'
+        : '<div style="display:flex;align-items:center;justify-content:center;font-size:2.8rem;width:100%;height:100%">👨‍🏫</div>';
+      html += '<div class="teacher-card" style="animation-delay:'+(i*0.06)+'s">';
+      html += '<div class="teacher-avatar">'+avatarHtml+'</div>';
+      html += '<div class="teacher-name">'+t.name+'</div>';
+      html += '<div class="teacher-meta">'+t.subject_name+(t.grade_label?' — '+t.grade_label:'')+'</div>';
+      html += '</div>';
+    });
+    grid.innerHTML = html;
+    var cards = grid.querySelectorAll('.teacher-card');
+    rows.forEach(function(t, i){
+      if(cards[i]) cards[i].onclick = function(){
+        openTeacher(t.id, t.name, t.photo_url||'', t.subject_name, t.grade_label||'');
+      };
+    });
+  }catch(e){
+    grid.innerHTML = '<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ في التحميل</h3><p>'+e.message+'</p></div>';
+  }
+}
+
+
+/* ── OPEN TEACHER PAGE ──────────────────────── */
+function openTeacher(tid, tname, tphoto, tsubj, tgrade){
+  // Update topbar
+  var tt = el('tc-tbar-title');
+  if(tt) tt.textContent = tname;
+
+  // Build teacher hero
+  var hero = el('teacher-hero');
+  if(hero){
+    var avatarHtml = tphoto
+      ? '<img src="'+tphoto+'" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.22)" onerror="this.style.display=\'none\'">'
+      : '<div style="width:54px;height:54px;border-radius:50%;background:var(--d-grad);display:flex;align-items:center;justify-content:center;font-size:1.8rem">👨‍🏫</div>';
+    hero.innerHTML = '<div style="display:flex;align-items:center;gap:14px;padding:16px 20px">'
+      + avatarHtml
+      + '<div><div style="font-family:Tajawal,sans-serif;font-size:1rem;font-weight:900;color:var(--d-tx1)">'+tname+'</div>'
+      + '<div style="font-size:.78rem;color:var(--d-tx3);margin-top:2px">'+tsubj+(tgrade?' — '+tgrade:'')+'</div></div>'
+      + '</div>';
+  }
+
+  // Back button
+  var backBtn = el('tc-tbar-title');
+  var pg = document.getElementById('pg-teacher-chapters');
+  if(pg){
+    var bb = pg.querySelector('.back-btn');
+    if(bb) bb.onclick = function(){
+      // If we came from subject detail teachers tab, go back there
+      goPage('pg-teachers');
+    };
+  }
+
+  goPage('pg-teacher-chapters');
+  loadTeacherChapters(tid);
+}
+
+async function loadTeacherChapters(tid){
+  var grid = el('tc-grid');
+  if(!grid) return;
+  grid.innerHTML = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
+
+  try{
+    var rows = (await sb('teacher_chapters','GET',null,'?teacher_id=eq.'+tid+'&is_visible=eq.true&order=sort_order.asc,created_at.asc')) || [];
+    if(!rows.length){
+      grid.innerHTML = '<div class="state-box"><div class="state-ic">📂</div><h3>لا توجد فصول بعد</h3><p>سيُضاف المحتوى قريباً</p></div>';
+      return;
+    }
+    var html = '';
+    rows.forEach(function(ch, i){
+      var coverHtml = ch.cover_url
+        ? '<img src="'+ch.cover_url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">'
+        : '<div class="tc-cover-placeholder">📁</div>';
+      html += '<div class="tc-card" onclick="openChapterLectures(\''+ch.id+'\',\''+ch.title.replace(/'/g,"\\'")+'\',\''+  (ch.cover_url||'')+'\',\''+tid+'\')" style="animation-delay:'+(i*0.07)+'s">'
+            + '<div class="tc-cover" style="background:linear-gradient(135deg,#1e293b,#334155)">'+coverHtml+'</div>'
+            + '<div class="tc-info"><div class="tc-title">'+ch.title+'</div>'
+            + '<div class="tc-meta">📹 '+(ch.lecture_count||0)+' محاضرة</div></div>'
+            + '</div>';
+    });
+    grid.innerHTML = html;
+  }catch(e){
+    grid.innerHTML = '<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ</h3><p>'+e.message+'</p></div>';
+  }
+}
+
+var curChapterId = null;
+
+async function openChapterLectures(chid, chtitle, chcover, tid){
+  curChapterId = chid;
+
+  var tt = el('lec-tbar-title');
+  var ts = el('lec-tbar-sub');
+  if(tt) tt.textContent = chtitle;
+  if(ts) ts.textContent = 'المحاضرات';
+
+  var backBtn = el('lec-back-btn');
+  if(backBtn) backBtn.onclick = function(){ goPage('pg-teacher-chapters'); };
+
+  // Chapter hero
+  var hero = el('lec-chapter-hero');
+  if(hero){
+    if(chcover){
+      hero.innerHTML = '<img class="lec-chapter-img" src="'+chcover+'" alt="'+chtitle+'" onerror="this.parentNode.innerHTML=\'<div class=\\"lec-chapter-img-placeholder\\">📁</div>\'">'
+        + '<div class="lec-chapter-info"><div class="lec-chapter-title">'+chtitle+'</div></div>';
+    } else {
+      hero.innerHTML = '<div class="lec-chapter-img-placeholder">📁</div>'
+        + '<div class="lec-chapter-info"><div class="lec-chapter-title">'+chtitle+'</div></div>';
+    }
+  }
+
+  var list = el('lec-list');
+  if(!list){ goPage('pg-lectures'); return; }
+  list.innerHTML = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
+  goPage('pg-lectures');
+
+  try{
+    var rows = (await sb('lectures','GET',null,'?chapter_id=eq.'+chid+'&is_visible=eq.true&order=sort_order.asc,created_at.asc')) || [];
+    if(!rows.length){
+      list.innerHTML = '<div class="state-box"><div class="state-ic">🎬</div><h3>لا توجد محاضرات بعد</h3><p>سيُضاف المحتوى قريباً</p></div>';
+      return;
+    }
+    var html = '';
+    rows.forEach(function(lec, i){
+      html += '<div class="lec-item" onclick="openVideoPlayer(\''+lec.id+'\',\''+lec.title.replace(/'/g,"\\'")+'\',\''+  (lec.video_url||'')+'\',\''+chtitle.replace(/'/g,"\\'")+'\',\''+chid+'\')" style="animation-delay:'+(i*0.06)+'s">'
+            + '<div class="lec-num">'+(i+1)+'</div>'
+            + '<div class="lec-info"><div class="lec-name">'+lec.title+'</div><div class="lec-meta">'+(lec.duration?'⏱ '+lec.duration:' محاضرة')+'</div></div>'
+            + '<div class="lec-play-ic"><svg viewBox="0 0 24 24" fill="white" width="16" height="16"><polygon points="5,3 19,12 5,21"/></svg></div>'
+            + '</div>';
+    });
+    list.innerHTML = html;
+  }catch(e){
+    list.innerHTML = '<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ</h3><p>'+e.message+'</p></div>';
+  }
+}
+
+/* ══════════════════════════════════════════════
+   VIDEO PLAYER — مشغل الفيديو
+══════════════════════════════════════════════ */
+var vidState = { url:'', title:'', chapterTitle:'', chapterId:'' };
+
+// ── تتبع مشاهدات المحاضرات ──
+var _viewTrackTimer = null;
+var _viewLectureId = null;
+var _viewMaxPct = 0;
+
+async function trackLectureView(lectureId, pct){
+  var sess = getSess();
+  if(!sess || !sess.id) return;
+  try{
+    var existing = await sb('lecture_views','GET',null,'?lecture_id=eq.'+lectureId+'&user_id=eq.'+sess.id+'&select=id,watch_pct');
+    if(existing && existing.length){
+      var curPct = existing[0].watch_pct||0;
+      var newPct = Math.max(curPct, Math.round(pct));
+      if(newPct > curPct){
+        await sb('lecture_views','PATCH',{watch_pct:newPct,last_watched:new Date().toISOString()},'?lecture_id=eq.'+lectureId+'&user_id=eq.'+sess.id);
+      }
+    } else {
+      await sb('lecture_views','POST',{
+        lecture_id:lectureId,
+        user_id:sess.id,
+        username:sess.username||'',
+        display_name:sess.display_name||sess.username||'',
+        watch_pct:Math.round(pct),
+        last_watched:new Date().toISOString()
+      });
+    }
+  }catch(e){ console.warn('track view error:',e.message); }
+}
+
+function openVideoPlayer(lid, ltitle, vurl, chtitle, chid){
+  if(!vurl){ toast('⚠️ لا يوجد رابط فيديو','warn'); return; }
+
+  // Stop previous tracking
+  if(_viewTrackTimer){ clearInterval(_viewTrackTimer); _viewTrackTimer=null; }
+  _viewLectureId = lid;
+  _viewMaxPct = 0;
+
+  vidState = { url:vurl, title:ltitle, chapterTitle:chtitle, chapterId:chid };
+
+  // Set back button
+  var bb = el('vid-back-btn');
+  if(bb) bb.onclick = function(){
+    var vid = el('main-video');
+    if(vid){ vid.pause(); vid.src=''; }
+    goPage('pg-lectures');
+  };
+
+  var tt = el('vid-title');
+  var ts = el('vid-sub');
+  var ti = el('vid-info-title');
+  var si = el('vid-info-sub');
+  if(tt) tt.textContent = ltitle;
+  if(ts) ts.textContent = chtitle;
+  if(ti) ti.textContent = ltitle;
+  if(si) si.textContent = chtitle + ' · محاضرة';
+
+  goPage('pg-video');
+
+  // Load video
+  setTimeout(function(){
+    var vid = el('main-video');
+    if(!vid) return;
+    vid.src = vurl;
+    vid.load();
+    _vidBindEvents(vid);
+    // Show paused state
+    var cont = el('vid-container');
+    if(cont) cont.classList.add('vid-paused');
+  }, 50);
+}
+
+function _vidBindEvents(vid){
+  vid.onplay = function(){
+    _vidUpdatePlayBtn(true);
+    var cont = el('vid-container');
+    if(cont) cont.classList.remove('vid-paused');
+  };
+  vid.onpause = function(){
+    _vidUpdatePlayBtn(false);
+    var cont = el('vid-container');
+    if(cont) cont.classList.add('vid-paused');
+  };
+  vid.ontimeupdate = function(){
+    _vidUpdateProgress(vid);
+    // Track watch percentage
+    if(vid.duration && _viewLectureId){
+      var pct = (vid.currentTime / vid.duration) * 100;
+      if(pct > _viewMaxPct + 5){
+        _viewMaxPct = pct;
+        trackLectureView(_viewLectureId, pct);
+      }
+    }
+  };
+  vid.onended = function(){
+    if(_viewLectureId) trackLectureView(_viewLectureId, 100);
+  };
+  vid.onloadedmetadata = function(){
+    var d = el('vid-duration');
+    if(d) d.textContent = _vidFmt(vid.duration);
+  };
+  vid.onprogress = function(){
+    _vidUpdateBuffer(vid);
+  };
+
+  // Progress track click
+  var track = el('vid-progress-track');
+  if(track){
+    track.onclick = function(e){
+      var rect = track.getBoundingClientRect();
+      var pct = (e.clientX - rect.left) / rect.width;
+      vid.currentTime = pct * vid.duration;
+    };
+  }
+}
+
+function _vidUpdatePlayBtn(playing){
+  var icon = el('play-icon');
+  if(!icon) return;
+  if(playing){
+    icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    icon.setAttribute('fill','none');
+    icon.setAttribute('stroke','white');
+    icon.setAttribute('stroke-width','2');
+  } else {
+    icon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+    icon.setAttribute('fill','white');
+    icon.setAttribute('stroke','none');
+  }
+  // center icon too
+  var ci = el('center-play-icon');
+  if(ci){
+    if(playing){
+      ci.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      ci.setAttribute('fill','none');ci.setAttribute('stroke','white');ci.setAttribute('stroke-width','2');
+    } else {
+      ci.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+      ci.setAttribute('fill','white');ci.setAttribute('stroke','none');
+    }
+  }
+}
+
+function _vidUpdateProgress(vid){
+  if(!vid.duration) return;
+  var pct = (vid.currentTime / vid.duration) * 100;
+  var fill = el('vid-prog-fill');
+  var thumb = el('vid-prog-thumb');
+  var cur = el('vid-current');
+  if(fill) fill.style.width = pct+'%';
+  if(thumb) thumb.style.left = pct+'%';
+  if(cur) cur.textContent = _vidFmt(vid.currentTime);
+}
+
+function _vidUpdateBuffer(vid){
+  if(!vid.duration || !vid.buffered.length) return;
+  var pct = (vid.buffered.end(vid.buffered.length-1) / vid.duration) * 100;
+  var buf = el('vid-buf');
+  if(buf) buf.style.width = pct+'%';
+}
+
+function _vidFmt(s){
+  if(isNaN(s)) return '0:00';
+  var m = Math.floor(s/60);
+  var sec = Math.floor(s%60);
+  return m+':'+(sec<10?'0':'')+sec;
+}
+
+function vidTogglePlay(){
+  var vid = el('main-video');
+  if(!vid) return;
+  if(vid.paused) vid.play();
+  else vid.pause();
+}
+
+function vidSeek(secs){
+  var vid = el('main-video');
+  if(!vid) return;
+  vid.currentTime = Math.max(0, Math.min(vid.duration, vid.currentTime + secs));
+}
+
+function vidToggleMute(){
+  var vid = el('main-video');
+  if(!vid) return;
+  vid.muted = !vid.muted;
+  var icon = el('vol-icon');
+  if(icon){
+    if(vid.muted){
+      icon.innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+    } else {
+      icon.innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>';
+    }
+  }
+}
+
+function vidSetVol(val){
+  var vid = el('main-video');
+  if(!vid) return;
+  vid.volume = parseFloat(val);
+  vid.muted = (parseFloat(val) === 0);
+}
+
+function vidToggleSpeedMenu(){
+  var menu = el('vid-speed-menu');
+  if(menu) menu.classList.toggle('hidden');
+}
+
+function vidSetSpeed(sp){
+  var vid = el('main-video');
+  if(!vid) return;
+  vid.playbackRate = sp;
+  var btn = el('vid-speed-btn');
+  if(btn) btn.textContent = (sp===1?'1×':sp+'×');
+  // mark active
+  document.querySelectorAll('.vid-speed-menu button').forEach(function(b){
+    b.classList.toggle('spd-active', parseFloat(b.textContent)===sp || (sp===1 && b.textContent==='عادي'));
+  });
+  var menu = el('vid-speed-menu');
+  if(menu) menu.classList.add('hidden');
+}
+
+function vidFullscreen(){
+  var cont = el('vid-container');
+  var vid = el('main-video');
+  if(!cont) return;
+  if(document.fullscreenElement){
+    document.exitFullscreen();
+  } else {
+    if(vid.requestFullscreen) vid.requestFullscreen();
+    else if(cont.requestFullscreen) cont.requestFullscreen();
+    else if(vid.webkitEnterFullscreen) vid.webkitEnterFullscreen();
+  }
+}
+
+/* Close speed menu on outside click */
+document.addEventListener('click', function(e){
+  var menu = el('vid-speed-menu');
+  var btn = el('vid-speed-btn');
+  if(menu && !menu.classList.contains('hidden')){
+    if(!menu.contains(e.target) && e.target !== btn){
+      menu.classList.add('hidden');
+    }
+  }
+});
+
+
+/* ══════════════════════════════════════════════
+   NOTIFICATIONS SYSTEM
+══════════════════════════════════════════════ */
+var _notifsCache = [];
+
+async function loadNotifs(){
+  var s = getSess();
+  if(!s || !s.id) return;
+  try{
+    // Get unread notifs for this user's stage/grade + global notifs
+    var q = '?is_active=eq.true&order=created_at.desc&limit=50';
+    var rows = (await sb('notifications','GET',null,q)) || [];
+    // Filter: global (no stage/grade) OR matches user stage/grade
+    rows = rows.filter(function(n){
+      if(!n.target_stage && !n.target_grade) return true; // global
+      if(n.target_stage && n.target_stage !== curStage) return false;
+      if(n.target_grade && n.target_grade !== curGrade) return false;
+      return true;
+    });
+    _notifsCache = rows;
+    updateNotifBadge(rows);
+  }catch(e){ console.warn('Notifs load error:',e.message); }
+}
+
+function updateNotifBadge(rows){
+  // Count unread — check localStorage for read IDs
+  var readIds = JSON.parse(localStorage.getItem('dz_notifs_read')||'[]');
+  var unread = rows.filter(function(n){ return !readIds.includes(n.id); }).length;
+  // Update all badges
+  document.querySelectorAll('.notif-badge').forEach(function(b){
+    if(unread > 0){
+      b.textContent = unread > 99 ? '99+' : unread;
+      b.classList.remove('hidden');
+    } else {
+      b.classList.add('hidden');
+    }
+  });
+}
+
+function openNotifs(){
+  loadNotifs().then(function(){
+    renderNotifsList();
+  });
+  openModal('ov-notifs');
+}
+
+function renderNotifsList(){
+  var list = el('notifs-list');
+  if(!list) return;
+  if(!_notifsCache.length){
+    list.innerHTML = '<div class="state-box" style="padding:40px 0"><div class="state-ic">🔔</div><h3 style="color:var(--d-tx1)">لا توجد إشعارات</h3><p style="color:var(--d-tx3)">ستظهر هنا عند إضافة محتوى جديد</p></div>';
+    return;
+  }
+  var readIds = JSON.parse(localStorage.getItem('dz_notifs_read')||'[]');
+  var html = '';
+  _notifsCache.forEach(function(n){
+    var isRead = readIds.includes(n.id);
+    var timeAgo = getTimeAgo(n.created_at);
+    var typeIcon = n.type==='lecture'?'📹':n.type==='exam'?'📝':n.type==='booklet'?'📚':'🔔';
+    html += '<div class="notif-item'+(isRead?'':' notif-unread')+'" onclick="markNotifRead(\''+n.id+'\')">'
+          + '<div class="notif-icon-wrap">'+typeIcon+'</div>'
+          + '<div class="notif-content">'
+          + '<div class="notif-title">'+n.title+'</div>'
+          + (n.body?'<div class="notif-body">'+n.body+'</div>':'')
+          + '<div class="notif-time">'+timeAgo+'</div>'
+          + '</div>'
+          + (isRead?'':'<div class="notif-dot"></div>')
+          + '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function markNotifRead(id){
+  var readIds = JSON.parse(localStorage.getItem('dz_notifs_read')||'[]');
+  if(!readIds.includes(id)){ readIds.push(id); }
+  localStorage.setItem('dz_notifs_read', JSON.stringify(readIds));
+  updateNotifBadge(_notifsCache);
+  renderNotifsList();
+}
+
+function markAllNotifsRead(){
+  var readIds = _notifsCache.map(function(n){return n.id;});
+  localStorage.setItem('dz_notifs_read', JSON.stringify(readIds));
+  updateNotifBadge(_notifsCache);
+  renderNotifsList();
+}
+
+function getTimeAgo(dateStr){
+  var diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
+  if(diff < 60)    return 'الآن';
+  if(diff < 3600)  return Math.floor(diff/60)+' دقيقة';
+  if(diff < 86400) return Math.floor(diff/3600)+' ساعة';
+  return Math.floor(diff/86400)+' يوم';
+}
+
+// Load notifs after login/boot
+var _origSetSess = setSess;
+// Auto-load notifs when user is available
+(function(){
+  var orig = window.onload;
+  setTimeout(function(){
+    if(getSess() && getSess().id) loadNotifs();
+  }, 2000);
+})();

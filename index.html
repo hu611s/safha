@@ -180,9 +180,10 @@
     <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
     <span>مكتبتي</span>
   </button>
-  <button class="bnb" id="bnav-profile" onclick="bottomNav('profile')">
-    <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span>حسابي</span>
+
+  <button class="bnb" id="bnav-teachers" onclick="bottomNav('teachers')">
+    <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    <span>مدرسون</span>
   </button>
   <button class="bnb" id="bnav-settings" onclick="openSettings()">
     <svg class="bnb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -198,13 +199,10 @@
   <div class="auth-bg" id="authBg"></div>
   <div class="auth-center">
 
-    <!-- Brand -->
-    <div class="auth-brand">
-      <img src="https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png" alt="دوروز أكاديمي" class="auth-hero-logo"/>
-      <div>
-        <div class="brand-name">دوروز أكاديمي</div>
-        <div class="brand-tag">منصتك الدراسية الشاملة</div>
-      </div>
+    <!-- Brand (no logo) -->
+    <div class="auth-brand" style="justify-content:center;text-align:center;flex-direction:column;gap:6px">
+      <div class="brand-name">دوروز أكاديمي</div>
+      <div class="brand-tag">منصتك الدراسية الشاملة</div>
     </div>
 
     <!-- Card -->
@@ -297,6 +295,7 @@
       </div>
     </div>
     <div class="tbar-r">
+      <button class="tbar-notif-btn" id="notif-btn-grade" onclick="openNotifs()"><img src="https://i.ibb.co/7tNx5g7j/email.png" class="notif-bell-img" alt="إشعارات"/><span class="notif-badge hidden" id="notif-badge-grade">0</span></button>
       <div class="user-pill" id="upill-grade">👤</div>
     </div>
   </header>
@@ -512,5 +511,238 @@
     </div>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════
+     PAGE 7 — SUBJECTS GRID (مواد الصف شبكة)
+══════════════════════════════════════ -->
+<div id="pg-subjects" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <button class="back-btn" id="subjects-back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        رجوع
+      </button>
+      <div>
+        <div class="tbar-title" id="subjects-tbar-title">المواد الدراسية</div>
+        <div class="tbar-sub" id="subjects-tbar-sub">اختر مادة</div>
+      </div>
+    </div>
+    <div class="tbar-r"><button class="tbar-notif-btn" onclick="openNotifs()"><img src="https://i.ibb.co/7tNx5g7j/email.png" class="notif-bell-img" alt="إشعارات"/><span class="notif-badge hidden" id="notif-badge-subjects">0</span></button><div class="user-pill" id="upill-subjects">👤</div></div>
+  </header>
+  <main class="pg-body">
+    <div class="subj-grid" id="subj-grid"></div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 8 — SUBJECT DETAIL
+══════════════════════════════════════ -->
+<div id="pg-subj-detail" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <button class="back-btn" onclick="goPage('pg-subjects')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        رجوع
+      </button>
+      <div>
+        <div class="tbar-title" id="sdet-tbar-title">المادة</div>
+        <div class="tbar-sub" id="sdet-tbar-sub">اختر قسماً</div>
+      </div>
+    </div>
+    <div class="tbar-r"><button class="tbar-notif-btn" onclick="openNotifs()"><img src="https://i.ibb.co/7tNx5g7j/email.png" class="notif-bell-img" alt="إشعارات"/><span class="notif-badge hidden" id="notif-badge-sdet">0</span></button><div class="user-pill" id="upill-sdet">👤</div></div>
+  </header>
+  <div class="ctabs-bar">
+    <button class="ctab active" onclick="switchSDetTab('exams',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      اختبارات
+    </button>
+    <button class="ctab" onclick="switchSDetTab('booklets',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/></svg>
+      ملازم
+    </button>
+    <button class="ctab" onclick="switchSDetTab('curriculum',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+      المنهج
+    </button>
+    <button class="ctab" onclick="switchSDetTab('subj-teachers',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      مدرسون
+    </button>
+  </div>
+  <main class="pg-body" id="sdet-body"></main>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 9 — TEACHERS LIST
+══════════════════════════════════════ -->
+<div id="pg-teachers" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <div class="tbar-logo"><img src="https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png" alt="دوروز" class="tbar-logo-img"/></div>
+      <span class="tbar-title">المدرسون</span>
+    </div>
+    <div class="tbar-r"><button class="tbar-notif-btn" onclick="openNotifs()"><img src="https://i.ibb.co/7tNx5g7j/email.png" class="notif-bell-img" alt="إشعارات"/><span class="notif-badge hidden" id="notif-badge-teachers">0</span></button><div class="user-pill" id="upill-teachers">👤</div></div>
+  </header>
+  <main class="pg-body">
+    <div class="pg-hero" style="margin-bottom:24px">
+      <div class="big-ic">👨‍🏫</div>
+      <h1>المدرسون</h1>
+      <p>اختر مدرساً لمتابعة فصوله ومحاضراته</p>
+    </div>
+    <div class="teachers-grid" id="teachers-grid">
+      <div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 10 — TEACHER CHAPTERS
+══════════════════════════════════════ -->
+<div id="pg-teacher-chapters" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <button class="back-btn" onclick="goPage('pg-teachers')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        رجوع
+      </button>
+      <div>
+        <div class="tbar-title" id="tc-tbar-title">المدرس</div>
+        <div class="tbar-sub">الفصول الدراسية</div>
+      </div>
+    </div>
+  </header>
+  <main class="pg-body">
+    <div id="teacher-hero" class="teacher-hero"></div>
+    <div class="tc-grid" id="tc-grid">
+      <div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 11 — CHAPTER LECTURES
+══════════════════════════════════════ -->
+<div id="pg-lectures" class="pg">
+  <header class="topbar">
+    <div class="tbar-l">
+      <button class="back-btn" id="lec-back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        رجوع
+      </button>
+      <div>
+        <div class="tbar-title" id="lec-tbar-title">المحاضرات</div>
+        <div class="tbar-sub" id="lec-tbar-sub">فصل دراسي</div>
+      </div>
+    </div>
+  </header>
+  <main class="pg-body">
+    <div id="lec-chapter-hero" class="lec-chapter-hero"></div>
+    <div class="lec-list" id="lec-list"></div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 12 — VIDEO PLAYER
+══════════════════════════════════════ -->
+<div id="pg-video" class="pg" style="padding-bottom:0">
+  <header class="topbar" style="background:rgba(0,0,0,0.95);border-color:rgba(255,255,255,0.08)">
+    <div class="tbar-l">
+      <button class="back-btn" id="vid-back-btn" style="background:rgba(255,255,255,0.12)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        رجوع
+      </button>
+      <div>
+        <div class="tbar-title" id="vid-title" style="max-width:190px">المحاضرة</div>
+        <div class="tbar-sub" id="vid-sub">فيديو</div>
+      </div>
+    </div>
+  </header>
+  <div class="vid-container" id="vid-container">
+    <video id="main-video" playsinline preload="metadata" webkit-playsinline></video>
+    <div class="vid-overlay" id="vid-overlay" onclick="vidTogglePlay()">
+      <div class="vid-center-btn" id="vid-center-btn">
+        <svg id="center-play-icon" viewBox="0 0 24 24" fill="white" width="52" height="52"><polygon points="5,3 19,12 5,21"/></svg>
+      </div>
+    </div>
+    <div class="vid-controls" id="vid-controls">
+      <div class="vid-progress-wrap">
+        <span class="vid-time" id="vid-current">0:00</span>
+        <div class="vid-progress-track" id="vid-progress-track">
+          <div class="vid-buf-bar" id="vid-buf"></div>
+          <div class="vid-prog-fill" id="vid-prog-fill"></div>
+          <div class="vid-prog-thumb" id="vid-prog-thumb"></div>
+        </div>
+        <span class="vid-time" id="vid-duration">0:00</span>
+      </div>
+      <div class="vid-btns-row">
+        <div class="vid-btns-l">
+          <button class="vid-ctrl-btn" onclick="vidTogglePlay()" id="vid-play-btn" title="تشغيل/إيقاف">
+            <svg id="play-icon" viewBox="0 0 24 24" fill="white" width="22" height="22"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <button class="vid-ctrl-btn" onclick="vidSeek(-10)" title="10 ثوانٍ للخلف">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" width="22" height="22"><path d="M2.5 12a9.5 9.5 0 109.5-9.5V7"/><path d="M12 2.5L8 7l4 4.5"/></svg>
+            <span style="font-size:.6rem;color:white;position:absolute;margin-top:14px;margin-right:-4px">10</span>
+          </button>
+          <button class="vid-ctrl-btn" onclick="vidSeek(10)" title="10 ثوانٍ للأمام">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" width="22" height="22"><path d="M21.5 12a9.5 9.5 0 11-9.5-9.5V7"/><path d="M12 2.5l4 4.5-4 4.5"/></svg>
+            <span style="font-size:.6rem;color:white;position:absolute;margin-top:14px;margin-left:-4px">10</span>
+          </button>
+          <div class="vid-vol-wrap">
+            <button class="vid-ctrl-btn" onclick="vidToggleMute()" id="vid-vol-btn" title="كتم/إلغاء كتم">
+              <svg id="vol-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="20" height="20"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+            </button>
+            <input type="range" class="vid-vol-slider" id="vid-vol-slider" min="0" max="1" step="0.05" value="1" oninput="vidSetVol(this.value)"/>
+          </div>
+        </div>
+        <div class="vid-btns-r">
+          <div class="vid-speed-wrap" style="position:relative">
+            <button class="vid-ctrl-btn vid-speed-btn" onclick="vidToggleSpeedMenu()" id="vid-speed-btn">1×</button>
+            <div class="vid-speed-menu hidden" id="vid-speed-menu">
+              <button onclick="vidSetSpeed(0.5)">0.5×</button>
+              <button onclick="vidSetSpeed(0.75)">0.75×</button>
+              <button class="spd-active" onclick="vidSetSpeed(1)">عادي</button>
+              <button onclick="vidSetSpeed(1.25)">1.25×</button>
+              <button onclick="vidSetSpeed(1.5)">1.5×</button>
+              <button onclick="vidSetSpeed(2)">2×</button>
+            </div>
+          </div>
+          <button class="vid-ctrl-btn" onclick="vidFullscreen()" title="ملء الشاشة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="18" height="18"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="vid-info-panel" id="vid-info-panel">
+    <div class="vid-info-title" id="vid-info-title"></div>
+    <div class="vid-info-sub" id="vid-info-sub"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     NOTIFICATIONS OVERLAY
+══════════════════════════════════════ -->
+<div class="overlay hidden" id="ov-notifs">
+  <div class="modal" id="modal-notifs">
+    <div class="modal-drag"></div>
+    <div class="modal-hd">
+      <div class="modal-hd-l">
+        <div class="modal-hd-ic">
+          <img src="https://i.ibb.co/7tNx5g7j/email.png" style="width:18px;height:18px;object-fit:contain" alt="إشعارات"/>
+        </div>
+        <span>الإشعارات</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="markAllNotifsRead()" style="background:none;border:none;cursor:pointer;font-size:.75rem;font-weight:700;color:var(--d-p600);padding:4px 8px" id="notif-markall">تحديد الكل كمقروء</button>
+        <button class="modal-close" onclick="closeModal('ov-notifs')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="notifs-list" style="padding:8px 0 16px"></div>
+  </div>
+</div>
+
 </body>
 </html>
