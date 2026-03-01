@@ -215,66 +215,37 @@ function buildStagePickerCards(grid){
   if(!grid)return;
   var stages=['primary','middle','secondary','vocational'];
   var stageMeta={
-    primary:   {name:'الابتدائية', sub:'الصفوف الأول — السادس',  icon:'🌱', grad:'linear-gradient(135deg,#22c55e,#16a34a)', glow:'rgba(34,197,94,.28)'},
-    middle:    {name:'المتوسطة',   sub:'الصفوف الأول — الثالث',  icon:'📘', grad:'linear-gradient(135deg,#3b82f6,#4f46e5)', glow:'rgba(59,130,246,.28)'},
-    secondary: {name:'الإعدادية',  sub:'الرابع — السادس إعدادي', icon:'🔬', grad:'linear-gradient(135deg,#f97316,#ea580c)', glow:'rgba(249,115,22,.28)'},
-    vocational:{name:'المهني',     sub:'الفروع المهنية والتقنية', icon:'⚙️', grad:'linear-gradient(135deg,#8b5cf6,#6d28d9)', glow:'rgba(139,92,246,.28)'}
+    primary:   {name:'الابتدائية', sub:'الصفوف الأول — السادس',  icon:'🌱', accent:'#22c55e', bg:'rgba(34,197,94,.10)'},
+    middle:    {name:'المتوسطة',   sub:'الصفوف الأول — الثالث',  icon:'📘', accent:'#3b82f6', bg:'rgba(59,130,246,.10)'},
+    secondary: {name:'الإعدادية',  sub:'الرابع — السادس إعدادي', icon:'🔬', accent:'#f97316', bg:'rgba(249,115,22,.10)'},
+    vocational:{name:'المهني',     sub:'الفروع المهنية والتقنية', icon:'⚙️', accent:'#8b5cf6', bg:'rgba(139,92,246,.10)'}
   };
-  var html='<div class="stage-cards-grid">';
+  var html='<div class="stage-vlist">';
   stages.forEach(function(st){
-    var m=stageMeta[st]||STAGES_META[st];
-    html+='<div class="stage-pick-card" onclick="pickerSelectStage(\''+st+'\')">'
-        +'<div class="spc-glow" style="background:'+m.glow+'"></div>'
-        +'<div class="spc-icon-wrap" style="background:'+m.grad+'">'+m.icon+'</div>'
-        +'<div class="spc-body">'
-        +'<div class="spc-name">'+m.name+'</div>'
-        +'<div class="spc-sub">'+m.sub+'</div>'
+    var m=stageMeta[st]||{name:st,sub:'',icon:'📚',accent:'#667eea',bg:'rgba(102,126,234,.10)'};
+    html+='<div class="stage-vcard" onclick="pickerSelectStage(\''+st+'\')">'
+        +'<div class="svc-icon" style="background:'+m.bg+';color:'+m.accent+'">'+m.icon+'</div>'
+        +'<div class="svc-body">'
+        +'<div class="svc-name">'+m.name+'</div>'
+        +'<div class="svc-sub">'+m.sub+'</div>'
         +'</div>'
-        +'<div class="spc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg></div>'
+        +'<div class="svc-arr" style="color:'+m.accent+'">'
+        +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>'
+        +'</div>'
         +'</div>';
   });
   html+='</div>';
   grid.innerHTML=html;
 }
 
-/* Called when a stage card is tapped inside the picker modal */
+/* Called when a stage card is tapped — CLOSE picker and go to pg-grade */
 function pickerSelectStage(stageId){
-  var grid=el('picker-grid');
-  var title=el('picker-title');
-  var sub=el('picker-sub');
-  var stageMeta={
-    primary:   {name:'الابتدائية', grad:'linear-gradient(135deg,#22c55e,#16a34a)'},
-    middle:    {name:'المتوسطة',   grad:'linear-gradient(135deg,#3b82f6,#4f46e5)'},
-    secondary: {name:'الإعدادية',  grad:'linear-gradient(135deg,#f97316,#ea580c)'},
-    vocational:{name:'المهني',     grad:'linear-gradient(135deg,#8b5cf6,#6d28d9)'}
-  };
-  var m=stageMeta[stageId]||STAGES_META[stageId];
-  if(!m)return;
-
-  if(title)title.textContent='اختر صفك الدراسي';
-  if(sub)sub.textContent='مرحلة '+m.name;
-
-  var grades=ALL_GRADES.filter(function(g){return g.stage===stageId;});
-
-  var backFn = "buildStagePickerCards(el('picker-grid'));el('picker-title').textContent='\u0627\u062e\u062a\u0631 \u0645\u0631\u062d\u0644\u062a\u0643 \u0627\u0644\u062f\u0631\u0627\u0633\u064a\u0629';el('picker-sub').textContent='\u0627\u062e\u062a\u0631 \u0645\u0631\u062d\u0644\u062a\u0643 \u0644\u0639\u0631\u0636 \u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u0646\u0627\u0633\u0628'";
-  var html='<div class="grade-picker-back">'
-    +'<button class="grade-back-btn" onclick="'+backFn+'">'
-    +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>'
-    +'\u0627\u0644\u0639\u0648\u062f\u0629 \u0644\u0644\u0645\u0631\u0627\u062d\u0644</button>'
-    +'<div class="grade-stage-chip" style="background:'+m.grad+'">'+m.name+'</div>'
-    +'</div>';
-
-  html+='<div class="grade-cards-grid">';
-  grades.forEach(function(g){
-    var lbl = g.name;
-    html+='<div class="grade-pick-card" onclick="pickerSelectGrade(\''+stageId+'\',\''+g.id+'\')">'
-        +'<div class="gpc-icon" style="background:'+g.bg+'">'+g.icon+'</div>'
-        +'<div class="gpc-name">'+lbl+'</div>'
-        +'</div>';
-  });
-  html+='</div>';
-
-  if(grid){ grid.innerHTML=html; grid.classList.add('grade-anim'); }
+  curStage = stageId;
+  curGrade = null;
+  closeModal('ov-picker');
+  buildGradePage();
+  goPage('pg-grade');
+  setNavActive('home');
 }
 
 /* Called when a grade button is tapped inside the picker modal */
@@ -304,6 +275,11 @@ async function pickerSelectGrade(stageId, gradeId){
     openGradeSubjectsGrid(gradeId);
     setNavActive('home');
   }, 260);
+}
+
+/* Called from Settings "تغيير المرحلة" — reopens stage picker */
+function changeStageFromSettings(){
+  openStagePicker('change');
 }
 
 async function pickStage(stageId){
@@ -490,7 +466,7 @@ function buildGradePage(){
   var tt = el('grade-tbar-title');
   if(tt) tt.textContent = sm.name;
 
-  // تحديث Hero
+  // تحديث Hero مع زر تغيير المرحلة
   var hi = el('grade-hero-ic');
   var hh = el('grade-hero-h1');
   var hp = el('grade-hero-p');
@@ -498,27 +474,47 @@ function buildGradePage(){
   if(hh) hh.textContent = sm.name;
   if(hp) hp.textContent = 'اختر صفك الدراسي';
 
-  // بناء بطاقات الصفوف
+  // بناء كروت الصفوف — تصميم كبير واضح
+  var stageMeta={
+    primary:   {grad:'linear-gradient(135deg,#22c55e,#16a34a)', glow:'rgba(34,197,94,.22)'},
+    middle:    {grad:'linear-gradient(135deg,#3b82f6,#4f46e5)', glow:'rgba(59,130,246,.22)'},
+    secondary: {grad:'linear-gradient(135deg,#f97316,#ea580c)', glow:'rgba(249,115,22,.22)'},
+    vocational:{grad:'linear-gradient(135deg,#8b5cf6,#6d28d9)', glow:'rgba(139,92,246,.22)'}
+  };
+  var sm2 = stageMeta[curStage] || {grad:'linear-gradient(135deg,#3b82f6,#4f46e5)',glow:'rgba(59,130,246,.22)'};
+
   var grades = ALL_GRADES.filter(function(g){ return g.stage === curStage; });
   var grid = el('grades-grid');
   if(!grid) return;
 
   var html = '';
   grades.forEach(function(g, i){
-    html += '<div class="grade-card" onclick="openGrade(\''+g.id+'\')"'
-          + ' style="background:'+g.bg+';animation-delay:'+(i*0.06)+'s">'
-          + '<div class="gc-shine"></div>'
-          + '<div class="gc-ic">'+g.icon+'</div>'
-          + '<div class="gc-nm">'+g.name+'</div>'
-          + '<div class="gc-sub">'+g.sub+'</div>'
+    html += '<div class="grade-big-card" onclick="openGrade(\''+g.id+'\')" style="animation-delay:'+(i*0.055)+'s">'
+          + '<div class="gbc-icon" style="background:'+g.bg+'">'+g.icon+'</div>'
+          + '<div class="gbc-body">'
+          + '<div class="gbc-name">'+g.name+'</div>'
+          + '<div class="gbc-sub">'+g.sub+'</div>'
+          + '</div>'
+          + '<div class="gbc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg></div>'
           + '</div>';
   });
   grid.innerHTML = html;
 }
 
-function openGrade(gid){
+async function openGrade(gid){
   var g=ALL_GRADES.find(function(x){return x.id===gid;});if(!g)return;
   curGrade=gid;
+
+  // Save grade to DB
+  var sess=getSess();
+  if(sess){
+    sess.grade=gid; sess.stage=curStage; setSess(sess);
+    if(sess.id){
+      try{ await sb('users','PATCH',{grade:gid,stage:curStage},'?id=eq.'+sess.id); }catch(e){}
+    }
+  }
+  syncSettingsUI && syncSettingsUI();
+  toast('✅ '+g.name+' — جاهز','ok');
 
   // المواد حسب الصف المحدد
   var subjs = GRADE_SUBJECTS[gid] || GRADE_SUBJECTS['m1'];
@@ -541,6 +537,7 @@ function openGrade(gid){
   document.querySelectorAll('.ctab').forEach(function(t){t.classList.remove('active');});
   var firstTab=document.querySelector('.ctab');if(firstTab)firstTab.classList.add('active');
   goPage('pg-class');
+  setNavActive('home');
   renderContent();
 }
 
@@ -591,12 +588,22 @@ function renderContent(){
   else                          el('class-body').innerHTML=head+renderCurriculum(subj);
 }
 
-async function loadBooklets(subj,head){
+async function loadBooklets(subj,head,bodyId){
+  bodyId = bodyId || 'class-body';
   try{
+    // Filter by grade name (grade column stores full name like 'أول ابتدائي')
+    // Fetch all for this stage+subject, then filter client-side by grade
     var q='?is_visible=eq.true&stage=eq.'+curStage+'&subject_id=eq.'+subj.id+'&order=created_at.asc';
     var rows=(await sb('booklets','GET',null,q))||[];
+    // Client-side grade filter using grade_id or grade name
+    if(curGrade){
+      rows=rows.filter(function(b){
+        // grade column stores grade_id (p1, m2...) OR is null/empty = show for all grades
+        return !b.grade || b.grade==='' || b.grade===curGrade;
+      });
+    }
     if(!rows.length){
-      el('class-body').innerHTML=head+'<div class="state-box"><div class="state-ic">📚</div><h3>لا توجد ملازم بعد</h3><p>ترقب المحتوى قريباً</p></div>';
+      el(bodyId).innerHTML=head+'<div class="state-box"><div class="state-ic">📚</div><h3>لا توجد ملازم بعد</h3><p>ترقب المحتوى قريباً</p></div>';
       return;
     }
     var html='<div class="sec-lbl">📂 الملازم ('+rows.length+')</div><div class="bk-grid">';
@@ -620,18 +627,27 @@ async function loadBooklets(subj,head){
           +(isFav?'محفوظة':'حفظ')+'</button>'
           +'</div></div>';
     });
-    el('class-body').innerHTML=head+html+'</div>';
+    el(bodyId).innerHTML=head+html+'</div>';
   }catch(e){
-    el('class-body').innerHTML=head+'<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ في التحميل</h3><p>'+e.message+'</p></div>';
+    el(bodyId).innerHTML=head+'<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ في التحميل</h3><p>'+e.message+'</p></div>';
   }
 }
 
-async function loadExams(subj,head){
+async function loadExams(subj,head,bodyId){
+  bodyId = bodyId || 'class-body';
   try{
+    // Filter by stage+subject, then client-side by grade
     var q='?is_visible=eq.true&stage=eq.'+curStage+'&subject_id=eq.'+subj.id+'&order=created_at.asc';
     var rows=(await sb('exams','GET',null,q))||[];
+    // Client-side grade filter
+    if(curGrade){
+      rows=rows.filter(function(ex){
+        // grade column stores grade_id (p1, m2...) OR is null/empty = show for all grades
+        return !ex.grade || ex.grade==='' || ex.grade===curGrade;
+      });
+    }
     if(!rows.length){
-      el('class-body').innerHTML=head+'<div class="state-box"><div class="state-ic">📝</div><h3>لا توجد اختبارات بعد</h3><p>ترقب المحتوى قريباً</p></div>';
+      el(bodyId).innerHTML=head+'<div class="state-box"><div class="state-ic">📝</div><h3>لا توجد اختبارات بعد</h3><p>ترقب المحتوى قريباً</p></div>';
       return;
     }
     var groups={'1':[],'2':[],'ns':[],'ls':[]};
@@ -681,9 +697,9 @@ async function loadExams(subj,head){
       });
       html+='</div></div>';
     });
-    el('class-body').innerHTML=head+html;
+    el(bodyId).innerHTML=head+html;
   }catch(e){
-    el('class-body').innerHTML=head+'<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ</h3><p>'+e.message+'</p></div>';
+    el(bodyId).innerHTML=head+'<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ</h3><p>'+e.message+'</p></div>';
   }
 }
 
@@ -1114,16 +1130,16 @@ function finishQuiz(){  _qFinish(); }
 function goQuestion(i){ Q.idx=i; _qRenderQ(); }
 function confirmCloseQuiz(){ _qConfirmExit(); }
 
-function renderCurriculum(subj){
-  // يعرض spinner ثم يجلب من Supabase
+function renderCurriculum(subj,bodyId){
+  bodyId = bodyId || 'class-body';
   var spinner='<div class="loading-spin"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ تحميل المنهج...</span></div>';
-  setTimeout(function(){loadCurriculumFromDB(subj);},0);
+  setTimeout(function(){loadCurriculumFromDB(subj,bodyId);},0);
   return '<div class="sec-lbl">📖 المنهج — '+subj.label+'</div>'+spinner;
 }
 
-async function loadCurriculumFromDB(subj){
-  var body=el('class-body');if(!body)return;
-  var head=body.querySelector('.subj-hd')?body.innerHTML.split('</div>').slice(0,2).join('</div>')+'</div>':'';
+async function loadCurriculumFromDB(subj,bodyId){
+  bodyId = bodyId || 'class-body';
+  var body=el(bodyId);if(!body)return;
   try{
     var q='?subject_id=eq.'+subj.id+'&stage=eq.'+curStage+'&grade=eq.'+curGrade+'&order=sort_order.asc';
     var chapters=(await sb('curriculum_chapters','GET',null,q))||[];
@@ -1304,6 +1320,72 @@ function clearSearch(){
 }
 
 /* ── PROFILE ─────────────────────────────────── */
+/* ══ openProfilePage — opens profile with DB refresh ══ */
+async function openProfilePage(){
+  var sess=getSess();
+  if(!sess||!sess.id){ goPage('pg-auth'); return; }
+  buildProfile();       // show local data immediately
+  goPage('pg-profile'); // navigate now
+
+  // Fetch fresh data from DB
+  try{
+    var rows=await sb('users','GET',null,'?id=eq.'+sess.id+'&select=id,display_name,username,photo_url,joined_at');
+    if(rows&&rows[0]){
+      var u=rows[0];
+      // Sync photo to session
+      if(u.photo_url) sess.photo_url=u.photo_url;
+      if(u.display_name){ sess.name=u.display_name; setSess(sess); }
+      // Update avatar
+      var av=el('p-avatar');
+      if(av){
+        if(u.photo_url){
+          av.innerHTML='<img src="'+u.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent=\''+((u.display_name||'؟').charAt(0).toUpperCase())+'\'">';
+        } else {
+          av.textContent=(u.display_name||sess.name||'؟').charAt(0).toUpperCase();
+        }
+      }
+      var pn=el('p-name'); if(pn) pn.textContent=u.display_name||sess.name;
+      var en=el('edit-name'); if(en) en.value=u.display_name||sess.name;
+    }
+  }catch(e){ console.warn('openProfilePage DB error:',e.message); }
+}
+
+/* Upload profile photo */
+async function uploadProfilePhoto(input){
+  var file = input.files[0];
+  if(!file) return;
+  var sess = getSess(); if(!sess||!sess.id) return;
+  var statusEl = el('p-photo-status');
+  if(statusEl) statusEl.textContent = '⏳ جارٍ الرفع...';
+  try{
+    var ext = file.name.split('.').pop() || 'jpg';
+    var path = 'photos/'+sess.id+'.'+ext;
+    // Upload to Supabase storage
+    var fd = new FormData(); fd.append('file', file);
+    var res = await fetch(SB_URL+'/storage/v1/object/files/'+path,{
+      method:'POST',
+      headers:{ 'apikey': SB_KEY, 'Authorization':'Bearer '+SB_KEY, 'x-upsert':'true' },
+      body: file
+    });
+    if(!res.ok){ var err=await res.json(); throw new Error(err.message||'فشل الرفع'); }
+    var photoUrl = SB_URL+'/storage/v1/object/public/files/'+path;
+    // Save to DB
+    await sb('users','PATCH',{photo_url:photoUrl},'?id=eq.'+sess.id);
+    // Update session + UI
+    sess.photo_url = photoUrl; setSess(sess);
+    var av = el('p-avatar');
+    if(av) av.innerHTML='<img src="'+photoUrl+'?t='+Date.now()+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>';
+    if(statusEl) statusEl.textContent = '✅ تم تحديث الصورة';
+    setTimeout(function(){ if(statusEl) statusEl.textContent=''; },3000);
+    toast('✅ تم تحديث الصورة','ok');
+  }catch(e){
+    if(statusEl) statusEl.textContent = '❌ '+e.message;
+    toast('❌ فشل الرفع: '+e.message,'err');
+    console.error('uploadProfilePhoto:',e);
+  }
+  input.value = '';
+}
+
 function buildProfile(){
   var s=getSess();if(!s){goPage('pg-auth');return;}
   var av=el('p-avatar');if(av)av.textContent=s.name.charAt(0).toUpperCase();
@@ -1524,10 +1606,10 @@ function renderSDetContent(){
 
   body.innerHTML = head + spinner;
 
-  if(curSDetTab==='exams')      loadExams(subj, head);
-  else if(curSDetTab==='booklets') loadBooklets(subj, head);
+  if(curSDetTab==='exams')         loadExams(subj, head, 'sdet-body');
+  else if(curSDetTab==='booklets')  loadBooklets(subj, head, 'sdet-body');
   else if(curSDetTab==='subj-teachers') loadSubjTeachers(subj, head);
-  else { body.innerHTML = head + renderCurriculum(subj); }
+  else { body.innerHTML = head + renderCurriculum(subj, 'sdet-body'); }
 }
 
 /* ── SUBJECT TEACHERS TAB ─────────────────────── */
@@ -1692,8 +1774,7 @@ var _origBottomNav = bottomNav;
 bottomNav = function(k){
   if(k==='teachers'){ setNavActive('teachers'); buildTeachersPage(); goPage('pg-teachers'); return; }
   if(k==='settings'){ openSettings(); return; }
-  // 'profile' still works but via settings now
-  if(k==='profile'){ openSettings(); return; }
+  if(k==='profile'){ setNavActive('profile'); openProfilePage(); return; }
   setNavActive(k);
   _origBottomNav(k);
 };
@@ -1815,58 +1896,188 @@ async function loadTeacherChapters(tid){
 
 var curChapterId = null;
 
+/* ═══════════════════════════════════════════════════════
+   openChapterLectures — Full Featured Chapter Page
+   ═══════════════════════════════════════════════════════ */
+var _curChapterMeta = {tid:'', chtitle:'', chcover:'', chid:''};
+
 async function openChapterLectures(chid, chtitle, chcover, tid){
   curChapterId = chid;
+  _curChapterMeta = {tid:tid, chtitle:chtitle, chcover:chcover, chid:chid};
 
   var tt = el('lec-tbar-title');
   var ts = el('lec-tbar-sub');
   if(tt) tt.textContent = chtitle;
-  if(ts) ts.textContent = 'المحاضرات';
+  if(ts) ts.textContent = 'تفاصيل الفصل';
 
   var backBtn = el('lec-back-btn');
   if(backBtn) backBtn.onclick = function(){ goPage('pg-teacher-chapters'); };
 
-  // Chapter hero
   var hero = el('lec-chapter-hero');
-  if(hero){
-    if(chcover){
-      hero.innerHTML = '<img class="lec-chapter-img" src="'+chcover+'" alt="'+chtitle+'" onerror="this.parentNode.innerHTML=\'<div class=\\"lec-chapter-img-placeholder\\">📁</div>\'">'
-        + '<div class="lec-chapter-info"><div class="lec-chapter-title">'+chtitle+'</div></div>';
-    } else {
-      hero.innerHTML = '<div class="lec-chapter-img-placeholder">📁</div>'
-        + '<div class="lec-chapter-info"><div class="lec-chapter-title">'+chtitle+'</div></div>';
-    }
-  }
-
   var list = el('lec-list');
   if(!list){ goPage('pg-lectures'); return; }
-  list.innerHTML = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
+
+  // Skeleton loading
+  if(hero) hero.innerHTML = '<div class="ch-hd-skeleton"><div class="ch-sk-cover"></div><div class="ch-sk-body"><div class="ch-sk-l"></div><div class="ch-sk-l ch-sk-l2"></div><div class="ch-sk-l ch-sk-l3"></div></div></div>';
+  list.innerHTML = Array(3).fill(0).map(function(){ return '<div class="lec-sk-item"><div class="lec-sk-thumb"></div><div class="lec-sk-info"><div class="lec-sk-t"></div><div class="lec-sk-m"></div></div></div>'; }).join('');
   goPage('pg-lectures');
 
   try{
-    var rows = (await sb('lectures','GET',null,'?chapter_id=eq.'+chid+'&is_visible=eq.true&order=sort_order.asc,created_at.asc')) || [];
+    var sess = getSess();
+
+    // Parallel fetch
+    var pLecs    = sb('lectures','GET',null,'?chapter_id=eq.'+chid+'&is_visible=eq.true&order=sort_order.asc,created_at.asc');
+    var pTeacher = tid ? sb('teachers','GET',null,'?id=eq.'+tid+'&select=name,photo_url') : Promise.resolve([]);
+    var pProg    = (sess && sess.id) ? sb('lecture_views','GET',null,'?user_id=eq.'+sess.id+'&select=lecture_id,watch_pct,last_watched') : Promise.resolve([]);
+
+    var rows        = (await pLecs)    || [];
+    var teacherRows = (await pTeacher) || [];
+    var progRows    = (await pProg)    || [];
+
+    _chapterLectures = rows;
+    var teacher = teacherRows[0] || null;
+
+    // Progress map
+    var progMap = {};
+    progRows.forEach(function(p){ progMap[p.lecture_id] = {pct: p.watch_pct||0, ts: p.last_watched||''}; });
+
+    // Last watched IN this chapter
+    var chIds = rows.map(function(r){return r.id;});
+    var lastLid = null, lastTs = '';
+    chIds.forEach(function(lid){
+      if(progMap[lid] && progMap[lid].ts > lastTs){ lastTs = progMap[lid].ts; lastLid = lid; }
+    });
+
+    // Stats
+    var totalLecs = rows.length;
+    var doneLecs  = rows.filter(function(r){return (progMap[r.id]||{}).pct >= 80;}).length;
+    var progPct   = totalLecs > 0 ? Math.round(doneLecs/totalLecs*100) : 0;
+
+    // Total duration
+    var totalSecs = 0;
+    rows.forEach(function(r){
+      if(!r.duration) return;
+      var p = r.duration.split(':').map(Number);
+      if(p.length===2) totalSecs += p[0]*60+p[1];
+      else if(p.length===3) totalSecs += p[0]*3600+p[1]*60+p[2];
+    });
+    var totalMins = Math.round(totalSecs/60);
+    var durStr = '';
+    if(totalMins >= 60){ var h=Math.floor(totalMins/60),m=totalMins%60; durStr=h+' ساعة'+(m>0?' و'+m+' د':''); }
+    else if(totalMins>0){ durStr=totalMins+' دقيقة'; }
+
+    // Resume
+    window._resumeLecId = lastLid || (rows[0] ? rows[0].id : null);
+
+    // ── Build hero HTML ──
+    if(hero){
+      var coverStyle = chcover
+        ? 'background-image:url('+chcover+');background-size:cover;background-position:center'
+        : 'background:linear-gradient(135deg,#1a2942 0%,#2563eb 60%,#4f46e5 100%)';
+
+      var teacherHtml = '';
+      if(teacher){
+        teacherHtml = '<div class="ch-hd-teacher">'
+          + (teacher.photo_url ? '<img src="'+teacher.photo_url+'" class="ch-hd-tav"/>' : '<span class="ch-hd-tav-ph">👨‍🏫</span>')
+          + '<span class="ch-hd-tname">'+teacher.name+'</span>'
+          +'</div>';
+      }
+
+      var statsHtml = '<div class="ch-hd-stats">'
+        +'<span class="ch-st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>'+totalLecs+' درس</span>'
+        +(durStr?'<span class="ch-st-dot">•</span><span class="ch-st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'+durStr+'</span>':'')
+        +(doneLecs>0?'<span class="ch-st-dot">•</span><span class="ch-st ch-st-g"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>'+doneLecs+' مكتمل</span>':'')
+        +'</div>';
+
+      hero.innerHTML =
+        '<div class="ch-hd-cover" style="'+coverStyle+'">'
+        +'<div class="ch-hd-shade"></div>'
+        +'<div class="ch-hd-corner-badge">'+totalLecs+' محاضرة</div>'
+        +'</div>'
+        +'<div class="ch-hd-prog"><div class="ch-hd-prog-bar" style="width:'+progPct+'%"></div></div>'
+        +'<div class="ch-hd-body">'
+        +'<h2 class="ch-hd-title">'+chtitle+'</h2>'
+        +teacherHtml
+        +statsHtml
+        +'<button class="ch-hd-resume" onclick="_chapterResume()">'
+        +'<svg viewBox="0 0 24 24" fill="white" width="15" height="15"><polygon points="5,3 19,12 5,21"/></svg>'
+        +(lastLid ? 'متابعة من حيث توقفت' : 'ابدأ الآن')
+        +'</button>'
+        +'</div>';
+    }
+
+    // ── Lecture list ──
     if(!rows.length){
-      list.innerHTML = '<div class="state-box"><div class="state-ic">🎬</div><h3>لا توجد محاضرات بعد</h3><p>سيُضاف المحتوى قريباً</p></div>';
+      list.innerHTML='<div class="state-box"><div class="state-ic">🎬</div><h3>لا توجد محاضرات بعد</h3><p>سيُضاف المحتوى قريباً</p></div>';
       return;
     }
-    var html = '';
-    rows.forEach(function(lec, i){
-      html += '<div class="lec-item" onclick="openVideoPlayer(\''+lec.id+'\',\''+lec.title.replace(/'/g,"\\'")+'\',\''+  (lec.video_url||'')+'\',\''+chtitle.replace(/'/g,"\\'")+'\',\''+chid+'\')" style="animation-delay:'+(i*0.06)+'s">'
-            + '<div class="lec-num">'+(i+1)+'</div>'
-            + '<div class="lec-info"><div class="lec-name">'+lec.title+'</div><div class="lec-meta">'+(lec.duration?'⏱ '+lec.duration:' محاضرة')+'</div></div>'
-            + '<div class="lec-play-ic"><svg viewBox="0 0 24 24" fill="white" width="16" height="16"><polygon points="5,3 19,12 5,21"/></svg></div>'
-            + '</div>';
+
+    var html='<div class="ch-list-hdr"><span class="ch-list-hdr-t">📋 قائمة المحاضرات</span><span class="ch-list-cnt">'+totalLecs+' درس</span></div>';
+    rows.forEach(function(lec,i){
+      var p    = (progMap[lec.id]||{}).pct||0;
+      var done = p>=80;
+      var isLast = lec.id===lastLid;
+
+      var thumbInner = done
+        ? '<div class="lec-ck"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg></div>'
+        : '';
+
+      var thumb = lec.thumbnail_url
+        ? '<div class="lec-thumb2" style="background-image:url('+lec.thumbnail_url+')">'+thumbInner+'</div>'
+        : '<div class="lec-thumb2 lec-thumb2-ph">'
+          +(done
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="rgba(255,255,255,.7)" width="14" height="14"><polygon points="5,3 19,12 5,21"/></svg>')
+          +'</div>';
+
+      html+='<div class="lec-row'+(done?' lec-row-done':'')+(isLast?' lec-row-cur':'')+'" data-i="'+i+'" style="animation-delay:'+(i*0.04)+'s">'
+        +thumb
+        +'<div class="lec-row-num">'+(done?'<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg>':(i+1))+'</div>'
+        +'<div class="lec-row-info">'
+        +'<div class="lec-row-name">'+lec.title+'</div>'
+        +'<div class="lec-row-meta">'
+        +(lec.duration?'<span class="lec-dur">⏱ '+lec.duration+'</span>':'')
+        +(done?'<span class="lec-done-chip">✓ مكتملة</span>':'')
+        +'</div>'
+        +'</div>'
+        +(done
+          ? '<div class="lec-row-end lec-row-end-ok"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg></div>'
+          : '<div class="lec-row-end lec-row-end-pl"><svg viewBox="0 0 24 24" fill="white" width="12" height="12"><polygon points="5,3 19,12 5,21"/></svg></div>')
+        +'</div>';
     });
-    list.innerHTML = html;
-  }catch(e){
-    list.innerHTML = '<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ</h3><p>'+e.message+'</p></div>';
+    list.innerHTML=html;
+
+    // Bind click events
+    list.querySelectorAll('.lec-row').forEach(function(item){
+      item.addEventListener('click',function(){
+        var i=parseInt(this.dataset.i), lec=rows[i];
+        if(!lec) return;
+        openVideoPlayer(lec.id,lec.title,lec.video_url||'',chtitle,chid,i,lec.thumbnail_url||'');
+      });
+    });
+
+  }catch(err){
+    var l=el('lec-list');
+    if(l) l.innerHTML='<div class="state-box"><div class="state-ic">⚠️</div><h3>خطأ في التحميل</h3><p>'+err.message+'</p></div>';
+    console.error('openChapterLectures:',err);
   }
 }
 
+function _chapterResume(){
+  var lid=window._resumeLecId; if(!lid) return;
+  var idx=_chapterLectures.findIndex(function(l){return l.id===lid;}); if(idx===-1) idx=0;
+  var lec=_chapterLectures[idx]; if(!lec) return;
+  openVideoPlayer(lec.id,lec.title,lec.video_url||'',_curChapterMeta.chtitle,_curChapterMeta.chid,idx,lec.thumbnail_url||'');
+}
 /* ══════════════════════════════════════════════
    VIDEO PLAYER — مشغل الفيديو
 ══════════════════════════════════════════════ */
-var vidState = { url:'', title:'', chapterTitle:'', chapterId:'' };
+var vidState = { url:'', title:'', chapterTitle:'', chapterId:'', lectureId:'', thumbnail:'' };
+var _chapterLectures  = [];  // current chapter's lecture list
+var _curLecIndex      = -1;  // index in _chapterLectures
+var _autoplayEnabled  = true; // user preference
+var _autoplayTimer    = null;
+var _autoplayCountdown = 0;
 
 // ── تتبع مشاهدات المحاضرات ──
 var _viewTrackTimer = null;
@@ -1883,6 +2094,8 @@ async function trackLectureView(lectureId, pct){
       var newPct = Math.max(curPct, Math.round(pct));
       if(newPct > curPct){
         await sb('lecture_views','PATCH',{watch_pct:newPct,last_watched:new Date().toISOString()},'?lecture_id=eq.'+lectureId+'&user_id=eq.'+sess.id);
+        // Update live progress bar if newly completed (≥80%)
+        if(newPct >= 80 && curPct < 80){ _updateChapterProgressBar(); }
       }
     } else {
       await sb('lecture_views','POST',{
@@ -1893,19 +2106,57 @@ async function trackLectureView(lectureId, pct){
         watch_pct:Math.round(pct),
         last_watched:new Date().toISOString()
       });
+      // Update live progress bar if first completion (≥80%)
+      if(Math.round(pct) >= 80){ _updateChapterProgressBar(); }
     }
   }catch(e){ console.warn('track view error:',e.message); }
 }
 
-function openVideoPlayer(lid, ltitle, vurl, chtitle, chid){
-  if(!vurl){ toast('⚠️ لا يوجد رابط فيديو','warn'); return; }
+/* Update chapter progress bar live without page reload */
+function _updateChapterProgressBar(){
+  var chid = _curChapterMeta && _curChapterMeta.chid;
+  if(!chid || !_chapterLectures.length) return;
+  var sess = getSess();
+  if(!sess || !sess.id) return;
+  // Re-fetch progress for this chapter's lectures
+  var ids = _chapterLectures.map(function(l){return l.id;}).join(',');
+  sb('lecture_views','GET',null,'?user_id=eq.'+sess.id+'&lecture_id=in.('+ids+')&select=lecture_id,watch_pct')
+    .then(function(rows){
+      rows = rows || [];
+      var done = rows.filter(function(r){return (r.watch_pct||0)>=80;}).length;
+      var total = _chapterLectures.length;
+      var pct = total > 0 ? Math.round(done/total*100) : 0;
+      // Update bar
+      var bar = el('ch-hd-prog-bar');  // might not exist (on video page)
+      if(bar){
+        bar.style.width = pct + '%';
+        // Flash animation
+        bar.style.transition = 'width 1s cubic-bezier(.4,0,.2,1)';
+      }
+      // Also update done count in stats
+      var statEl = document.querySelector('.ch-st-g');
+      if(statEl && done > 0) statEl.querySelector('span') && (statEl.querySelector('span').textContent = done + ' مكتمل');
+    }).catch(function(){});
+}
+
+function openVideoPlayer(lid, ltitle, vurl, chtitle, chid, lecIdx, thumbUrl){
+  // Auth check — guests cannot watch lectures
+  var _s = getSess();
+  if(isGuest || !_s || !_s.id){
+    toast('🔒 يجب تسجيل الدخول لمشاهدة المحاضرات','warn');
+    setTimeout(function(){ goPage('pg-auth'); }, 600);
+    return;
+  }
+  if(!vurl){ toast('⚠️ لا يوجد رابط فيديو للمحاضرة','warn'); return; }
 
   // Stop previous tracking
   if(_viewTrackTimer){ clearInterval(_viewTrackTimer); _viewTrackTimer=null; }
   _viewLectureId = lid;
   _viewMaxPct = 0;
 
-  vidState = { url:vurl, title:ltitle, chapterTitle:chtitle, chapterId:chid };
+  _curLecIndex = (lecIdx !== undefined && lecIdx !== '') ? parseInt(lecIdx) : 
+    _chapterLectures.findIndex(function(l){ return l.id === lid; });
+  vidState = { url:vurl, title:ltitle, chapterTitle:chtitle, chapterId:chid, lectureId:lid, thumbnail:thumbUrl||'' };
 
   // Set back button
   var bb = el('vid-back-btn');
@@ -1925,6 +2176,7 @@ function openVideoPlayer(lid, ltitle, vurl, chtitle, chid){
   if(si) si.textContent = chtitle + ' · محاضرة';
 
   goPage('pg-video');
+  _buildVidChapterList(lid);  // Build chapter playlist
 
   // Load video
   setTimeout(function(){
@@ -1963,6 +2215,7 @@ function _vidBindEvents(vid){
   };
   vid.onended = function(){
     if(_viewLectureId) trackLectureView(_viewLectureId, 100);
+    _onLectureEnded();
   };
   vid.onloadedmetadata = function(){
     var d = el('vid-duration');
@@ -2025,6 +2278,120 @@ function _vidUpdateBuffer(vid){
   var pct = (vid.buffered.end(vid.buffered.length-1) / vid.duration) * 100;
   var buf = el('vid-buf');
   if(buf) buf.style.width = pct+'%';
+}
+
+
+/* ══════════════════════════════════════════════
+   VIDEO — Chapter playlist & Autoplay
+══════════════════════════════════════════════ */
+
+function _buildVidChapterList(curLid){
+  var list  = document.getElementById('vcl-list');
+  var count = document.getElementById('vcl-count');
+  if(!list) return;
+  if(!_chapterLectures.length){ list.innerHTML = ''; return; }
+  if(count) count.textContent = _chapterLectures.length + ' محاضرة';
+  var html = '';
+  _chapterLectures.forEach(function(lec, i){
+    var isCur = lec.id === curLid;
+    var thumbBg = lec.thumbnail_url ? 'background-image:url('+lec.thumbnail_url+')' : '';
+    var thumbCls = lec.thumbnail_url ? 'vcl-thumb' : 'vcl-thumb vcl-thumb-def';
+    var thumbInner = lec.thumbnail_url ? '' : '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5" width="16" height="16"><polygon points="5,3 19,12 5,21"/></svg>';
+    html += '<div class="vcl-item'+(isCur?' vcl-active':'')+'" id="vcli-'+lec.id+'"'
+          + ' data-lid="'+lec.id+'"'
+          + ' data-idx="'+i+'">';
+    html += '<div class="'+thumbCls+'" style="'+thumbBg+'">'+thumbInner+'</div>';
+    html += '<div class="vcl-item-num">'+(isCur?'▶':i+1)+'</div>';
+    html += '<div class="vcl-item-info">';
+    html += '<div class="vcl-item-title">'+lec.title+'</div>';
+    html += '<div class="vcl-item-meta">'+(lec.duration?'⏱ '+lec.duration:'')+'</div>';
+    html += '</div></div>';
+  });
+  list.innerHTML = html;
+  // Bind click handlers
+  list.querySelectorAll('.vcl-item').forEach(function(item){
+    var lid   = item.dataset.lid;
+    var idx   = parseInt(item.dataset.idx);
+    var lecObj = _chapterLectures[idx];
+    if(!lecObj) return;
+    item.onclick = function(){
+      openVideoPlayer(lecObj.id, lecObj.title, lecObj.video_url||'', vidState.chapterTitle, vidState.chapterId, idx, lecObj.thumbnail_url||'');
+    };
+  });
+  // Scroll active item into view
+  setTimeout(function(){
+    var active = document.getElementById('vcli-'+curLid);
+    if(active) active.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 300);
+}
+
+function _buildVidChapterListFromRows(rows, curLid){
+  _chapterLectures = rows;
+  _buildVidChapterList(curLid);
+}
+
+function _onLectureEnded(){
+  if(!_autoplayEnabled) return;
+  var nextIdx = _curLecIndex + 1;
+  if(nextIdx >= _chapterLectures.length) return; // آخر محاضرة
+  var nextLec = _chapterLectures[nextIdx];
+  if(!nextLec) return;
+  _startAutoplayCountdown(nextLec, nextIdx);
+}
+
+function _startAutoplayCountdown(nextLec, nextIdx){
+  _autoplayCountdown = 5;
+  var banner = document.getElementById('vid-autoplay-banner');
+  var titleEl = document.getElementById('vab-next-title');
+  var cntEl = document.getElementById('vab-countdown');
+  var fill  = document.getElementById('vab-fill');
+  if(!banner) return;
+  if(titleEl) titleEl.textContent = nextLec.title;
+  if(cntEl) cntEl.textContent = _autoplayCountdown;
+  if(fill) fill.style.width = '0%';
+  banner.classList.remove('hidden');
+  banner.classList.add('show');
+
+  // Store next lec info
+  window._autoplayNext = {lec: nextLec, idx: nextIdx};
+
+  _autoplayTimer = setInterval(function(){
+    _autoplayCountdown--;
+    if(cntEl) cntEl.textContent = _autoplayCountdown;
+    var pct = ((5 - _autoplayCountdown) / 5) * 100;
+    if(fill) fill.style.width = pct + '%';
+    if(_autoplayCountdown <= 0){
+      clearInterval(_autoplayTimer);
+      _autoplayTimer = null;
+      playNextNow();
+    }
+  }, 1000);
+}
+
+function cancelAutoplay(){
+  if(_autoplayTimer){ clearInterval(_autoplayTimer); _autoplayTimer = null; }
+  var banner = document.getElementById('vid-autoplay-banner');
+  if(banner){ banner.classList.remove('show'); setTimeout(function(){ banner.classList.add('hidden'); }, 400); }
+}
+
+function playNextNow(){
+  if(_autoplayTimer){ clearInterval(_autoplayTimer); _autoplayTimer = null; }
+  var banner = document.getElementById('vid-autoplay-banner');
+  if(banner){ banner.classList.remove('show'); setTimeout(function(){ banner.classList.add('hidden'); }, 200); }
+  if(window._autoplayNext){
+    var l = window._autoplayNext.lec;
+    var i = window._autoplayNext.idx;
+    openVideoPlayer(l.id, l.title, l.video_url||'', vidState.chapterTitle, vidState.chapterId, i, l.thumbnail_url||'');
+  }
+}
+
+function toggleAutoplay(){
+  _autoplayEnabled = !_autoplayEnabled;
+  try{ localStorage.setItem('doroz_autoplay', _autoplayEnabled ? 'true' : 'false'); }catch(e){}
+  toast(_autoplayEnabled ? '✅ التشغيل التلقائي مفعّل' : '⏹ التشغيل التلقائي متوقف', 'info');
+  // Update settings UI
+  var btn = document.getElementById('autoplay-toggle-btn');
+  if(btn) btn.textContent = _autoplayEnabled ? '✅ مفعّل' : '⏹ متوقف';
 }
 
 function _vidFmt(s){

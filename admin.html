@@ -576,10 +576,12 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
       </div>
       <div class="fr two">
         <div><label>المرحلة *</label>
-          <select class="fs" id="bk-stage"><option value="">اختر</option><option value="primary">الابتدائية</option><option value="middle">المتوسطة</option><option value="secondary">الإعدادية</option><option value="vocational">المهني</option></select>
+          <select class="fs" id="bk-stage" onchange="populateGradeDropdown('bk-stage','bk-grade')"><option value="">اختر</option><option value="primary">الابتدائية</option><option value="middle">المتوسطة</option><option value="secondary">الإعدادية</option><option value="vocational">المهني</option></select>
         </div>
         <div><label>الصف</label>
-          <select class="fs" id="bk-grade"><option value="">الكل</option><option>أول</option><option>ثاني</option><option>ثالث</option><option>رابع</option><option>خامس</option><option>سادس</option></select>
+          <select class="fs" id="bk-grade">
+            <option value="">الكل (جميع الصفوف)</option>
+          </select>
         </div>
       </div>
       <!-- صورة الغلاف -->
@@ -659,10 +661,12 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
       </div>
       <div class="fr two">
         <div><label>المرحلة *</label>
-          <select class="fs" id="ex-stage"><option value="">اختر</option><option value="primary">الابتدائية</option><option value="middle">المتوسطة</option><option value="secondary">الإعدادية</option><option value="vocational">المهني</option></select>
+          <select class="fs" id="ex-stage" onchange="populateGradeDropdown('ex-stage','ex-grade')"><option value="">اختر</option><option value="primary">الابتدائية</option><option value="middle">المتوسطة</option><option value="secondary">الإعدادية</option><option value="vocational">المهني</option></select>
         </div>
         <div><label>الصف</label>
-          <select class="fs" id="ex-grade"><option value="">الكل</option><option>أول</option><option>ثاني</option><option>ثالث</option><option>رابع</option><option>خامس</option><option>سادس</option></select>
+          <select class="fs" id="ex-grade">
+            <option value="">الكل (جميع الصفوف)</option>
+          </select>
         </div>
       </div>
       <div class="fr two">
@@ -1038,7 +1042,8 @@ function editBk(id){
   g('bk-m-title').textContent='تعديل الملزمة';g('bk-eid').value=id;
   g('bk-name').value=b.name||'';g('bk-url').value=b.file_url||'';
   g('bk-notes').value=b.notes||'';g('bk-img-url').value=b.cover_url||'';
-  setSel('bk-stage',b.stage);setSel('bk-subj',b.subject_name);setSel('bk-grade',b.grade);
+  setSel('bk-stage',b.stage);setSel('bk-subj',b.subject_name);
+  populateGradeDropdown('bk-stage','bk-grade'); setSel('bk-grade',b.grade||'');
   selBkE=b.emoji||'📝';selBkC=b.color||COLORS[0];
   var prev=g('bk-ic-prev');
   if(b.cover_url){
@@ -1066,7 +1071,7 @@ async function saveBk(){
       subject_id:toSubjId(subj),
       subject_name:subj,
       stage:stage,
-      grade:g('bk-grade').value||null,
+      grade:g('bk-grade').value||null,  // grade_id: p1, m2, s3 etc
       emoji:selBkE,
       color:selBkC,
       cover_url:coverUrl||null,
@@ -1156,13 +1161,35 @@ function editEx(id){
   g('ex-m-title').textContent='تعديل الاختبار';g('ex-eid').value=id;
   g('ex-name').value=e.name||'';g('ex-url').value=e.file_url||'';
   g('ex-notes').value=e.notes||'';g('ex-year').value=e.academic_year||'';
-  setSel('ex-stage',e.stage);setSel('ex-subj',e.subject_name);setSel('ex-grade',e.grade);
+  setSel('ex-stage',e.stage);setSel('ex-subj',e.subject_name);
+  populateGradeDropdown('ex-stage','ex-grade'); setSel('ex-grade',e.grade||'');
   setSel('ex-course',e.course);
   updateExamTypes();
   setTimeout(function(){setSel('ex-type',e.exam_type);},50);
   files.ex=null;
   try{loadQuizFromData(e.questions?JSON.parse(e.questions):[]);}catch(er){clearQuiz();}
   openOv('ov-ex');
+}
+
+/* Populate grade dropdown based on selected stage */
+var ADMIN_GRADES_MAP = {
+  primary:   [{id:'p1',name:'أول ابتدائي'},{id:'p2',name:'ثاني ابتدائي'},{id:'p3',name:'ثالث ابتدائي'},{id:'p4',name:'رابع ابتدائي'},{id:'p5',name:'خامس ابتدائي'},{id:'p6',name:'سادس ابتدائي'}],
+  middle:    [{id:'m1',name:'أول متوسط'},{id:'m2',name:'ثاني متوسط'},{id:'m3',name:'ثالث متوسط'}],
+  secondary: [{id:'s1',name:'رابع إعدادي'},{id:'s2',name:'خامس إعدادي'},{id:'s3',name:'سادس إعدادي'}],
+  vocational:[{id:'vb1',name:'فرع صناعي'},{id:'vb2',name:'فرع تجاري'},{id:'vb3',name:'فرع زراعي'},{id:'vb4',name:'فرع سياحة'},{id:'vb5',name:'فرع حاسوب'},{id:'vb6',name:'تقنيات حاسوب'},{id:'vb7',name:'فنون تطبيقية'}]
+};
+function populateGradeDropdown(stageElId, gradeElId){
+  var stage = g(stageElId).value;
+  var gradeEl = g(gradeElId);
+  if(!gradeEl) return;
+  gradeEl.innerHTML = '<option value="">الكل (جميع الصفوف)</option>';
+  var list = ADMIN_GRADES_MAP[stage] || [];
+  list.forEach(function(gr){
+    var opt = document.createElement('option');
+    opt.value = gr.id;
+    opt.textContent = gr.name;
+    gradeEl.appendChild(opt);
+  });
 }
 
 async function saveEx(){
@@ -1194,7 +1221,7 @@ async function saveEx(){
       course:course,
       exam_type:type,
       stage:stage,
-      grade:g('ex-grade').value||null,
+      grade:g('ex-grade').value||null,  // grade_id: p1, m2, s3 etc
       academic_year:g('ex-year').value.trim()||null,
       color:COURSE_COLORS[type]||'#667eea',
       file_url:fileUrl||null,
@@ -1557,6 +1584,21 @@ function showToast(msg,type){
       <div class="fr">
         <label>مدة المحاضرة (اختياري)</label>
         <input class="fi" id="lec-duration" placeholder="مثال: 45:30"/>
+      </div>
+      <div class="fr">
+        <label>صورة المحاضرة (اختياري — 16:9)</label>
+        <input class="fi" id="lec-thumbnail-url" placeholder="رابط الصورة أو ارفع أدناه"/>
+        <div class="fdrop" id="lec-thumb-drop" style="margin-top:8px">
+          <input type="file" accept="image/*" onchange="handleLectureThumbnail(this)"/>
+          <span class="fd-ic">🖼️</span>
+          <div class="fd-title">اسحب صورة أو انقر للاختيار</div>
+          <div class="fd-sub">JPG, PNG, WebP — نسبة 16:9 مُفضلة</div>
+        </div>
+        <div class="prog-wrap" id="lec-thumb-prog">
+          <div class="prog-bar"><div class="prog-fill" id="lec-thumb-fill"></div></div>
+          <div class="prog-lbl" id="lec-thumb-lbl">جارٍ الرفع...</div>
+        </div>
+        <div id="lec-thumb-preview" style="margin-top:8px"></div>
       </div>
       <div class="fr">
         <label>ملاحظات (اختياري)</label>
@@ -2563,7 +2605,10 @@ function renderLecturesAdminList(rows){
       : '<span class="badge" style="background:rgba(255,255,255,.05);color:var(--tx3)">0</span>';
     html += '<tr>';
     html += '<td><div class="td-nm">'+(i+1)+'</div></td>';
-    html += '<td><div class="td-nm">'+lec.title+'</div><div class="td-sub" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+lec.video_url+'</div></td>';
+    var thumbHtml = lec.thumbnail_url
+      ? '<img src="'+lec.thumbnail_url+'" style="width:48px;height:27px;object-fit:cover;border-radius:4px;vertical-align:middle;margin-left:8px">'
+      : '<div style="width:48px;height:27px;border-radius:4px;background:rgba(255,255,255,.06);display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;vertical-align:middle;margin-left:8px">🎬</div>';
+    html += '<td><div class="td-nm" style="display:flex;align-items:center">'+thumbHtml+lec.title+'</div><div class="td-sub" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:56px">'+lec.video_url+'</div></td>';
     html += '<td>'+(lec.duration||'—')+'</td>';
     html += '<td>'+vBadge+'</td>';
     html += '<td><span class="badge '+(lec.is_visible?'b-grn':'b-red')+'">'+(lec.is_visible?'ظاهر':'مخفي')+'</span></td>';
@@ -2582,7 +2627,10 @@ function openAddLecture(){
   document.getElementById('lec-title').value = '';
   document.getElementById('lec-video-url').value = '';
   document.getElementById('lec-duration').value = '';
+  document.getElementById('lec-thumbnail-url').value = '';
   document.getElementById('lec-sort').value = (_lecturesList.length+1);
+  var prev = document.getElementById('lec-thumb-preview');
+  if(prev) prev.innerHTML = '';
   openOv('ov-lecture');
 }
 
@@ -2594,7 +2642,14 @@ function editLecture(id){
   document.getElementById('lec-title').value = lec.title||'';
   document.getElementById('lec-video-url').value = lec.video_url||'';
   document.getElementById('lec-duration').value = lec.duration||'';
+  document.getElementById('lec-thumbnail-url').value = lec.thumbnail_url||'';
   document.getElementById('lec-sort').value = lec.sort_order||1;
+  var prev = document.getElementById('lec-thumb-preview');
+  if(prev){
+    prev.innerHTML = lec.thumbnail_url
+      ? '<img src="'+lec.thumbnail_url+'" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;aspect-ratio:16/9">'
+      : '';
+  }
   openOv('ov-lecture');
 }
 
@@ -2628,6 +2683,44 @@ async function handleLectureVideo(input){
     if(lbl) lbl.textContent='✅ تم الرفع!';
     document.getElementById('lec-video-url').value = url;
     showToast('✅ تم رفع الفيديو بنجاح','ok');
+    setTimeout(function(){ if(prog) prog.classList.remove('show'); if(fill) fill.style.width='0%'; }, 2000);
+  }catch(e){
+    if(prog) prog.classList.remove('show');
+    showToast('❌ '+e.message,'err');
+  }
+}
+
+async function handleLectureThumbnail(input){
+  var file = input.files[0];
+  if(!file) return;
+  var prog = document.getElementById('lec-thumb-prog');
+  var fill = document.getElementById('lec-thumb-fill');
+  var lbl  = document.getElementById('lec-thumb-lbl');
+  var prev = document.getElementById('lec-thumb-preview');
+  if(prog) prog.classList.add('show');
+  if(lbl) lbl.textContent = 'جارٍ رفع الصورة... 0%';
+  try{
+    var ext = file.name.split('.').pop().toLowerCase()||'jpg';
+    var path = 'thumbnails/'+Date.now()+'.'+ext;
+    var pct = 0;
+    var iv = setInterval(function(){
+      pct = Math.min(pct+6, 90);
+      if(fill) fill.style.width = pct+'%';
+      if(lbl) lbl.textContent = 'جارٍ رفع الصورة... '+pct+'%';
+    }, 150);
+    var r = await fetch(SB+'/storage/v1/object/files/'+path, {
+      method:'POST',
+      headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':file.type||'image/jpeg'},
+      body:file
+    });
+    clearInterval(iv);
+    if(!r.ok){ var t=await r.text(); throw new Error('رفع الصورة فشل: '+t); }
+    var url = SB+'/storage/v1/object/public/files/'+path;
+    if(fill) fill.style.width='100%';
+    if(lbl) lbl.textContent='✅ تم رفع الصورة!';
+    document.getElementById('lec-thumbnail-url').value = url;
+    if(prev) prev.innerHTML = '<img src="'+url+'" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;aspect-ratio:16/9">';
+    showToast('✅ تم رفع صورة المحاضرة بنجاح','ok');
     setTimeout(function(){ if(prog) prog.classList.remove('show'); if(fill) fill.style.width='0%'; }, 2000);
   }catch(e){
     if(prog) prog.classList.remove('show');
