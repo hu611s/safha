@@ -1,26 +1,35 @@
 {
   "name": "دوروز أكاديمي",
   "short_name": "دوروز",
-  "description": "منصتك الدراسية الشاملة",
-  "start_url": "/",
+  "description": "منصتك الدراسية الشاملة — ملازم، اختبارات، محاضرات",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#667eea",
+  "background_color": "#0f0f1a",
   "theme_color": "#667eea",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "lang": "ar",
   "dir": "rtl",
+  "categories": ["education"],
   "icons": [
     {
       "src": "https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }

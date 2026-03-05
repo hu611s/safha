@@ -107,12 +107,98 @@ var COURSE_TYPES = {
 
 /* ── STATE ───────────────────────────────────── */
 var curStage=null, curBranch=null, curGrade=null, curSubject=null;
+var _pageHistory = [];
 var curCTab='booklets', curFilter='all';
 var isDark=false, isGuest=false;
 var searchIdx=[];
 
 /* ── SESSION (localStorage) ──────────────────── */
 function getSess(){ try{return JSON.parse(localStorage.getItem('dz_sess'))||null;}catch(e){return null;} }
+/* ══════════════════════════════════════════════
+   ACTIVITY LOG — تسجيل نشاط المستخدم
+   يُسجَّل في جدول activity_logs في Supabase
+══════════════════════════════════════════════ */
+function logActivity(type, data){
+  /* type: 'exam' | 'lecture' | 'booklet'
+     data: { item_id, item_name, subject_name, score(exam only) } */
+  var sess = getSess();
+  if(!sess || !sess.id || isGuest) return;
+  try{
+    var payload = {
+      user_id:      sess.id,
+      username:     sess.username || '',
+      type:         type,
+      item_id:      data.item_id   || '',
+      item_name:    data.item_name  || '',
+      subject_name: data.subject_name || '',
+      score:        data.score !== undefined ? data.score : null,
+      created_at:   new Date().toISOString()
+    };
+    sb('activity_logs','POST',payload).catch(function(){});
+  }catch(e){}
+}
+
+var _activityCache = [];
+
+async function loadActivityLog(){
+  var sess = getSess();
+  if(!sess || !sess.id) return;
+  try{
+    var rows = (await sb('activity_logs','GET',null,
+      '?user_id=eq.'+sess.id+'&order=created_at.desc&limit=20')) || [];
+    _activityCache = rows;
+    renderActivityLog(rows);
+  }catch(e){
+    var list = el('activity-list');
+    if(list) list.innerHTML = '<div class="state-box"><p style="color:var(--d-tx3)">تعذّر تحميل السجل</p></div>';
+  }
+}
+
+function renderActivityLog(rows){
+  var list = el('activity-list');
+  if(!list) return;
+  if(!rows || !rows.length){
+    list.innerHTML = '<div class="state-box" style="padding:40px 0"><div class="state-ic">📋</div><h3 style="color:var(--d-tx1)">لا يوجد نشاط بعد</h3><p style="color:var(--d-tx3)">ستظهر هنا الاختبارات والمحاضرات والملازم التي تفاعلت معها</p></div>';
+    return;
+  }
+  var ICONS = {exam:'📝', lecture:'📹', booklet:'📚'};
+  var LABELS = {exam:'اختبار', lecture:'محاضرة', booklet:'ملزمة'};
+  var COLORS = {exam:'var(--d-yellow)', lecture:'var(--d-p400)', booklet:'var(--d-teal)'};
+  var html = '';
+  rows.forEach(function(r){
+    var icon  = ICONS[r.type]  || '📌';
+    var label = LABELS[r.type] || r.type;
+    var color = COLORS[r.type] || 'var(--d-p400)';
+    var time  = getTimeAgo(r.created_at);
+    var extra = '';
+    if(r.type === 'exam' && r.score !== null && r.score !== undefined){
+      var sc = parseInt(r.score);
+      var col = sc >= 80 ? '#22c55e' : sc >= 50 ? '#f59e0b' : '#ef4444';
+      extra = '<span class="act-score" style="background:'+col+'20;color:'+col+';border:1px solid '+col+'40">'+sc+'%</span>';
+    }
+    html += '<div class="act-row">'
+          + '<div class="act-ic" style="background:'+color+'18;color:'+color+'">'+icon+'</div>'
+          + '<div class="act-info">'
+          +   '<div class="act-name">'+r.item_name+'</div>'
+          +   '<div class="act-meta">'
+          +     '<span class="act-type-badge" style="background:'+color+'18;color:'+color+'">'+label+'</span>'
+          +     (r.subject_name ? '<span>'+r.subject_name+'</span>' : '')
+          +   '</div>'
+          + '</div>'
+          + '<div class="act-right">'
+          +   extra
+          +   '<div class="act-time">'+time+'</div>'
+          + '</div>'
+          + '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function openActivityLog(){
+  goPage('pg-activity');
+  loadActivityLog();
+}
+
 function setSess(s){ localStorage.setItem('dz_sess',JSON.stringify(s)); }
 function getFavs(){ try{return JSON.parse(localStorage.getItem('dz_favs'))||[];}catch(e){return[];} }
 function setFavs(f){ localStorage.setItem('dz_favs',JSON.stringify(f)); }
@@ -121,8 +207,12 @@ function setFavs(f){ localStorage.setItem('dz_favs',JSON.stringify(f)); }
 function el(id){ return document.getElementById(id); }
 function goPage(pid){
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active');});
-  el(pid).classList.add('active');
+  if(el(pid)) el(pid).classList.add('active');
   window.scrollTo(0,0);
+  // Track page history for back button
+  if(!_pageHistory) _pageHistory = [];
+  if(_pageHistory[_pageHistory.length-1] !== pid) _pageHistory.push(pid);
+  if(_pageHistory.length > 20) _pageHistory.shift();
 }
 function toast(msg,type){
   var t=el('toast'); if(!t)return;
@@ -133,7 +223,231 @@ function toast(msg,type){
 }
 function openModal(id){var o=el(id);if(!o)return;o.classList.remove('hidden');document.body.style.overflow='hidden';o.onclick=function(e){if(e.target===o)closeModal(id);};}
 function closeModal(id){var o=el(id);if(!o)return;o.classList.add('hidden');document.body.style.overflow='';}
-function showBottomNav(s){var n=el('bottomNav');if(n){if(s)n.classList.remove('hidden');else n.classList.add('hidden');}}
+function showBottomNav(s){
+  var n=el('bottomNav');
+  if(n){if(s)n.classList.remove('hidden');else n.classList.add('hidden');}
+  // Sync global top bar
+  var gt=el('gtbar');
+  if(gt){if(s)gt.classList.remove('hidden');else gt.classList.add('hidden');}
+  // Body class for page top-padding
+  if(s){document.body.classList.add('has-gtbar');}else{document.body.classList.remove('has-gtbar');}
+  if(s){updateGtbarAvatar();syncNotifToggle();}
+  // Auth page: always full-screen, hide all chrome
+  var pgAuth=el('pg-auth');
+  if(pgAuth){
+    if(s){ pgAuth.style.paddingTop=''; }
+    else { pgAuth.style.paddingTop='0'; }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   GLOBAL TOP BAR + SIDEBAR
+   ══════════════════════════════════════════════════════════ */
+
+function showGlobalTopBar(s){
+  var b=el('gtbar');
+  if(b){ if(s)b.classList.remove('hidden'); else b.classList.add('hidden'); }
+}
+
+function updateGtbarAvatar(){
+  var sess=getSess();
+  if(!sess) return;
+  var av=el('gtbar-avatar');
+  var sbAv=el('sb-avatar');
+  var sbUn=el('sb-uname');
+  var sbSt=el('sb-ustage');
+  if(av){
+    if(sess.photo_url){
+      av.innerHTML='<img src="'+sess.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent=\''+((sess.name||'؟').charAt(0).toUpperCase())+'\'">';
+    } else {
+      av.textContent=(sess.name||'؟').charAt(0).toUpperCase();
+    }
+  }
+  if(sbAv){
+    if(sess.photo_url){
+      sbAv.innerHTML='<img src="'+sess.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent=\''+((sess.name||'؟').charAt(0).toUpperCase())+'\'">';
+    } else {
+      sbAv.textContent=(sess.name||'؟').charAt(0).toUpperCase();
+    }
+  }
+  if(sbUn) sbUn.textContent=sess.name||sess.username||'—';
+  if(sbSt){
+    var sm=STAGES_META&&STAGES_META[curStage];
+    sbSt.textContent=sm?sm.name:(curStage?curStage:'—');
+  }
+  // Dark toggle sync
+  updateSbThemeIcon();
+}
+
+/* ── Sidebar open/close ─────────────────────────── */
+function openSidebar(){
+  var sb=el('sidebar'), ov=el('sb-overlay');
+  if(!sb||!ov) return;
+  updateGtbarAvatar();
+  sb.classList.add('open');
+  ov.classList.add('open');
+  document.body.style.overflow='hidden';
+  // Always show main nav, hide settings sub-panel
+  var sp=el('sb-settings-panel'); if(sp) sp.style.display='none';
+  var nav=el('sidebar')&&el('sidebar').querySelector('.sb-nav'); if(nav) nav.style.display='';
+  var ft=el('sidebar')&&el('sidebar').querySelector('.sb-footer'); if(ft) ft.style.display='';
+}
+function closeSidebar(){
+  var sb=el('sidebar'), ov=el('sb-overlay');
+  if(!sb||!ov) return;
+  sb.classList.remove('open');
+  ov.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── Settings sub-panel inside sidebar ───────────── */
+function openSbSettings(){
+  var sp=el('sb-settings-panel');
+  var nav=el('sidebar')&&el('sidebar').querySelector('.sb-nav');
+  var ft=el('sidebar')&&el('sidebar').querySelector('.sb-footer');
+  if(sp){ sp.style.display=''; sp.style.animation='sbSubIn .22s ease'; }
+  if(nav) nav.style.display='none';
+  if(ft) ft.style.display='none';
+  updateSbDarkToggle();
+  // تعبئة معلومات الحساب
+  var sess=getSess();
+  var av=el('sb-account-avatar');
+  var nm=el('sb-account-name');
+  var un=el('sb-account-username');
+  var mt=el('sb-account-meta');
+  var st=el('sb-account-stage');
+  var logoutBtn=el('sb-logout-btn');
+  var loginBtn=el('sb-login-btn');
+  if(sess&&sess.name){
+    if(av){
+      if(sess.photo_url){
+        av.innerHTML='<img src="'+sess.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent=\''+(sess.name.charAt(0).toUpperCase())+'\'"/>';
+      } else { av.textContent=sess.name.charAt(0).toUpperCase(); }
+    }
+    if(nm) nm.textContent=sess.name||'—';
+    if(un) un.textContent=sess.username?('@'+sess.username):'';
+    // عمر وجنس
+    var meta=[];
+    var age=localStorage.getItem('dz_age');
+    var gender=localStorage.getItem('dz_gender');
+    if(age) meta.push(age+' سنة');
+    if(gender) meta.push(gender==='male'?'ذكر':'أنثى');
+    if(mt) mt.textContent=meta.join(' • ')||'';
+    // مرحلة وصف
+    var sm=STAGES_META&&curStage?STAGES_META[curStage]:null;
+    var gr=curGrade?ALL_GRADES.find(function(g){return g.id===curGrade;}):null;
+    var stageText=sm?sm.name:'لم تختر مرحلة';
+    var gradeText=gr?(' — '+gr.name):'';
+    if(st) st.textContent=stageText+gradeText;
+    if(logoutBtn) logoutBtn.style.display='';
+    if(loginBtn) loginBtn.style.display='none';
+  } else {
+    if(av) av.textContent='؟';
+    if(nm) nm.textContent='زائر';
+    if(un) un.textContent='';
+    if(mt) mt.textContent='';
+    if(st) st.textContent='';
+    if(logoutBtn) logoutBtn.style.display='none';
+    if(loginBtn) loginBtn.style.display='';
+  }
+}
+function closeSbSettings(){
+  var sp=el('sb-settings-panel');
+  var nav=el('sidebar')&&el('sidebar').querySelector('.sb-nav');
+  var ft=el('sidebar')&&el('sidebar').querySelector('.sb-footer');
+  if(sp) sp.style.display='none';
+  if(nav) nav.style.display='';
+  if(ft) ft.style.display='';
+}
+
+/* ── Dark mode sync ──────────────────────────────── */
+function updateSbThemeIcon(){
+  var tog=el('sb-dark-toggle'); if(!tog) return;
+  var lbl=el('sb-theme-label');
+  if(isDark){
+    tog.classList.add('on');
+    if(lbl) lbl.textContent='الوضع النهاري';
+  } else {
+    tog.classList.remove('on');
+    if(lbl) lbl.textContent='الوضع الليلي';
+  }
+}
+function updateSbDarkToggle(){ updateSbThemeIcon(); }
+
+/* ── Notifications toggle ──────────────────────── */
+var _notifEnabled = localStorage.getItem('dz_notif')!=='off';
+function toggleNotifSetting(){
+  _notifEnabled = !_notifEnabled;
+  localStorage.setItem('dz_notif', _notifEnabled?'on':'off');
+  var t=el('sb-notif-toggle'); if(t){ if(_notifEnabled)t.classList.add('on'); else t.classList.remove('on'); }
+  toast(_notifEnabled?'🔔 الإشعارات مفعّلة':'🔕 الإشعارات معطّلة','ok');
+}
+function syncNotifToggle(){
+  _notifEnabled = localStorage.getItem('dz_notif')!=='off';
+  var t=el('sb-notif-toggle'); if(t){ if(_notifEnabled)t.classList.add('on'); else t.classList.remove('on'); }
+}
+
+/* ── Notifications panel ────────────────────────── */
+/* ── Notification Dropdown (top bar bell) ────────────── */
+var _notifDropdownOpen = false;
+function toggleNotifDropdown(e){
+  e.stopPropagation();
+  var dd = el('notif-dropdown');
+  if(!dd) return;
+  if(_notifDropdownOpen){
+    dd.classList.add('hidden');
+    _notifDropdownOpen = false;
+  } else {
+    dd.classList.remove('hidden');
+    _notifDropdownOpen = true;
+    loadNotifs().then(function(){ renderNotifDropdown(); });
+  }
+}
+function renderNotifDropdown(){
+  var list = el('notif-dd-list');
+  if(!list) return;
+  if(!_notifsCache.length){
+    list.innerHTML = '<div style="text-align:center;padding:28px 16px;color:var(--d-tx3)"><div style="font-size:2rem;margin-bottom:8px">🔔</div><div style="font-size:.82rem;font-weight:700">لا توجد إشعارات حالياً</div></div>';
+    return;
+  }
+  var readIds = JSON.parse(localStorage.getItem('dz_notifs_read')||'[]');
+  var html = '';
+  _notifsCache.slice(0,8).forEach(function(n){
+    var isRead = readIds.includes(n.id);
+    var typeIcon = n.type==='lecture'?'📹':n.type==='exam'?'📝':n.type==='booklet'?'📚':'🔔';
+    html += '<div class="notif-dd-item'+(isRead?'':' notif-dd-unread')+'" onclick="markNotifRead(\''+n.id+'\');renderNotifDropdown()">'          + '<div class="notif-dd-icon">'+typeIcon+'</div>'          + '<div class="notif-dd-body">'          + '<div class="notif-dd-title">'+n.title+'</div>'          + (n.body?'<div class="notif-dd-sub">'+n.body+'</div>':'')          + '<div class="notif-dd-time">'+getTimeAgo(n.created_at)+'</div>'          + '</div>'          + (isRead?'':'<div class="notif-dd-dot"></div>')          + '</div>';
+  });
+  list.innerHTML = html;
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e){
+  if(_notifDropdownOpen){
+    var dd = el('notif-dropdown');
+    var btn = el('gtbar-notif-btn');
+    if(dd && !dd.contains(e.target) && !btn.contains(e.target)){
+      dd.classList.add('hidden');
+      _notifDropdownOpen = false;
+    }
+  }
+});
+function openNotifPanel(){ toggleNotifDropdown({stopPropagation:function(){}}); }
+
+/* ── Contact modal ──────────────────────────────── */
+function openContactModal(){
+  window.open('https://forms.gle/hEavZ1hKWnHG8wcu9','_blank');
+}
+
+/* ── FAQ & Guide ────────────────────────────────── */
+function openFaqModal(){ openModal('ov-faq'); }
+function openGuideModal(){ openModal('ov-guide'); }
+
+/* ── Notifications badge ─────────────────────────── */
+function setNotifBadge(count){
+  var b=el('notif-badge');
+  if(!b) return;
+  if(count>0){ b.textContent=count>9?'9+':count; b.classList.remove('hidden'); }
+  else b.classList.add('hidden');
+}
 
 /* ── نافذة تأكيد مخصصة (بديل confirm المتصفح) ── */
 function showConfirm(opts){
@@ -162,18 +476,54 @@ function setNavActive(k){
   var t=el(m[k]); if(t)t.classList.add('active');
 }
 function updatePills(n){
-  document.querySelectorAll('.user-pill').forEach(function(p){p.textContent=n.charAt(0).toUpperCase();});
+  // user-pill elements removed — global gtbar handles avatar display
+  if(typeof updateGtbarAvatar==='function') updateGtbarAvatar();
 }
 
 /* ── SETTINGS ────────────────────────────────── */
 function openSettings(){syncSettingsUI();openModal('ov-settings');setNavActive('settings');}
+function openSupport(){openModal('ov-support');}
 function syncSettingsUI(){
+  if(typeof updateSbDarkToggle==='function') updateSbDarkToggle();
+  if(typeof updateGtbarAvatar==='function') updateGtbarAvatar();
   var s=getSess();
-  var av=el('set-avatar'),un=el('set-uname'),us=el('set-ustage');
-  if(s&&s.name){if(av)av.textContent=s.name.charAt(0).toUpperCase();if(un)un.textContent=s.name;}
-  else{if(av)av.textContent='؟';if(un)un.textContent='زائر';}
-  if(us)us.textContent=(curStage&&STAGES_META[curStage])?STAGES_META[curStage].name:'لم تختر مرحلة';
-  var lbl=el('set-theme-lbl');if(lbl)lbl.textContent=isDark?'الوضع الليلي':'الوضع النهاري';
+  var av=el('set-avatar'), un=el('set-uname'), us=el('set-ustage');
+  var setUsername=el('set-username-val');
+  var setMeta=el('set-meta-val');
+
+  if(s&&s.name){
+    // Avatar
+    if(av){
+      if(s.photo_url){
+        av.innerHTML='<img src="'+s.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent=\''+(s.name.charAt(0).toUpperCase())+'\'"/>';
+      } else { av.textContent=s.name.charAt(0).toUpperCase(); }
+    }
+    if(un) un.textContent=s.name;
+    if(setUsername) setUsername.textContent=s.username?('@'+s.username):'—';
+    // Age & gender from localStorage
+    var age=localStorage.getItem('dz_age');
+    var gender=localStorage.getItem('dz_gender');
+    var metaParts=[];
+    if(age) metaParts.push(age+' سنة');
+    if(gender) metaParts.push(gender==='male'?'ذكر':'أنثى');
+    if(setMeta) setMeta.textContent=metaParts.join(' • ')||'—';
+    // Stage & grade
+    var sm=curStage&&STAGES_META?STAGES_META[curStage]:null;
+    var gr=curGrade?ALL_GRADES.find(function(g){return g.id===curGrade;}):null;
+    var stageText=sm?sm.name:'لم تختر مرحلة';
+    var gradeText=gr?(' — '+gr.name):'';
+    if(us) us.textContent=stageText+gradeText;
+  } else {
+    if(av) av.textContent='؟';
+    if(un) un.textContent='زائر';
+    if(setUsername) setUsername.textContent='—';
+    if(setMeta) setMeta.textContent='—';
+    if(us) us.textContent='لم تختر مرحلة';
+  }
+  var lbl=el('set-theme-lbl');if(lbl)lbl.textContent=isDark?'الوضع الليلي ✓':'الوضع النهاري';
+  var tog=el('set-toggle'),kn=el('set-knob');
+  if(tog) tog.classList.toggle('on',!!isDark);
+  if(kn) kn.style.transform=isDark?'translateX(-20px)':'';
 }
 function pickAuthStage(stageId){
   /* تحديد البطاقة المختارة بصرياً */
@@ -291,19 +641,262 @@ async function pickStage(stageId){
   }
   closeModal('ov-picker');
   toast('✅ تم اختيار '+STAGES_META[stageId].name,'ok');
-  setTimeout(function(){buildGradePage();goPage('pg-grade');setNavActive('home');},300);
+  setTimeout(function(){
+    // بعد اختيار المرحلة: إذا كان الصف محفوظاً انتقل للمواد مباشرة
+    if(curGrade){
+      var gradeObj=ALL_GRADES.find(function(g){return g.id===curGrade;});
+      if(gradeObj && gradeObj.stage===curStage){
+        openGradeSubjectsGrid(curGrade); setNavActive('home'); return;
+      } else { curGrade=null; }
+    }
+    buildGradePage(); goPage('pg-grade'); setNavActive('home');
+  },300);
 }
 
-/* ── AUTH ────────────────────────────────────── */
-function switchTab(tab){
-  var isL=tab==='login';
-  el('frm-login').classList.toggle('hidden',!isL);
-  el('frm-register').classList.toggle('hidden',isL);
-  el('tab-login').classList.toggle('active',isL);
-  el('tab-reg').classList.toggle('active',!isL);
-  el('tab-line').style.right=isL?'0':'50%';
-  el('tab-line').style.left=isL?'auto':'0';
-  el('l-err').textContent='';el('r-err').textContent='';
+/* ══════════════════════════════════════════════════════════
+   NEW AUTH SYSTEM — Welcome + Login + Register Wizard
+   ══════════════════════════════════════════════════════════ */
+
+/* Legacy stub for any code that calls switchTab */
+function switchTab(tab){ showAuthScreen(tab==='login'?'login':'register'); }
+
+function showAuthScreen(screen){
+  var w=el('auth-welcome'), lc=el('auth-login-card'), rc=el('auth-register-card');
+  if(w) w.classList.add('hidden');
+  if(lc) lc.classList.add('hidden');
+  if(rc) rc.classList.add('hidden');
+  if(screen==='welcome' && w){ w.classList.remove('hidden'); }
+  else if(screen==='login' && lc){ lc.classList.remove('hidden'); var e=el('l-err');if(e)e.textContent=''; }
+  else if(screen==='register' && rc){
+    rc.classList.remove('hidden');
+    _regStep=1; _regGender=null; _regStage=null; _regGrade=null; _regPhotoFile=null;
+    regWizardGo(1);
+    buildRegStageList();
+  }
+}
+
+/* ── Register Wizard state ─────────────────────── */
+var _regStep=1, _regGender=null, _regStage=null, _regGrade=null, _regPhotoFile=null;
+var _usernameCheckTimer=null;
+
+function regWizardGo(step){
+  _regStep=step;
+  [1,2,3].forEach(function(s){
+    var el_=el('reg-step-'+s); if(el_) el_.classList.toggle('hidden', s!==step);
+  });
+  var titles={1:'معلومات الحساب',2:'بياناتك الشخصية',3:'مرحلتك الدراسية'};
+  var t=el('reg-step-title'); if(t) t.textContent=titles[step]||'';
+  var s=el('reg-step-sub'); if(s) s.textContent='الخطوة '+step+' من 3';
+  var pb=el('reg-progress-bar'); if(pb) pb.style.width=(step/3*100)+'%';
+  var backBtn=el('reg-back-btn');
+  if(backBtn) backBtn.style.visibility = step===1?'hidden':'visible';
+}
+function regWizardBack(){
+  if(_regStep<=1){ showAuthScreen('welcome'); }
+  else { regWizardGo(_regStep-1); }
+}
+function regWizardNext(fromStep){
+  if(fromStep===1){
+    var dn=el('r-display-name').value.trim();
+    var un=el('r-username').value.trim().toLowerCase();
+    var pw=el('r-pass').value;
+    var err=el('r-err');
+    err.textContent='';
+    if(!dn){ err.textContent='⚠️ أدخل اسمك الكامل'; return; }
+    var unFmt = validateUsernameFormat(un);
+    if(!unFmt.ok){ err.textContent = unFmt.msg || '⚠️ اسم المستخدم غير صالح'; return; }
+    if(!pw||pw.length<4){ err.textContent='⚠️ كلمة المرور ٤ أحرف على الأقل'; return; }
+    var status=el('reg-username-status');
+    if(status&&status.dataset.valid==='false'){ err.textContent='⚠️ اسم المستخدم مستخدم مسبقاً'; return; }
+    regWizardGo(2);
+  } else if(fromStep===2){
+    var err2=el('r-err-2'); err2.textContent='';
+    if(!_regGender){ err2.textContent='⚠️ اختر الجنس'; return; }
+    var age=el('r-age').value;
+    if(!age||isNaN(age)||age<5||age>60){ err2.textContent='⚠️ أدخل عمراً صحيحاً (5–60)'; return; }
+    regWizardGo(3);
+  }
+}
+function selectGender(g){
+  _regGender=g;
+  var m=el('gender-male'), f=el('gender-female');
+  if(m) m.classList.toggle('selected',g==='male');
+  if(f) f.classList.toggle('selected',g==='female');
+}
+function previewRegPhoto(input){
+  var file=input.files[0]; if(!file) return;
+  _regPhotoFile=file;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var prev=el('reg-photo-preview');
+    if(prev) prev.innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>';
+  };
+  reader.readAsDataURL(file);
+}
+function buildRegStageList(){
+  var stages=[
+    {id:'primary', name:'الابتدائية', icon:'🌱', accent:'#22c55e', bg:'rgba(34,197,94,.10)'},
+    {id:'middle',  name:'المتوسطة',   icon:'📘', accent:'#3b82f6', bg:'rgba(59,130,246,.10)'},
+    {id:'secondary',name:'الإعدادية', icon:'🔬', accent:'#f97316', bg:'rgba(249,115,22,.10)'},
+    {id:'vocational',name:'المهني',   icon:'⚙️', accent:'#8b5cf6', bg:'rgba(139,92,246,.10)'}
+  ];
+  var container=el('reg-stage-list'); if(!container) return;
+  var html='';
+  stages.forEach(function(s){
+    html+='<div class="reg-stage-opt" id="reg-stage-'+s.id+'" onclick="selectRegStage(\''+s.id+'\')">'        +'<div class="reg-stage-ic" style="background:'+s.bg+';color:'+s.accent+'">'+s.icon+'</div>'        +'<span>'+s.name+'</span>'        +'</div>';
+  });
+  container.innerHTML=html;
+}
+function selectRegStage(stageId){
+  _regStage=stageId; _regGrade=null;
+  document.querySelectorAll('.reg-stage-opt').forEach(function(o){ o.classList.remove('selected'); });
+  var opt=el('reg-stage-'+stageId); if(opt) opt.classList.add('selected');
+  // Show grades
+  var gradeSection=el('reg-grade-section');
+  var gradeList=el('reg-grade-list');
+  if(!gradeSection||!gradeList) return;
+  var grades=ALL_GRADES.filter(function(g){return g.stage===stageId;});
+  var html='';
+  grades.forEach(function(g){
+    html+='<div class="reg-grade-opt" id="reg-grade-'+g.id+'" onclick="selectRegGrade(\''+g.id+'\')">'+g.name+'</div>';
+  });
+  gradeList.innerHTML=html;
+  gradeSection.classList.remove('hidden');
+  updateRegFinishBtn();
+}
+function selectRegGrade(gradeId){
+  _regGrade=gradeId;
+  document.querySelectorAll('.reg-grade-opt').forEach(function(o){ o.classList.remove('selected'); });
+  var opt=el('reg-grade-'+gradeId); if(opt) opt.classList.add('selected');
+  updateRegFinishBtn();
+}
+function updateRegFinishBtn(){
+  var btn=el('reg-finish-btn');
+  if(!btn) return;
+  var ok = _regStage && _regGrade;
+  btn.disabled=!ok;
+  btn.style.opacity=ok?'1':'0.5';
+  btn.style.cursor=ok?'pointer':'not-allowed';
+}
+var _checkUsernameTimer=null;
+var _checkEditUsernameTimer=null;
+function checkEditUsername(val){
+  var status=el('edit-username-status');
+  if(!status) return;
+  val=(val||'').toLowerCase();
+  if(!val){ status.innerHTML=''; status.dataset.valid=''; return; }
+  var fmt=validateUsernameFormat(val);
+  if(!fmt.ok){
+    status.innerHTML=fmt.msg?'<span style="color:#ef4444">'+fmt.msg+'</span>':'';
+    status.dataset.valid='false';
+    return;
+  }
+  status.innerHTML='<span style="color:var(--d-tx3)">⏳ جارٍ التحقق...</span>';
+  clearTimeout(_checkEditUsernameTimer);
+  _checkEditUsernameTimer=setTimeout(async function(){
+    try{
+      var sess=getSess();
+      var q='?username=eq.'+encodeURIComponent(val)+'&select=id';
+      if(sess&&sess.id) q+='&id=neq.'+sess.id;
+      var rows=await sb('users','GET',null,q);
+      if(rows&&rows.length){
+        status.innerHTML='<span style="color:#ef4444">❌ مستخدم مسبقاً</span>';
+        status.dataset.valid='false';
+      } else {
+        status.innerHTML='<span style="color:#22c55e">✅ متاح</span>';
+        status.dataset.valid='true';
+      }
+    }catch(e){ status.innerHTML=''; }
+  }, 600);
+}
+/* Username validation: lowercase letters (a-z) and dots only, no consecutive dots, no start/end dots */
+var USERNAME_REGEX = /^[a-z]+(\.[a-z]+)*$/;
+function validateUsernameFormat(val){
+  if(!val) return {ok:false, msg:''};
+  if(val.length < 5) return {ok:false, msg:'⚠️ اسم المستخدم 5 أحرف على الأقل'};
+  if(!USERNAME_REGEX.test(val)) return {ok:false, msg:'⚠️ اسم المستخدم يجب أن يحتوي على أحرف إنجليزية فقط ويمكن استخدام نقطة بين الكلمات.'};
+  return {ok:true, msg:''};
+}
+
+function checkUsernameAvail(val){
+  var status=el('reg-username-status');
+  if(!status) return;
+  val = (val||'').toLowerCase();
+  if(!val){ status.innerHTML=''; status.dataset.valid=''; return; }
+  // Format check first (instant, no server)
+  var fmt = validateUsernameFormat(val);
+  if(!fmt.ok){
+    status.innerHTML = fmt.msg ? '<span style="color:#ef4444">'+fmt.msg+'</span>' : '';
+    status.dataset.valid = 'false';
+    return;
+  }
+  status.innerHTML='<span style="color:var(--d-tx3)">⏳ جارٍ التحقق...</span>';
+  clearTimeout(_checkUsernameTimer);
+  _checkUsernameTimer=setTimeout(async function(){
+    try{
+      var rows=await sb('users','GET',null,'?username=eq.'+encodeURIComponent(val)+'&select=id');
+      if(rows&&rows.length){
+        status.innerHTML='<span style="color:#ef4444">❌ اسم المستخدم مستخدم مسبقاً</span>';
+        status.dataset.valid='false';
+      } else {
+        status.innerHTML='<span style="color:#22c55e">✅ اسم المستخدم متاح</span>';
+        status.dataset.valid='true';
+      }
+    }catch(e){ status.innerHTML=''; }
+  }, 600);
+}
+
+/* ── Full register wizard submit ─────────────────────────── */
+async function doRegisterWizard(){
+  var err3=el('r-err-3'); if(err3) err3.textContent='';
+  if(!_regStage){ if(err3) err3.textContent='⚠️ اختر المرحلة الدراسية'; return; }
+  if(!_regGrade){ if(err3) err3.textContent='⚠️ اختر الصف'; return; }
+  var dn=el('r-display-name').value.trim();
+  var un=el('r-username').value.trim().toLowerCase();
+  var pw=el('r-pass').value;
+  var age=el('r-age')?parseInt(el('r-age').value)||null:null;
+  var btn=el('reg-finish-btn');
+  if(btn){btn.textContent='⏳ جارٍ الإنشاء...'; btn.disabled=true;}
+  try{
+    var existing=await sb('users','GET',null,'?username=eq.'+encodeURIComponent(un)+'&select=id');
+    if(existing&&existing.length){
+      if(err3) err3.textContent='⚠️ اسم المستخدم مستخدم مسبقاً';
+      if(btn){btn.textContent='إنشاء الحساب والبدء 🚀'; btn.disabled=false;} return;
+    }
+    var now=new Date().toISOString();
+    // Save only columns that exist in the users table
+    var payload={
+      username: un, password: pw, display_name: dn,
+      stage: _regStage, grade: _regGrade, branch: null,
+      joined_at: now, last_login: now
+    };
+    // Store gender/age locally only (not in DB unless columns exist)
+    if(_regGender) localStorage.setItem('dz_gender', _regGender);
+    if(age) localStorage.setItem('dz_age', age);
+    var rows=await sb('users','POST',payload);
+    if(!rows||!rows.length){ if(err3) err3.textContent='⚠️ فشل الإنشاء'; if(btn){btn.textContent='إنشاء الحساب والبدء 🚀'; btn.disabled=false;} return; }
+    var u=rows[0];
+    // Upload photo if selected
+    var photoUrl=null;
+    if(_regPhotoFile){
+      try{
+        var ext=_regPhotoFile.name.split('.').pop()||'jpg';
+        var path='photos/'+u.id+'.'+ext;
+        await fetch(SB_URL+'/storage/v1/object/files/'+path,{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'x-upsert':'true'},body:_regPhotoFile});
+        photoUrl=SB_URL+'/storage/v1/object/public/files/'+path;
+        await sb('users','PATCH',{photo_url:photoUrl},'?id=eq.'+u.id);
+      }catch(e){ console.warn('Photo upload:',e); }
+    }
+    setSess({id:u.id,name:dn,stage:_regStage,grade:_regGrade,branch:null,joined:Date.now(),photo_url:photoUrl});
+    isGuest=false; curStage=_regStage; curGrade=_regGrade; curBranch=null;
+    updatePills(dn); showBottomNav(true);
+    toast('🎉 أهلاً '+dn+'! حسابك جاهز','ok');
+    setTimeout(function(){ goHome(); }, 200);
+  }catch(e){
+    console.error('doRegisterWizard:',e);
+    if(err3) err3.textContent='⚠️ خطأ: '+e.message;
+    if(btn){btn.textContent='إنشاء الحساب والبدء 🚀'; btn.disabled=false;}
+  }
 }
 
 function toggleEye(iid,bid){
@@ -337,21 +930,7 @@ async function doLogin(){
       window._pendingStage=null;
       updatePills(u.display_name); showBottomNav(true);
       toast('👋 أهلاً '+u.display_name,'ok');
-      if(!curStage){
-        openStagePicker('first');
-      } else if(curGrade){
-        var gradeObj = ALL_GRADES.find(function(g){return g.id===curGrade;});
-        if(gradeObj && gradeObj.stage === curStage){
-          buildGradePage();
-          setTimeout(function(){ openGradeSubjectsGrid(curGrade); }, 120);
-          setNavActive('home');
-        } else {
-          curGrade = null;
-          buildGradePage(); goPage('pg-grade'); setNavActive('home');
-        }
-      } else {
-        buildGradePage(); goPage('pg-grade'); setNavActive('home');
-      }
+      setTimeout(function(){ goHome(); }, 120);
     }
   }catch(e){err.textContent='⚠️ خطأ: '+e.message;}
   if(btn){btn.textContent='دخول';btn.disabled=false;}
@@ -409,7 +988,7 @@ async function doRegister(){
     if(!curStage){
       openStagePicker('first');
     } else {
-      buildGradePage(); goPage('pg-grade'); setNavActive('home');
+      setTimeout(function(){ goHome(); }, 120);
     }
   }catch(e){
     console.error('Register error:',e);
@@ -426,7 +1005,7 @@ function doGuest(){
 }
 
 function doLogout(){
-  closeModal('ov-settings');
+  closeSidebar();
   setTimeout(function(){
     showConfirm({
       icon:'👋',
@@ -437,20 +1016,44 @@ function doLogout(){
       onYes:function(){
         localStorage.removeItem('dz_sess');
         curStage=null;curBranch=null;curGrade=null;isGuest=false;
-        showBottomNav(false); switchTab('login');
+        showBottomNav(false);
         var ln=el('l-name'),lp=el('l-pass');
         if(ln)ln.value='';if(lp)lp.value='';if(el('l-err'))el('l-err').textContent='';
         toast('👋 تم تسجيل الخروج','info');
         goPage('pg-auth');
+        setTimeout(function(){ showAuthScreen('welcome'); }, 50);
       }
     });
   },100);
 }
 
+/* ── SMART HOME NAVIGATION ───────────────────── */
+/* الانتقال لصفحة المواد مباشرة إذا كانت المرحلة والصف محفوظين */
+function goHome(){
+  setNavActive('home');
+  var sess=getSess();
+  if(!sess||!sess.id){
+    goPage('pg-auth'); return;
+  }
+  if(!curStage){
+    openStagePicker('first'); return;
+  }
+  if(curGrade){
+    var gradeObj=ALL_GRADES.find(function(g){return g.id===curGrade;});
+    if(gradeObj && gradeObj.stage===curStage){
+      openGradeSubjectsGrid(curGrade); return;
+    } else {
+      curGrade=null;
+    }
+  }
+  // المرحلة موجودة لكن الصف لم يختر بعد
+  buildGradePage(); goPage('pg-grade');
+}
+
 /* ── BOTTOM NAV ──────────────────────────────── */
 function bottomNav(k){
   setNavActive(k);
-  if(k==='home'){buildGradePage();goPage('pg-grade');}
+  if(k==='home'){ goHome(); }
   else if(k==='search'){goPage('pg-search');var i=el('search-inp');if(i)i.focus();}
   else if(k==='favs'){buildFavsPage();goPage('pg-favs');}
   else if(k==='profile'){buildProfile();goPage('pg-profile');}
@@ -536,9 +1139,9 @@ async function openGrade(gid){
   curCTab='booklets';
   document.querySelectorAll('.ctab').forEach(function(t){t.classList.remove('active');});
   var firstTab=document.querySelector('.ctab');if(firstTab)firstTab.classList.add('active');
-  goPage('pg-class');
+  // اذهب مباشرة لصفحة المواد الدراسية (pg-subjects)
+  openGradeSubjectsGrid(gid);
   setNavActive('home');
-  renderContent();
 }
 
 function openSubject(sid,el_){
@@ -591,16 +1194,46 @@ function renderContent(){
 async function loadBooklets(subj,head,bodyId){
   bodyId = bodyId || 'class-body';
   try{
-    // Filter by grade name (grade column stores full name like 'أول ابتدائي')
-    // Fetch all for this stage+subject, then filter client-side by grade
-    var q='?is_visible=eq.true&stage=eq.'+curStage+'&subject_id=eq.'+subj.id+'&order=created_at.asc';
-    var rows=(await sb('booklets','GET',null,q))||[];
-    // Client-side grade filter using grade_id or grade name
-    if(curGrade){
-      rows=rows.filter(function(b){
-        // grade column stores grade_id (p1, m2...) OR is null/empty = show for all grades
-        return !b.grade || b.grade==='' || b.grade===curGrade;
+    /*
+     * فلترة الملازم:
+     * - stage يجب أن يطابق curStage دائماً
+     * - grade: إما يطابق curGrade أو يكون null (يظهر للجميع)
+     * الاستعلام يجلب بشكل منفصل ثم يدمج:
+     *   1) ملازم مرتبطة بالصف المحدد
+     *   2) ملازم بدون صف محدد (للمرحلة كاملة)
+     */
+    var rows = [];
+    if(curStage && curGrade){
+      // جلب الملازم المخصصة للصف المحدد
+      var q1 = '?is_visible=eq.true&stage=eq.'+curStage
+              +'&grade=eq.'+curGrade
+              +'&subject_id=eq.'+subj.id
+              +'&order=created_at.asc';
+      var specific = (await sb('booklets','GET',null,q1)) || [];
+
+      // جلب الملازم العامة للمرحلة (بدون صف محدد)
+      var q2 = '?is_visible=eq.true&stage=eq.'+curStage
+              +'&grade=is.null'
+              +'&subject_id=eq.'+subj.id
+              +'&order=created_at.asc';
+      var general = (await sb('booklets','GET',null,q2)) || [];
+
+      // دمج وإزالة التكرار
+      var seen = {};
+      rows = specific.concat(general).filter(function(b){
+        if(seen[b.id]) return false;
+        seen[b.id] = true;
+        return true;
       });
+    } else if(curStage){
+      // لا يوجد صف محدد — اعرض ملازم المرحلة فقط (grade=null)
+      var q = '?is_visible=eq.true&stage=eq.'+curStage
+             +'&grade=is.null'
+             +'&subject_id=eq.'+subj.id
+             +'&order=created_at.asc';
+      rows = (await sb('booklets','GET',null,q)) || [];
+    } else {
+      rows = [];
     }
     if(!rows.length){
       el(bodyId).innerHTML=head+'<div class="state-box"><div class="state-ic">📚</div><h3>لا توجد ملازم بعد</h3><p>ترقب المحتوى قريباً</p></div>';
@@ -619,7 +1252,7 @@ async function loadBooklets(subj,head,bodyId){
           +'<div class="bk-name">'+b.name+'</div>'
           +'<div class="bk-meta">📖 '+b.subject_name+(b.grade?' — '+b.grade:'')+'</div>'
           +'<div class="bk-actions">'
-          +(b.file_url?'<button class="btn-view" onclick="openFile(\''+b.file_url+'\')">👁 عرض</button>':'<button class="btn-view" disabled style="opacity:.45">غير متاح</button>')
+          +(b.file_url?'<button class="btn-view" onclick="openFile(\''+b.file_url+'\',b.name,b.subject_name,b.id)">👁 عرض</button>':'<button class="btn-view" disabled style="opacity:.45">غير متاح</button>')
           +(b.file_url?'<a class="btn-dl" href="'+b.file_url+'" download target="_blank">⬇ تحميل</a>':'<button class="btn-dl" disabled style="opacity:.45">⬇ تحميل</button>')
           +'</div>'
           +'<button class="bk-fav'+(isFav?' saved':'')+'" id="favbtn-'+fid+'" onclick="toggleFav(\''+fid+'\',\''+safe+'\',\''+subj.label+'\',\'ملزمة\',\''+(b.color||subj.cover)+'\',\''+(b.emoji||'📝')+'\')">'
@@ -636,15 +1269,41 @@ async function loadBooklets(subj,head,bodyId){
 async function loadExams(subj,head,bodyId){
   bodyId = bodyId || 'class-body';
   try{
-    // Filter by stage+subject, then client-side by grade
-    var q='?is_visible=eq.true&stage=eq.'+curStage+'&subject_id=eq.'+subj.id+'&order=created_at.asc';
-    var rows=(await sb('exams','GET',null,q))||[];
-    // Client-side grade filter
-    if(curGrade){
-      rows=rows.filter(function(ex){
-        // grade column stores grade_id (p1, m2...) OR is null/empty = show for all grades
-        return !ex.grade || ex.grade==='' || ex.grade===curGrade;
+    /*
+     * فلترة الاختبارات:
+     * - stage يجب أن يطابق curStage
+     * - grade: إما يطابق curGrade أو null (يظهر للجميع)
+     */
+    var rows = [];
+    if(curStage && curGrade){
+      // اختبارات مخصصة للصف
+      var q1 = '?is_visible=eq.true&stage=eq.'+curStage
+              +'&grade=eq.'+curGrade
+              +'&subject_id=eq.'+subj.id
+              +'&order=created_at.asc';
+      var specific = (await sb('exams','GET',null,q1)) || [];
+
+      // اختبارات عامة للمرحلة
+      var q2 = '?is_visible=eq.true&stage=eq.'+curStage
+              +'&grade=is.null'
+              +'&subject_id=eq.'+subj.id
+              +'&order=created_at.asc';
+      var general = (await sb('exams','GET',null,q2)) || [];
+
+      var seen = {};
+      rows = specific.concat(general).filter(function(ex){
+        if(seen[ex.id]) return false;
+        seen[ex.id] = true;
+        return true;
       });
+    } else if(curStage){
+      var q = '?is_visible=eq.true&stage=eq.'+curStage
+             +'&grade=is.null'
+             +'&subject_id=eq.'+subj.id
+             +'&order=created_at.asc';
+      rows = (await sb('exams','GET',null,q)) || [];
+    } else {
+      rows = [];
     }
     if(!rows.length){
       el(bodyId).innerHTML=head+'<div class="state-box"><div class="state-ic">📝</div><h3>لا توجد اختبارات بعد</h3><p>ترقب المحتوى قريباً</p></div>';
@@ -703,7 +1362,10 @@ async function loadExams(subj,head,bodyId){
   }
 }
 
-function openFile(url){window.open(url,'_blank');}
+function openFile(url, itemName, subjectName, itemId){
+  window.open(url,'_blank');
+  if(itemName) logActivity('booklet',{item_id:itemId||url,item_name:itemName,subject_name:subjectName||''});
+}
 
 /* ══════════════════════════════════════════════
    THEMES — نظام الثيمات المتعددة
@@ -1003,6 +1665,9 @@ function _qFinish(){
   });
   var total = qs.length;
   var pct   = Math.round((correct / total) * 100);
+  // Log exam activity
+  var _examName = Q.data && Q.data.name ? Q.data.name : 'اختبار';
+  logActivity('exam',{item_id:'exam_'+Date.now(),item_name:_examName,subject_name:'',score:Math.round((correct/(qs.length||1))*100)});
   _qRenderResult(correct, wrong, skipped, total, pct);
 }
 
@@ -1388,10 +2053,31 @@ async function uploadProfilePhoto(input){
 
 function buildProfile(){
   var s=getSess();if(!s){goPage('pg-auth');return;}
-  var av=el('p-avatar');if(av)av.textContent=s.name.charAt(0).toUpperCase();
-  var pn=el('p-name');if(pn)pn.textContent=s.name;
-  var en=el('edit-name');if(en)en.value=s.name;
-  var chip=el('p-chip');if(chip)chip.textContent=(curStage&&STAGES_META[curStage])?STAGES_META[curStage].name:'لم تختر مرحلة';
+  // Avatar
+  var av=el('p-avatar');
+  if(av){
+    if(s.photo_url){
+      av.innerHTML='<img src="'+s.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display=\'none\'">';
+    } else {
+      av.textContent=(s.name||'؟').charAt(0).toUpperCase();
+    }
+  }
+  var pn=el('p-name');if(pn)pn.textContent=s.name||'—';
+  var en=el('edit-name');if(en)en.value=s.name||'';
+  var eu=el('edit-username');if(eu)eu.value=s.username||'';
+  var chip=el('p-chip');
+  if(chip){
+    var stageLabel=(curStage&&STAGES_META[curStage])?STAGES_META[curStage].name:'';
+    var gradeObj=curGrade?ALL_GRADES.find(function(g){return g.id===curGrade;}):null;
+    chip.textContent=(stageLabel&&gradeObj)?(stageLabel+' — '+gradeObj.name):(stageLabel||'لم تختر مرحلة');
+  }
+  // Stage/grade info in profile
+  var psiStage=el('psi-stage'), psiGrade=el('psi-grade');
+  if(psiStage) psiStage.textContent=(curStage&&STAGES_META[curStage])?STAGES_META[curStage].name:'—';
+  if(psiGrade){
+    var go=curGrade?ALL_GRADES.find(function(g){return g.id===curGrade;}):null;
+    psiGrade.textContent=go?go.name:'—';
+  }
   var sd=el('st-days');if(sd&&s.joined)sd.textContent=Math.max(1,Math.floor((Date.now()-s.joined)/864e5));
   var sf=el('st-favs');if(sf)sf.textContent=getFavs().length;
   ['old-pass','new-pass'].forEach(function(id){var e=el(id);if(e)e.value='';});
@@ -1399,16 +2085,106 @@ function buildProfile(){
 }
 
 async function saveName(){
-  var newN=el('edit-name').value.trim();
+  return saveProfileInfo();
+}
+
+async function saveProfileInfo(){
+  var newN=(el('edit-name')?el('edit-name').value.trim():'');
+  var newU=(el('edit-username')?el('edit-username').value.trim().toLowerCase():'');
+  var s=getSess();if(!s)return;
   if(!newN||newN.length<2){toast('⚠️ الاسم قصير','warn');return;}
+  if(newU && newU.length>0){
+    var unFmt2=validateUsernameFormat(newU);
+    if(!unFmt2.ok){ toast(unFmt2.msg||'⚠️ اسم المستخدم غير صالح','warn'); return; }
+  }
+  // Check username uniqueness
+  if(newU && newU!==s.username){
+    try{
+      var ex=await sb('users','GET',null,'?username=eq.'+encodeURIComponent(newU)+'&id=neq.'+s.id+'&select=id');
+      if(ex&&ex.length){toast('⚠️ اسم المستخدم مستخدم مسبقاً','err');return;}
+    }catch(e){}
+  }
+  var patch={display_name:newN};
+  if(newU) patch.username=newU;
+  try{
+    await sb('users','PATCH',patch,'?id=eq.'+s.id);
+    s.name=newN;if(newU)s.username=newU;setSess(s);
+    buildProfile();updatePills(newN);updateGtbarAvatar();
+    toast('✅ تم حفظ المعلومات','ok');
+  }catch(e){toast('❌ '+e.message,'err');}
+}
+
+/* Profile Stage/Grade edit */
+var _profStage=null, _profGrade=null;
+function openProfileStageEdit(){
+  _profStage=curStage; _profGrade=curGrade;
+  buildProfStageList();
+  openModal('ov-profile-stage');
+}
+function buildProfStageList(){
+  var stages=[
+    {id:'primary', name:'الابتدائية', icon:'🌱', accent:'#22c55e', bg:'rgba(34,197,94,.10)'},
+    {id:'middle',  name:'المتوسطة',   icon:'📘', accent:'#3b82f6', bg:'rgba(59,130,246,.10)'},
+    {id:'secondary',name:'الإعدادية', icon:'🔬', accent:'#f97316', bg:'rgba(249,115,22,.10)'},
+    {id:'vocational',name:'المهني',   icon:'⚙️', accent:'#8b5cf6', bg:'rgba(139,92,246,.10)'}
+  ];
+  var container=el('prof-stage-list'); if(!container) return;
+  var html='';
+  stages.forEach(function(s){
+    var isSel=(s.id===_profStage);
+    html+='<div class="reg-stage-opt'+(isSel?' selected':'')+'" id="prof-stage-opt-'+s.id+'" onclick="selectProfStage(\''+s.id+'\')">'        +'<div class="reg-stage-ic" style="background:'+s.bg+';color:'+s.accent+'">'+s.icon+'</div>'        +'<span>'+s.name+'</span>'        +'</div>';
+  });
+  container.innerHTML=html;
+  if(_profStage) buildProfGradeList(_profStage);
+}
+function selectProfStage(stageId){
+  _profStage=stageId; _profGrade=null;
+  document.querySelectorAll('#prof-stage-list .reg-stage-opt').forEach(function(o){ o.classList.remove('selected'); });
+  var opt=el('prof-stage-opt-'+stageId); if(opt) opt.classList.add('selected');
+  buildProfGradeList(stageId);
+  updateProfSaveBtn();
+}
+function buildProfGradeList(stageId){
+  var gs=el('prof-grade-section'), gl=el('prof-grade-list');
+  if(!gs||!gl) return;
+  var grades=ALL_GRADES.filter(function(g){return g.stage===stageId;});
+  var html='';
+  grades.forEach(function(g){
+    var isSel=(g.id===_profGrade);
+    html+='<div class="reg-grade-opt'+(isSel?' selected':'')+'" id="prof-grade-opt-'+g.id+'" onclick="selectProfGrade(\''+g.id+'\')">'+g.name+'</div>';
+  });
+  gl.innerHTML=html;
+  gs.classList.remove('hidden');
+}
+function selectProfGrade(gradeId){
+  _profGrade=gradeId;
+  document.querySelectorAll('#prof-grade-list .reg-grade-opt').forEach(function(o){ o.classList.remove('selected'); });
+  var opt=el('prof-grade-opt-'+gradeId); if(opt) opt.classList.add('selected');
+  updateProfSaveBtn();
+}
+function updateProfSaveBtn(){
+  var btn=el('prof-stage-save-btn');
+  if(!btn) return;
+  var ok=_profStage&&_profGrade;
+  btn.disabled=!ok; btn.style.opacity=ok?'1':'0.5'; btn.style.cursor=ok?'pointer':'not-allowed';
+}
+async function saveProfileStage(){
+  if(!_profStage||!_profGrade){toast('⚠️ اختر المرحلة والصف','warn');return;}
   var s=getSess();if(!s)return;
   try{
-    var ex=await sb('users','GET',null,'?username=eq.'+encodeURIComponent(newN.toLowerCase())+'&id=neq.'+s.id+'&select=id');
-    if(ex&&ex.length){toast('⚠️ الاسم مستخدم','err');return;}
-    await sb('users','PATCH',{display_name:newN,username:newN.toLowerCase()},'?id=eq.'+s.id);
-    s.name=newN;setSess(s);buildProfile();updatePills(newN);
-    toast('✅ تم تغيير الاسم','ok');
-  }catch(e){toast('❌ '+e.message,'err');}
+    await sb('users','PATCH',{stage:_profStage,grade:_profGrade},'?id=eq.'+s.id);
+    s.stage=_profStage; s.grade=_profGrade; setSess(s);
+    curStage=_profStage; curGrade=_profGrade; curBranch=null;
+    closeModal('ov-profile-stage');
+    buildProfile();
+    toast('✅ تم تحديث المرحلة والصف','ok');
+    // Reload grade page with new stage/grade
+    setTimeout(function(){
+      buildGradePage();
+      openGradeSubjectsGrid(curGrade);
+      setNavActive('home');
+    }, 500);
+  }catch(e){ toast('❌ '+e.message,'err'); }
 }
 
 async function changePass(){
@@ -1453,44 +2229,32 @@ async function _doDeleteNow(){
 
 /* ── PARTICLES ───────────────────────────────── */
 function buildParticles(){
-  var c=el('authBg');if(!c)return;
-  for(var i=0;i<20;i++){
-    var d=document.createElement('div');d.className='abg-p';
-    var s=Math.random()*16+5;
-    d.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(Math.random()*100)+'%;animation-duration:'+(Math.random()*13+8)+'s;animation-delay:'+(Math.random()*10)+'s;';
-    c.appendChild(d);
-  }
+  try{
+    var c=el('authBg');if(!c)return;
+    for(var i=0;i<20;i++){
+      var d=document.createElement('div');d.className='abg-p';
+      var s=Math.random()*16+5;
+      d.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(Math.random()*100)+'%;animation-duration:'+(Math.random()*13+8)+'s;animation-delay:'+(Math.random()*10)+'s;';
+      c.appendChild(d);
+    }
+  }catch(e){}
 }
 
 /* ── BOOT ────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',function(){
-  buildParticles();
-  buildSearchIndex();
+  try{ buildParticles(); }catch(e){}
+  try{ buildSearchIndex(); }catch(e){};
 
-  loadSavedTheme();
+  try{ loadSavedTheme(); }catch(e){}
   // Handle Google OAuth callback
-  handleOAuthCallback().then(function(sess){
+  try{ handleOAuthCallback().then(function(sess){
     if(sess){
       isGuest=false; curStage=sess.stage||null; curBranch=sess.branch||null;
+      curGrade=sess.grade||null;
       updatePills(sess.name); showBottomNav(true);
-      if(!curStage){
-        openStagePicker('first');
-      } else if(sess.grade){
-        curGrade = sess.grade;
-        var gradeObj = ALL_GRADES.find(function(g){return g.id===curGrade;});
-        if(gradeObj && gradeObj.stage === curStage){
-          buildGradePage();
-          setTimeout(function(){ openGradeSubjectsGrid(curGrade); }, 120);
-          setNavActive('home');
-        } else {
-          curGrade = null;
-          buildGradePage(); goPage('pg-grade'); setNavActive('home');
-        }
-      } else {
-        buildGradePage(); goPage('pg-grade'); setNavActive('home');
-      }
+      setTimeout(function(){ goHome(); }, 120);
     }
-  });
+  }).catch(function(){}); }catch(e){}
 
   var s=getSess();
   if(s&&s.name){
@@ -1498,34 +2262,22 @@ document.addEventListener('DOMContentLoaded',function(){
     curStage=s.stage||null;curBranch=s.branch||null;
     curGrade=s.grade||null;
     updatePills(s.name);showBottomNav(true);
-    if(!curStage){
-      openStagePicker('first');
-    } else if(curGrade){
-      // التحقق أن الصف المحفوظ ينتمي للمرحلة الحالية
-      var gradeObj = ALL_GRADES.find(function(g){return g.id===curGrade;});
-      if(gradeObj && gradeObj.stage === curStage){
-        // المرحلة والصف متطابقان — انتقل مباشرة لمواد الصف
-        buildGradePage();
-        setTimeout(function(){ openGradeSubjectsGrid(curGrade); }, 120);
-        setNavActive('home');
-      } else {
-        // الصف لا ينتمي للمرحلة — اختر صفاً جديداً
-        curGrade = null;
-        buildGradePage(); goPage('pg-grade'); setNavActive('home');
-      }
-    } else {
-      // المرحلة محفوظة لكن الصف لم يُحدد — اختر الصف
-      buildGradePage(); goPage('pg-grade'); setNavActive('home');
-    }
+    // انتقل مباشرة للمواد إذا كانت المرحلة والصف محفوظين
+    setTimeout(function(){ goHome(); }, 80);
   }else{
     showBottomNav(false);goPage('pg-auth');
+    setTimeout(function(){ showAuthScreen('welcome'); }, 50);
   }
 
   document.addEventListener('keydown',function(e){
     if(e.key!=='Enter')return;
-    var fl=el('frm-login'),fr=el('frm-register');
-    if(fl&&!fl.classList.contains('hidden'))doLogin();
-    else if(fr&&!fr.classList.contains('hidden'))doRegister();
+    var lc=el('auth-login-card');
+    if(lc&&!lc.classList.contains('hidden')){ doLogin(); return; }
+    var rc=el('auth-register-card');
+    if(rc&&!rc.classList.contains('hidden')){
+      if(_regStep===1) regWizardNext(1);
+      else if(_regStep===2) regWizardNext(2);
+    }
   });
 });
 
@@ -1538,6 +2290,14 @@ function openGradeSubjectsGrid(gid){
   var g = ALL_GRADES.find(function(x){return x.id===gid;});
   if(!g) return;
   curGrade = gid;
+  // Save grade to session and DB
+  var _s=getSess();
+  if(_s){
+    _s.grade=gid; setSess(_s);
+    if(_s.id&&!isGuest){
+      try{ sb('users','PATCH',{grade:gid},'?id=eq.'+_s.id); }catch(e){}
+    }
+  }
 
   var subjs = GRADE_SUBJECTS[gid] || GRADE_SUBJECTS['m1'];
 
@@ -1547,9 +2307,9 @@ function openGradeSubjectsGrid(gid){
   if(tt) tt.textContent = g.name;
   if(ts) ts.textContent = 'المواد الدراسية';
 
-  // زر الرجوع
+  // زر الرجوع مخفي — لا يمكن الرجوع لاختيار الصف من هنا
   var bb = el('subjects-back-btn');
-  if(bb) bb.onclick = function(){ goPage('pg-grade'); };
+  if(bb) { bb.style.display='none'; }
 
   var grid = el('subj-grid');
   if(!grid) return;
@@ -1619,12 +2379,22 @@ async function loadSubjTeachers(subj, head){
   var spinner = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5a7bf5" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
   body.innerHTML = head + spinner;
   try{
-    // Load teachers matching subject + stage + grade
-    var q = '?is_visible=eq.true&order=sort_order.asc,created_at.asc';
-    if(curStage) q += '&stage=eq.'+curStage;
-    if(curGrade) q += '&grade_id=eq.'+curGrade;
+    // Load teachers: صف محدد + مدرسون عامون للمرحلة
+    var allTeachers = [];
+    if(curStage && curGrade){
+      var tq1 = '?is_visible=eq.true&stage=eq.'+curStage+'&grade_id=eq.'+curGrade+'&order=sort_order.asc,created_at.asc';
+      var tq2 = '?is_visible=eq.true&stage=eq.'+curStage+'&grade_id=is.null&order=sort_order.asc,created_at.asc';
+      var tSpec = (await sb('teachers','GET',null,tq1)) || [];
+      var tGen  = (await sb('teachers','GET',null,tq2)) || [];
+      var tSeen = {};
+      allTeachers = tSpec.concat(tGen).filter(function(t){
+        if(tSeen[t.id]) return false; tSeen[t.id]=true; return true;
+      });
+    } else if(curStage){
+      var tq = '?is_visible=eq.true&stage=eq.'+curStage+'&grade_id=is.null&order=sort_order.asc,created_at.asc';
+      allTeachers = (await sb('teachers','GET',null,tq)) || [];
+    }
     // Match subject name
-    var allTeachers = (await sb('teachers','GET',null,q)) || [];
     var teachers = allTeachers.filter(function(t){
       if(!t.subject_name) return false;
       var tn = t.subject_name.toLowerCase().replace(/\s/g,'');
@@ -1718,8 +2488,9 @@ pickStage = async function(stageId){
     }
   }
   closeModal('ov-picker');
-  // Always show grade selection after picking stage
+  // بعد تغيير المرحلة يجب اختيار صف جديد
   setTimeout(function(){
+    curGrade = null;
     buildGradePage();
     goPage('pg-grade');
     setNavActive('home');
@@ -1773,8 +2544,8 @@ syncSettingsUI = function(){
 var _origBottomNav = bottomNav;
 bottomNav = function(k){
   if(k==='teachers'){ setNavActive('teachers'); buildTeachersPage(); goPage('pg-teachers'); return; }
-  if(k==='settings'){ openSettings(); return; }
-  if(k==='profile'){ setNavActive('profile'); openProfilePage(); return; }
+  if(k==='settings'){ openSidebar(); return; }
+  if(k==='profile'){ openProfilePage(); return; }
   setNavActive(k);
   _origBottomNav(k);
 };
@@ -1787,17 +2558,40 @@ async function buildTeachersPage(){
   if(!grid) return;
   grid.innerHTML = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
   try{
-    // فلترة المدرسين حسب مرحلة وصف الطالب
-    var q = '?is_visible=eq.true&order=sort_order.asc,created_at.asc';
-    if(curStage) q += '&stage=eq.'+curStage;
-    if(curGrade) q += '&grade_id=eq.'+curGrade;
-    var rows = (await sb('teachers','GET',null,q)) || [];
+    /*
+     * فلترة المدرسين:
+     * - grade_id = curGrade → مدرسون مخصصون لهذا الصف
+     * - grade_id = null     → مدرسون لكل صفوف المرحلة
+     * كلاهما يجب أن يطابق stage
+     */
+    var rows = [];
+    if(curStage && curGrade){
+      // مدرسون مخصصون للصف
+      var q1 = '?is_visible=eq.true&stage=eq.'+curStage
+              +'&grade_id=eq.'+curGrade
+              +'&order=sort_order.asc,created_at.asc';
+      var specific = (await sb('teachers','GET',null,q1)) || [];
 
-    // إذا لم يوجد مدرسون مخصصون للصف، اعرض مدرسي المرحلة فقط
-    if(!rows.length && curGrade && curStage){
-      var q2 = '?is_visible=eq.true&order=sort_order.asc,created_at.asc';
-      if(curStage) q2 += '&stage=eq.'+curStage;
-      rows = (await sb('teachers','GET',null,q2)) || [];
+      // مدرسون عامون للمرحلة (grade_id = null)
+      var q2 = '?is_visible=eq.true&stage=eq.'+curStage
+              +'&grade_id=is.null'
+              +'&order=sort_order.asc,created_at.asc';
+      var general = (await sb('teachers','GET',null,q2)) || [];
+
+      var seen = {};
+      rows = specific.concat(general).filter(function(t){
+        if(seen[t.id]) return false;
+        seen[t.id] = true;
+        return true;
+      });
+    } else if(curStage){
+      // لا يوجد صف محدد — مدرسو المرحلة العامون فقط
+      var q = '?is_visible=eq.true&stage=eq.'+curStage
+             +'&grade_id=is.null'
+             +'&order=sort_order.asc,created_at.asc';
+      rows = (await sb('teachers','GET',null,q)) || [];
+    } else {
+      rows = [];
     }
 
     if(!rows.length){
@@ -2148,6 +2942,8 @@ function openVideoPlayer(lid, ltitle, vurl, chtitle, chid, lecIdx, thumbUrl){
     return;
   }
   if(!vurl){ toast('⚠️ لا يوجد رابط فيديو للمحاضرة','warn'); return; }
+  // Log lecture activity
+  logActivity('lecture',{item_id:lid||'',item_name:ltitle||'',subject_name:chtitle||''});
 
   // Stop previous tracking
   if(_viewTrackTimer){ clearInterval(_viewTrackTimer); _viewTrackTimer=null; }
@@ -2488,16 +3284,40 @@ async function loadNotifs(){
   var s = getSess();
   if(!s || !s.id) return;
   try{
-    // Get unread notifs for this user's stage/grade + global notifs
-    var q = '?is_active=eq.true&order=created_at.desc&limit=50';
-    var rows = (await sb('notifications','GET',null,q)) || [];
-    // Filter: global (no stage/grade) OR matches user stage/grade
-    rows = rows.filter(function(n){
-      if(!n.target_stage && !n.target_grade) return true; // global
-      if(n.target_stage && n.target_stage !== curStage) return false;
-      if(n.target_grade && n.target_grade !== curGrade) return false;
+    /*
+     * فلترة الإشعارات من جهة السيرفر:
+     * نجلب: إشعارات عامة (بدون مرحلة/صف) + إشعارات خاصة بمرحلة المستخدم
+     * ثم نفلتر client-side للصف المحدد
+     */
+    var rows = [];
+
+    // إشعارات عامة (بدون مرحلة محددة)
+    var q1 = '?is_active=eq.true&target_stage=is.null&order=created_at.desc&limit=30';
+    var general = (await sb('notifications','GET',null,q1)) || [];
+
+    // إشعارات مخصصة للمرحلة
+    var specific = [];
+    if(curStage){
+      var q2 = '?is_active=eq.true&target_stage=eq.'+curStage+'&order=created_at.desc&limit=30';
+      specific = (await sb('notifications','GET',null,q2)) || [];
+      // فلترة client-side للصف المحدد
+      if(curGrade){
+        specific = specific.filter(function(n){
+          return !n.target_grade || n.target_grade === curGrade;
+        });
+      }
+    }
+
+    // دمج وإزالة التكرار وترتيب حسب التاريخ
+    var seen = {};
+    rows = general.concat(specific).filter(function(n){
+      if(seen[n.id]) return false;
+      seen[n.id] = true;
       return true;
-    });
+    }).sort(function(a,b){
+      return new Date(b.created_at) - new Date(a.created_at);
+    }).slice(0,50);
+
     _notifsCache = rows;
     updateNotifBadge(rows);
   }catch(e){ console.warn('Notifs load error:',e.message); }
@@ -2507,6 +3327,9 @@ function updateNotifBadge(rows){
   // Count unread — check localStorage for read IDs
   var readIds = JSON.parse(localStorage.getItem('dz_notifs_read')||'[]');
   var unread = rows.filter(function(n){ return !readIds.includes(n.id); }).length;
+  // Update sidebar dot
+  var dot = el('sb-notif-dot');
+  if(dot){ if(unread>0) dot.classList.remove('hidden'); else dot.classList.add('hidden'); }
   // Update all badges
   document.querySelectorAll('.notif-badge').forEach(function(b){
     if(unread > 0){
@@ -2524,6 +3347,55 @@ function openNotifs(){
   });
   openModal('ov-notifs');
 }
+
+function openNotifsPage(){
+  goPage('pg-notifs-page');
+  loadNotifs().then(function(){ renderNotifsPage(); });
+}
+
+function renderNotifsPage(){
+  var list = el('notifs-page-list');
+  if(!list) return;
+  var readIds = JSON.parse(localStorage.getItem('dz_notifs_read')||'[]');
+  if(!_notifsCache.length){
+    list.innerHTML = '<div class="state-box" style="padding:60px 0"><div class="state-ic">🔔</div><h3 style="color:var(--d-tx1)">لا توجد إشعارات</h3><p style="color:var(--d-tx3)">ستظهر هنا الإشعارات المرسلة لمرحلتك وصفك</p></div>';
+    return;
+  }
+  var TICONS = {lecture:'📹', exam:'📝', booklet:'📚', general:'🔔'};
+  var html = '';
+  _notifsCache.forEach(function(n){
+    var isRead = readIds.includes(n.id);
+    var icon = TICONS[n.type]||'🔔';
+    var time = getTimeAgo(n.created_at);
+    html += '<div class="notif-page-row'+(isRead?'':' notif-unread')+'" onclick="markNotifRead(\''+n.id+'\');this.classList.remove(\'notif-unread\')">'
+          + '<div class="notif-page-ic">'+icon+'</div>'
+          + '<div class="notif-page-body">'
+          +   '<div class="notif-page-title">'+n.title+'</div>'
+          +   (n.body?'<div class="notif-page-text">'+n.body+'</div>':'')
+          +   '<div class="notif-page-time">'+time+'</div>'
+          + '</div>'
+          + (isRead?'':'<div class="notif-unread-dot"></div>')
+          + '</div>';
+  });
+  list.innerHTML = html;
+  // Also update badge
+  updateNotifBadge(_notifsCache);
+}
+
+// goBack: returns to previous meaningful page
+function goBack(){
+  if(_pageHistory.length > 1){
+    _pageHistory.pop();
+    var prev = _pageHistory[_pageHistory.length-1];
+    // Navigate without pushing to history again
+    document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active');});
+    var pg = el(prev); if(pg) pg.classList.add('active');
+    window.scrollTo(0,0);
+  } else {
+    goPage('pg-grade');
+  }
+}
+
 
 function renderNotifsList(){
   var list = el('notifs-list');
