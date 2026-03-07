@@ -161,11 +161,6 @@
     </div>
   </div>
 
-  <!-- Center: logo only (no text, no background) -->
-  <div class="gtbar-logo-only">
-    <img src="https://i.ibb.co/KjfTk9Dg/Dark-Cyan-White-Minimalist-Book-Store-Logo-2-1.png" alt="دوروز"/>
-  </div>
-
   <!-- Right: avatar + burger -->
   <div class="gtbar-r">
     <div class="gtbar-avatar" id="gtbar-avatar" style="cursor:default">؟</div>
@@ -210,11 +205,12 @@
       <svg class="sb-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
 
-    <div class="sb-item" onclick="closeSidebar();bottomNav('favs')">
-      <div class="sb-item-ic sb-ic-pink">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    <!-- رصيدي -->
+    <div class="sb-item sb-balance-btn" id="sb-balance-nav-btn" onclick="closeSidebar();setTimeout(function(){openBalanceInfo();},180)">
+      <div class="sb-item-ic sb-ic-gold">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       </div>
-      <span>مكتبتي</span>
+      <span class="sb-balance-nav-text">رصيدي: <strong id="sb-nav-balance-val">0</strong> د.ع</span>
       <svg class="sb-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
 
@@ -279,6 +275,15 @@
         <div class="sb-account-username" id="sb-account-username">@—</div>
         <div class="sb-account-meta" id="sb-account-meta">—</div>
         <div class="sb-account-stage" id="sb-account-stage">لم تختر مرحلة</div>
+      </div>
+    </div>
+
+    <!-- رصيدي -->
+    <div class="sb-balance-row">
+      <div class="sb-balance-ic">💰</div>
+      <div class="sb-balance-body">
+        <div class="sb-balance-lbl">رصيدي</div>
+        <div class="sb-balance-val">0 د.ع</div>
       </div>
     </div>
 
@@ -1100,5 +1105,59 @@
 
 
 <script src="app.js"></script>
+
+  <!-- ══ overlay رصيدي وشحن الرصيد ══ -->
+  <div class="ov-backdrop" id="ov-balance-backdrop" onclick="closeBalanceOv()" style="display:none"></div>
+  <div class="ov-balance" id="ov-balance" style="display:none" role="dialog" aria-modal="true">
+    <!-- Header -->
+    <div class="ovb-header">
+      <div class="ovb-header-icon">💰</div>
+      <div class="ovb-header-info">
+        <div class="ovb-title">رصيدي</div>
+        <div class="ovb-subtitle">إدارة رصيدك وشحنه بالأكواد</div>
+      </div>
+      <button class="ovb-close" onclick="closeBalanceOv()" aria-label="إغلاق">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- بطاقة الرصيد الحالي -->
+    <div class="ovb-balance-card">
+      <div class="ovb-balance-label">رصيدك الحالي</div>
+      <div class="ovb-balance-amount" id="ovb-amount">0 <span class="ovb-currency">د.ع</span></div>
+    </div>
+
+    <!-- قسم شحن الرصيد -->
+    <div class="ovb-recharge-section">
+      <div class="ovb-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        شحن الرصيد بكود
+      </div>
+      <div class="ovb-input-row">
+        <input
+          class="ovb-code-input"
+          id="ovb-code-input"
+          type="text"
+          placeholder="ضع كود هنا  (مثال: A7K9-X2L4-P8Q1)"
+          maxlength="19"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          oninput="ovbFormatCode(this)"
+          onkeydown="if(event.key==='Enter') redeemCode()"
+          dir="ltr"
+        />
+      </div>
+      <button class="ovb-recharge-btn" id="ovb-recharge-btn" onclick="redeemCode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
+        شحن الرصيد
+      </button>
+      <div class="ovb-msg" id="ovb-msg"></div>
+    </div>
+
+    <!-- تذييل -->
+    <div class="ovb-footer">كل كود يُضيف 150,000 د.ع ويُستخدم مرة واحدة فقط</div>
+  </div>
+
 </body>
 </html>

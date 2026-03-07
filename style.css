@@ -1552,12 +1552,14 @@ mark{background:rgba(255,215,0,.32);color:inherit;border-radius:3px;padding:0 2p
 .teacher-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:var(--cshd-h)}
 .teacher-card:active{transform:scale(.97)}
 .teacher-avatar{
-  width:100%;aspect-ratio:1;object-fit:cover;
+  width:100%;aspect-ratio:4/5;object-fit:cover;
   background:var(--glass);
   display:flex;align-items:center;justify-content:center;
   font-size:3rem;
+  border-radius:12px;
+  overflow:hidden;
 }
-.teacher-avatar img{width:100%;height:100%;object-fit:cover}
+.teacher-avatar img{width:100%;height:100%;object-fit:cover;border-radius:10px}
 .teacher-name{font-family:var(--fd);font-size:1rem;font-weight:900;color:var(--tx);margin:12px 8px 4px;line-height:1.3}
 .teacher-meta{font-size:.73rem;color:var(--tx2)}
 
@@ -3596,9 +3598,9 @@ mark {
 }
 .teacher-avatar {
   width: 72px !important;
-  height: 72px !important;
+  height: 88px !important;
   aspect-ratio: unset !important;
-  border-radius: 50% !important;
+  border-radius: 12px !important;
   border: 2.5px solid var(--d-bdr2) !important;
   box-shadow: 0 4px 14px rgba(0,0,0,.14) !important;
   overflow: hidden !important;
@@ -3612,7 +3614,7 @@ mark {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
-  border-radius: 50% !important;
+  border-radius: 10px !important;
 }
 .teacher-name {
   font-size: .88rem !important;
@@ -3638,7 +3640,8 @@ mark {
 }
 .teachers-subj-grid .teacher-avatar {
   width: 64px !important;
-  height: 64px !important;
+  height: 78px !important;
+  border-radius: 10px !important;
 }
 
 /* ── Stage picker — full-screen mode (stage-only) ── */
@@ -4502,6 +4505,8 @@ mark {
 .sb-ic-purple { background: rgba(139,92,246,.12);   color: #7c3aed; }
 .sb-ic-green  { background: rgba(34,197,94,.12);    color: #16a34a; }
 .sb-ic-orange { background: rgba(249,115,22,.12);   color: #ea580c; }
+.sb-ic-teal   { background: rgba(20,184,166,.12);   color: #0d9488; }
+.sb-ic-gold   { background: rgba(251,191,36,.12);   color: #d97706; }
 .sb-ic-yellow { background: rgba(245,158,11,.12);   color: #d97706; }
 .sb-ic-red    { background: rgba(239,68,68,.12);    color: #dc2626; }
 .sb-ic-green  { background: rgba(34,197,94,.12);    color: #16a34a; }
@@ -5404,4 +5409,322 @@ body.has-gtbar .pg-bar {
   border-radius: 50%;
   flex-shrink: 0;
   margin-top: 5px;
+}
+
+
+/* ══════════════════════════════════════════════
+   BALANCE & SUBSCRIPTION SYSTEM
+══════════════════════════════════════════════ */
+
+/* ── رصيدي في الـ Sidebar ── */
+.sb-balance-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;margin:8px 2px 6px;
+  background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.06));
+  border:1.5px solid rgba(102,126,234,.2);
+  border-radius:14px;
+}
+.sb-balance-ic{ font-size:1.25rem; }
+.sb-balance-body{ flex:1; }
+.sb-balance-lbl{ font-size:.7rem;color:var(--d-tx3);margin-bottom:1px; }
+.sb-balance-val{
+  font-size:.95rem;font-weight:800;
+  color:var(--d-p400);
+  font-family:Tajawal,sans-serif;
+}
+
+/* ── Badge سعر على كارد المدرس ── */
+.teacher-card{ position:relative; }
+.teacher-price-badge{
+  position:absolute;top:6px;right:6px;
+  background:rgba(0,0,0,.72);color:#fbbf24;
+  font-size:.65rem;font-weight:800;
+  padding:3px 7px;border-radius:20px;
+  font-family:Tajawal,sans-serif;
+  backdrop-filter:blur(4px);
+  letter-spacing:.3px;
+  pointer-events:none;
+}
+
+/* ── بوابة الاشتراك في صفحة المدرس ── */
+.teacher-sub-gate{
+  padding:18px 20px 14px;
+  border-top:1px solid rgba(102,126,234,.15);
+  display:flex;flex-direction:column;gap:10px;
+}
+.tsg-top{
+  display:flex;align-items:center;gap:12px;
+}
+.tsg-lock{ font-size:1.8rem; }
+.tsg-texts{ }
+.tsg-title{
+  font-size:.82rem;color:var(--d-tx3);font-weight:600;
+  font-family:Tajawal,sans-serif;
+}
+.tsg-price{
+  font-size:1.1rem;font-weight:900;color:#f59e0b;
+  font-family:Tajawal,sans-serif;line-height:1.3;
+  margin-top:2px;
+}
+.tsg-balance{
+  font-size:.78rem;color:var(--d-tx3);
+}
+.tsg-balance strong{ color:var(--d-tx1); }
+.tsg-btn{
+  background:var(--d-grad);color:#fff;
+  border:none;border-radius:12px;
+  padding:12px 20px;font-size:.88rem;
+  font-weight:700;cursor:pointer;
+  font-family:Tajawal,sans-serif;
+  transition:opacity .18s;width:100%;
+  text-align:center;
+}
+.tsg-btn:active{ opacity:.8; }
+
+/* ══ شارة السعر في بطاقة المدرس (tc-price-tag) ══ */
+.tc-price-tag{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:4px;margin:5px auto 2px;
+  font-size:.73rem;font-weight:800;
+  padding:4px 12px;border-radius:20px;
+  font-family:Tajawal,sans-serif;
+  width:fit-content;max-width:90%;
+  white-space:nowrap;
+}
+.tc-price-paid{
+  background:rgba(251,191,36,.13);
+  border:1.5px solid rgba(251,191,36,.35);
+  color:#d97706;
+}
+.tc-price-free{
+  background:rgba(34,197,94,.1);
+  border:1.5px solid rgba(34,197,94,.3);
+  color:#16a34a;
+}
+.tc-price-subbed{
+  background:rgba(34,197,94,.12);
+  border:1.5px solid rgba(34,197,94,.35);
+  color:#16a34a;
+}
+
+/* ══ هيرو صفحة المدرس ══ */
+.teacher-hero-info{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;width:100%;
+}
+.th-info{
+  display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;
+}
+.th-name{
+  font-family:Tajawal,sans-serif;font-size:1.05rem;
+  font-weight:900;color:var(--d-tx1);line-height:1.2;
+}
+.th-subj{
+  font-size:.76rem;color:var(--d-tx3);margin-top:1px;
+}
+.th-price-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:6px;padding:4px 12px;border-radius:20px;
+  font-size:.78rem;font-weight:800;font-family:Tajawal,sans-serif;
+  width:fit-content;
+}
+.th-price-paid{
+  background:rgba(251,191,36,.15);
+  border:1.5px solid rgba(251,191,36,.4);
+  color:#d97706;
+}
+.th-price-free{
+  background:rgba(34,197,94,.12);
+  border:1.5px solid rgba(34,197,94,.3);
+  color:#16a34a;
+}
+
+/* ══ شارة "مشترك" داخل هيرو المدرس ══ */
+.tsg-start-wrap{
+  margin-top:4px;
+}
+.tsg-subscribed-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(34,197,94,.12);
+  border:1.5px solid rgba(34,197,94,.35);
+  color:#16a34a;
+  font-size:.76rem;font-weight:800;
+  padding:4px 12px;border-radius:20px;
+  font-family:Tajawal,sans-serif;
+  width:fit-content;
+}
+
+/* admin badge yellow */
+.badge.b-yellow{
+  background:rgba(251,191,36,.15);
+  color:#d97706;border:1px solid rgba(251,191,36,.3);
+}
+
+/* ── Balance nav button text ── */
+.sb-balance-nav-text{
+  flex:1;
+  font-size:.87rem;
+  color:var(--d-tx1);
+}
+.sb-balance-nav-text strong{
+  color: #d97706;
+  font-size:.95rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   overlay رصيدي وشحن الرصيد
+══════════════════════════════════════════════════════════ */
+.ov-backdrop{
+  position:fixed;inset:0;z-index:1100;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+}
+.ov-balance{
+  position:fixed;bottom:0;left:0;right:0;z-index:1101;
+  max-width:480px;margin:0 auto;
+  background:var(--d-surf,#1a1c2e);
+  border-radius:24px 24px 0 0;
+  border:1.5px solid var(--d-bdr-n,rgba(255,255,255,.08));
+  box-shadow:0 -8px 40px rgba(0,0,0,.35);
+  display:flex;flex-direction:column;gap:0;
+  padding:0 0 env(safe-area-inset-bottom,16px);
+  animation:ovbSlideUp .28s cubic-bezier(.32,1,.6,1);
+  max-height:92vh;overflow-y:auto;
+}
+@keyframes ovbSlideUp{
+  from{transform:translateY(100%);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+
+/* Header */
+.ovb-header{
+  display:flex;align-items:center;gap:12px;
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--d-bdr-n,rgba(255,255,255,.07));
+  flex-shrink:0;
+}
+.ovb-header-icon{
+  font-size:1.6rem;line-height:1;
+  width:44px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(251,191,36,.12);
+  border:1.5px solid rgba(251,191,36,.25);
+  border-radius:14px;flex-shrink:0;
+}
+.ovb-header-info{ flex:1;min-width:0; }
+.ovb-title{
+  font-family:Tajawal,sans-serif;font-size:1rem;
+  font-weight:900;color:var(--d-tx1,#e8eaf6);
+}
+.ovb-subtitle{
+  font-size:.72rem;color:var(--d-tx3,#6b7280);margin-top:1px;
+}
+.ovb-close{
+  width:32px;height:32px;border-radius:50%;border:none;
+  background:var(--d-bg2,rgba(255,255,255,.06));
+  color:var(--d-tx2,#9ca3af);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.ovb-close:hover{ background:var(--d-bg3,rgba(255,255,255,.1)); }
+
+/* بطاقة الرصيد */
+.ovb-balance-card{
+  margin:16px 20px;
+  padding:16px 20px;
+  background:linear-gradient(135deg,rgba(102,126,234,.18),rgba(118,75,162,.14));
+  border:1.5px solid rgba(102,126,234,.25);
+  border-radius:16px;
+  text-align:center;
+}
+.ovb-balance-label{
+  font-size:.72rem;color:var(--d-tx3,#6b7280);
+  font-family:Tajawal,sans-serif;margin-bottom:6px;
+}
+.ovb-balance-amount{
+  font-family:Tajawal,sans-serif;font-size:2rem;
+  font-weight:900;color:var(--d-p400,#818cf8);line-height:1.1;
+}
+.ovb-currency{
+  font-size:1rem;font-weight:700;opacity:.75;
+}
+
+/* قسم الشحن */
+.ovb-recharge-section{
+  padding:0 20px 16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.ovb-section-title{
+  display:flex;align-items:center;gap:7px;
+  font-family:Tajawal,sans-serif;font-size:.82rem;
+  font-weight:700;color:var(--d-tx2,#9ca3af);
+}
+.ovb-input-row{
+  position:relative;
+}
+.ovb-code-input{
+  width:100%;box-sizing:border-box;
+  background:var(--d-bg2,rgba(255,255,255,.06));
+  border:1.5px solid var(--d-bdr-n,rgba(255,255,255,.1));
+  border-radius:14px;
+  padding:13px 16px;
+  font-size:1rem;font-weight:700;
+  color:var(--d-tx1,#e8eaf6);
+  font-family:'Courier New',monospace;
+  letter-spacing:.12em;
+  text-align:center;
+  direction:ltr;
+  outline:none;
+  transition:border-color .18s,box-shadow .18s;
+}
+.ovb-code-input::placeholder{
+  color:var(--d-tx3,#6b7280);font-size:.8rem;
+  font-family:Tajawal,sans-serif;letter-spacing:0;font-weight:400;
+}
+.ovb-code-input:focus{
+  border-color:rgba(102,126,234,.5);
+  box-shadow:0 0 0 3px rgba(102,126,234,.12);
+}
+.ovb-recharge-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px 20px;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:#fff;border:none;border-radius:14px;
+  font-family:Tajawal,sans-serif;font-size:.95rem;font-weight:800;
+  cursor:pointer;transition:opacity .18s,transform .1s;
+  box-shadow:0 4px 20px rgba(102,126,234,.3);
+}
+.ovb-recharge-btn:hover:not(:disabled){ opacity:.9; }
+.ovb-recharge-btn:active:not(:disabled){ transform:scale(.98); }
+.ovb-recharge-btn:disabled{ opacity:.5;cursor:not-allowed; }
+
+/* رسالة الحالة */
+.ovb-msg{
+  min-height:22px;
+  font-family:Tajawal,sans-serif;font-size:.83rem;
+  font-weight:600;text-align:center;
+  border-radius:10px;padding:0;
+  transition:all .2s;
+}
+.ovb-msg-ok{
+  color:#22c55e;background:rgba(34,197,94,.1);
+  border:1px solid rgba(34,197,94,.2);
+  padding:9px 14px;
+}
+.ovb-msg-warn{
+  color:#f59e0b;background:rgba(245,158,11,.1);
+  border:1px solid rgba(245,158,11,.2);
+  padding:9px 14px;
+}
+.ovb-msg-err{
+  color:#ef4444;background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.2);
+  padding:9px 14px;
+}
+
+/* تذييل */
+.ovb-footer{
+  text-align:center;font-size:.68rem;
+  color:var(--d-tx3,#6b7280);
+  padding:0 20px 12px;
+  font-family:Tajawal,sans-serif;
 }

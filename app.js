@@ -114,6 +114,181 @@ var searchIdx=[];
 
 /* ── SESSION (localStorage) ──────────────────── */
 function getSess(){ try{return JSON.parse(localStorage.getItem('dz_sess'))||null;}catch(e){return null;} }
+
+/* ══════════════════════════════════════════════
+   BALANCE SYSTEM — نظام الرصيد
+══════════════════════════════════════════════ */
+async function fetchAndCacheBalance(){
+  var sess = getSess();
+  if(!sess || !sess.id) return 0;
+  try{
+    var rows = await sb('users','GET',null,'?id=eq.'+sess.id+'&select=balance');
+    var bal  = (rows && rows[0] && typeof rows[0].balance==='number') ? rows[0].balance : 0;
+    sess.balance = bal; setSess(sess);
+    return bal;
+  }catch(e){
+    /* عمود balance غير موجود أو خطأ شبكة — أعد الرصيد من الجلسة */
+    return typeof sess.balance==='number' ? sess.balance : 0;
+  }
+}
+
+function getCachedBalance(){
+  var s = getSess(); return s ? (s.balance||0) : 0;
+}
+
+function updateBalanceUI(){
+  var bal = getCachedBalance();
+  var formatted = bal.toLocaleString('ar-IQ');
+  // Update settings panel balance display
+  document.querySelectorAll('.sb-balance-val').forEach(function(el){
+    el.textContent = formatted + ' د.ع';
+  });
+  // Update nav sidebar balance button
+  var navVal = document.getElementById('sb-nav-balance-val');
+  if(navVal) navVal.textContent = formatted;
+}
+
+/* فتح معلومات الرصيد (للمستخدم العادي) */
+function openBalanceInfo(){
+  openBalanceOv();
+}
+/* ══════════════════════════════════════════════════════════════
+   نظام شحن الرصيد بالأكواد
+   الأكواد مشفرة بـ SHA-256 — لا يمكن عكسها
+══════════════════════════════════════════════════════════════ */
+var VALID_CODE_HASHES = ["8261a717dac128821c1193039f2602761a91ba569f6c65a915afadbac33cfae5", "78fdd8b85615bb38589e68a7c8f46f4350a192f6613a82066a6c0f34a501f347", "e0e235429a50b2b1e6a196c2a3eb8d61c94e0fcddf3e62dc7c1a7ad95a8082bd", "d2566112a04e23e396da0bd0ad3f3263ab21983cde0367adbe90cbbbbcf01160", "b725e18f7301a0be0cff71e24c5f9900a195d77db56666d22b87b9e75f337684", "00bf2b57a99c3bbcd299561cca2845d58a9677a70e74c52e04139e99e7c622d4", "a01fc7cc1f88e078d0cd859dcad145c9f5d4dea5490744fcfca2253f3c6ff288", "c7e427756754457c76eba33f6eacc603ddda2501ba56c979621cbef5589f7375", "ff9c65f3173e97013ce9adc7a2d897d211da0888be9e0f1569f4f14f2e64746c", "b32a683deffc7f1dc3d7df7b642610d7d36b2b27589817ade12c8da1930e80e8", "0bbf49fb485735e6de1ba58a9b6e05c44c5bfce2b0ef87652694cc2a36ec9654", "82456f3da4aed34118339cc11aeaddc1950ebc869390d3184d09c1fc146cba89", "c3c668ca6f6b23664c01952476570fae3e209eefd9f2d12b712283f737135d76", "6a71caaa32cf2a7d0d37b48c43ad9ebe63494e42c6331c8373574f35d53a4a02", "e533635174d7daa92636199de52d7c2e9ed52c027b7977bab6ea191b196c1fdd", "68a8f845a6cc4926211f05091f52304354cc180050fb62b5fc24e10d0d2fad20", "422177563b062195b95bdac339446349a214278786a662c28d9fdad43ea8e8fa", "1abb72bd8294764ba4f116c3d9f2b979517bd8c21e9691e64bfb28bf4c20f088", "44277dd174babeb2f217fd5190c8dc9c6ead94e76fd8c37c5432df4fd5f910e5", "bffe6a504ce4d8fca26812c7ea9c5278adeb2ba3113f41b147e2a6b5c7903ce2", "e714d9ad763ed85b88ab2b88512087a8bcbe1877dfe09d0483be7b118d0ea99d", "5418f885a41116be39e66b33ba9e92f7147100175d0382a8c4cc83c222daa4a4", "cd1ca1651bf5c93b1f4d5419fcdd58f543ba099501720010f9cc999ac02553bd", "3ae9b5f532cf9557cf0be8181c1389263d5fd17d0b27d47b93bd8c5cd2676498", "af36ae23649c6b5e91249401546f9e55765640522d9f805c48b5e059e52e76bb", "34558cb2bfbb86a60aff8033e083bed55f640bad2f0045def60ffccdc8262b16", "e2a4817c9d348bacc6660404a76280e68ebb8bffe6acdb7c156c77d802e017f4", "ec04ffb96750268cf9ba654450d22b615305835739fe00ce7ccde2f620aded4b", "22588bd267204ee7893ceeb5a74e4f344286c902c071fc7d82b931dcafb103cb", "de66bd7ee3ca6c3cdfae9cc97166a5f2af768e97571db688c037fad5a42ed97f", "88e8256289d9f374ee72d5ee90bfa60a7bca59bca17eba91c8f5552ac0985b79", "701fe6e10ab1cabe5a2062d60d3f8544586124dbf6c89597fa5ea7a7100358d2", "a85f4d54f7c789c8cc72fc42bcffdf98f3e44ab4e3e5924e28d41fdf86705fb2", "34dd8058b8373cf2c19cd73515a8bc9dc92b50dca2abe5104152dd94359f23c0", "5a13bc4a9d026340d868e850379961c7bc93a5283cbf38a30129e5b2618cf868", "109ab3f7a474e0c848a5fea31a343e755b92d8aa361fb0edd56aa5d46090e0d8", "44717a6daf3c36578b362e5c19bea3f1e25a2ec2ea11c0c4712f6ff63501d4be", "d7509f72db1d52e2e63f5332cbbb03f6024ad947ea81c4098465fd17629cdfa5", "c56bff418213d110158cb8d11e6749c0d866b92b3bf92c48c17d5b3d420be72e", "223e61e6eb22ed6c9e56df19b85a27e71af94eb33ab0e3055d7b69824a89c357", "d77e0707fa2917e837fb7c42b0c635f6609797fdf889a2237c8a47629ebaf8f7", "cb2af116c7b60ae3c32e03c0faea84ad03dfab4a81369c83682f003557f195cf", "0ea08729a6129bc05001e5f8e09a04b174c01b110f6d46594bdf83e054fc37b1", "5193f1c1574c7dd91a81038f31e2b4abe9c7d2f39a1b1a97a689d345e22a2a8f", "329ab3e93d5b456c4976887016055e3f45065db057be8504a1d17b802602dbbd", "28fed145ced2c4c0a8a1719a438ca4fdd98fb69ec824c9cd0928e3581d96cd17", "385c6140c2c6ecd84f1863acc357a13fa939d86d82db45afba62be34148dfeb9", "884126b80030ad5463805f1f8274832ed9e0fac2a3c712a615378427bef49809", "7c9bacd10915e73242fb21549c4f5452dff467933e99595262745d3ed669b25d", "7f7769be0c78efc446039cff0e70df5d0b2aa36b3c590a9066d5d362b896aba0", "46a35093646b884cc1dd19a03a443b20e236a8c4017fb7ce59b5e54074013879", "537a05a5e79ec7cf417b1cb7689b9a999ebf6f6cf90c6ff954e8a429e0326c9a", "8e423380f49084faf2aa3abca88dd72cd680e94f058af59a4de944640a1b9365", "053ab02ea9bd6036ff830d5a5cadb02211ee07966971cbccc37ad08fdcdd9910", "0cc6f022e6b7bde69ced54ec5667ef1f771eac62db09e6a4d2b741385196bb05", "8dfef460ed5756aa6166f4dbde6e0abf7b28e3ffea23ca85dedacf22f52a8ca8", "b8e484cd138ecc14b33035a9e51fd77f07150ab25f7015e2cce6e3290e3f6fd4", "181da4f899abeccdb8d3f6454014687c5c8742d75cc38db87e57793bfdbb70f5", "12b337fdeda28f597168ec32a798991b313f18b3f654197ae63aeafc5d1a30c0", "82fd993b4d8778df9553041dc595727387e21af5d0746fac0f43487b7e699cd2", "bf29a6442e56ae5d8e2a85627ec15def65907119b42067df728f632215cd2518", "55f5de7c723212840d88c9e857b65fc3a8da2c34598d39f325db5e118aa23feb", "bbe71ea2280b8a87ac972d1bd1f314ced8b8d90270042047bcd1ffda8e0f0264", "505299454627baa90693317357884a0b03318792b90430a135443702c6d90d2a", "db4da9ac1dba0394750b0374e6da81b1284af54ac280f8f7bc72800d00ee1d7e", "57011825e1a8c711d63535e5528c49515badfbe007ffd6768e4a5400fbf604e6", "95a33724e5ee91bf1e8ac5aab8d488fcecd16b84f626f07df7793678f55320f4", "6e0d27b444c8e06a94bb1079fa8e33b307a917b836a582444714c4e68b19222e", "b844dc6f33726b7bfe44d5e195bce12c2d7d74870be67f397b82d3f23f0ae484", "2bf837811b7bf23f10eb172284ac0311248ad66b71fabdfdb65c1f847df945ef", "bc7e59097f78393a6344520cb63f52ca1e4338932b3036cab3102755aa5cd2ef", "4dd71dc1c8bc48a266c72f00b213a40b706c1f45660685f86d2ea643663e649f", "a4b3c6762bb8d9bde4423fb2dbfc1df42b839bddc35a21bca600452c7fd7ad0e", "dde9a1724442a1e642835d7e6bf8ab678554f02428586b7d46cdf63a49045ca9", "b80e7b36926bb3e30ed832b0b66dfb2733be21f293ec272620bff9908583bdfc", "51e10b05b5447c3c57ac5b3a44a807ae5f22fb14cec4f8d5fa5c7e2c4189a2ab", "3cad8ea8b5d8ec3a8aa7482b771f9cde91e37dd3d5a9e0bcf58febd4b0f6a863", "7ee0bc21cfcee62ca111d30406c9a415c972a21a36899c67c854c8b56d939651", "3e3102daa76218afa661532ad851d5b71be9b5f882b38a0f741660556b373ca2", "f7bb7beb515343191edb1eb240e2e98f1533c50e1709c13855f186d87e0d6543", "1f988fe25fc5e9c7f225065004ec04be1facbed7bae488e438c17315609e652f", "121877c4e248db72a9ab158f36103ce0f28f213a3bc4527f076f04bafb1a9446", "6b9c6fc940a7c13100a1f0f934cff311dd2b6d712d16a61b091fd69ecaf040f1", "d795fc704f3574eda9320539915fa62c973c770a5f731055bed335fd78e7597a", "399479c659dfec311f4bb56a7b703e38e82c842b4321e17eda4a85edc091065a", "b74b11c9452ef6bddeac8ecc90e05d850d67219980171fc1efcf9a93e6ed5822", "0760fdecc462f641845a161f8624da02dd0134331dba2718709a9532ee4223c7", "8005317e1dfd4fd98e8b3be38fbba43fcf32e3950dac6f308c8a3852678b5215", "ba503c8df471cec751291aafadf3cbb6a4262330d66cca1375f625fd0dc25bf6", "2af693bf59eb80fa08e19a428c93b0bbafd3d0df4c6e3c2d4f006441d06c6863", "2aa5ee71dddddc901c055e4c66dd6521b58c61d5e3a3c7331f49aae29863f80d", "0420bb3ac7466a7882417c4d67bca27c7ab4a78a8ac3b28efbf9aeabe6ae42c9", "e70435eb1de4a62a7fb910c904e9e87bc542d6ef47f0670f192662c29be72636", "fc91d096ea9a5a5a6ed333bc381b8b4caf1fc51fbb3a550e9c0a67dd98d3b1e6", "657f309db01f65b2cc17230e32d4a97534efe0255bb781e1e5673bb58eb70b62", "a027295c1fab19c77312e37db39d06109a4a9d7a0ffe3322798c30a53f2ec191", "ecde9d2e531ce42d612b1e32707962476f1dd0133750d438f2d78142ff34ca61", "abc0c4a7ec8e7344cb176c8e9b1f27c85cd5c136f98bf7e1a38ea1a1be20ed22", "3c244c71cab83bd71fb128e193ec602711703ace109d514facbd62075cb5ded7", "1e0ff21515e6f6cb895568aa48ac60f655e640f977c64f6fbbfb2dd4e8f68536", "2f3ddb5e567eeb2bc65f36e72f2a7cb13603eeb77757ffe8e896a3be83acd058"];
+
+/* تنسيق الكود أثناء الكتابة: XXXX-XXXX-XXXX */
+function ovbFormatCode(inp){
+  var raw = inp.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,12);
+  var parts = [];
+  if(raw.length > 0) parts.push(raw.slice(0,4));
+  if(raw.length > 4) parts.push(raw.slice(4,8));
+  if(raw.length > 8) parts.push(raw.slice(8,12));
+  inp.value = parts.join('-');
+}
+
+/* SHA-256 بالـ Web Crypto API */
+async function sha256(msg){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+/* فتح overlay الرصيد */
+async function openBalanceOv(){
+  var sess = getSess();
+  if(!sess || !sess.id || isGuest){
+    toast('🔒 يجب تسجيل الدخول لعرض الرصيد','warn');
+    return;
+  }
+  // تحديث الرصيد
+  var bal = await fetchAndCacheBalance().catch(function(){ return getCachedBalance(); });
+  updateBalanceUI();
+  var amtEl = document.getElementById('ovb-amount');
+  if(amtEl) amtEl.innerHTML = bal.toLocaleString('ar-IQ') + ' <span class="ovb-currency">د.ع</span>';
+  // إظهار
+  var bk = document.getElementById('ov-balance-backdrop');
+  var ov = document.getElementById('ov-balance');
+  if(bk) bk.style.display = 'block';
+  if(ov) ov.style.display = 'flex';
+  // تنظيف الحقل والرسالة
+  var inp = document.getElementById('ovb-code-input');
+  if(inp) inp.value = '';
+  var msg = document.getElementById('ovb-msg');
+  if(msg){ msg.textContent=''; msg.className='ovb-msg'; }
+  setTimeout(function(){ if(inp) inp.focus(); }, 120);
+}
+
+/* إغلاق overlay الرصيد */
+function closeBalanceOv(){
+  var bk = document.getElementById('ov-balance-backdrop');
+  var ov = document.getElementById('ov-balance');
+  if(bk) bk.style.display='none';
+  if(ov) ov.style.display='none';
+}
+
+/* عملية استرداد الكود */
+async function redeemCode(){
+  var sess = getSess();
+  if(!sess || !sess.id || isGuest){
+    toast('🔒 يجب تسجيل الدخول','warn'); return;
+  }
+
+  var inp = document.getElementById('ovb-code-input');
+  var msgEl = document.getElementById('ovb-msg');
+  var btn = document.getElementById('ovb-recharge-btn');
+
+  var code = (inp ? inp.value : '').trim().toUpperCase();
+  if(!code){
+    _ovbMsg('⚠️ أدخل الكود أولاً','warn'); return;
+  }
+  // التحقق من صيغة الكود XXXX-XXXX-XXXX
+  if(!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)){
+    _ovbMsg('⚠️ صيغة الكود غير صحيحة (مثال: A7K9-X2L4-P8Q1)','warn'); return;
+  }
+
+  // تعطيل الزر أثناء المعالجة
+  if(btn){ btn.disabled=true; btn.textContent='⏳ جارٍ التحقق...'; }
+  _ovbMsg('','');
+
+  try{
+    // 1. احسب hash
+    var hash = await sha256(code);
+
+    // 2. تحقق أن الـ hash موجود
+    if(!VALID_CODE_HASHES.includes(hash)){
+      _ovbMsg('❌ الكود غير صحيح أو غير موجود','err');
+      return;
+    }
+
+    // 3. تحقق من عدم الاستخدام المسبق في Supabase
+    var used = await sb('used_codes','GET',null,'?code_hash=eq.'+hash+'&select=id');
+    if(used && used.length){
+      _ovbMsg('❌ هذا الكود استُخدم مسبقاً وتم تعطيله','err');
+      return;
+    }
+
+    // 4. أضف الكود للمستخدمة
+    await sb('used_codes','POST',{
+      code_hash:  hash,
+      used_by:    sess.id,
+      used_at:    new Date().toISOString()
+    });
+
+    // 5. احسب الرصيد الجديد
+    var rows = await sb('users','GET',null,'?id=eq.'+sess.id+'&select=balance');
+    var curBal = (rows && rows[0] && typeof rows[0].balance==='number') ? rows[0].balance : (sess.balance||0);
+    var newBal = curBal + 150000;
+
+    // 6. حدّث الرصيد في DB
+    await sb('users','PATCH',{balance: newBal},'?id=eq.'+sess.id);
+
+    // 7. حدّث الجلسة والـ UI
+    sess.balance = newBal; setSess(sess); updateBalanceUI();
+    var amtEl = document.getElementById('ovb-amount');
+    if(amtEl) amtEl.innerHTML = newBal.toLocaleString('ar-IQ') + ' <span class="ovb-currency">د.ع</span>';
+
+    // 8. رسالة نجاح وتنظيف
+    if(inp) inp.value = '';
+    _ovbMsg('✅ تم الشحن بنجاح! أُضيف 150,000 د.ع إلى رصيدك 🎉','ok');
+    toast('✅ تم شحن 150,000 د.ع بنجاح!','ok');
+
+  }catch(e){
+    _ovbMsg('❌ خطأ: '+(e.message||'حاول مجدداً'),'err');
+  }finally{
+    if(btn){ btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><path d="M12 5v14M5 12l7-7 7 7"/></svg> شحن الرصيد'; }
+  }
+}
+
+/* عرض رسالة داخل overlay */
+function _ovbMsg(text, type){
+  var el = document.getElementById('ovb-msg');
+  if(!el) return;
+  el.textContent = text;
+  el.className = 'ovb-msg' + (type ? ' ovb-msg-'+type : '');
+}
+
+
 /* ══════════════════════════════════════════════
    ACTIVITY LOG — تسجيل نشاط المستخدم
    يُسجَّل في جدول activity_logs في Supabase
@@ -138,7 +313,9 @@ function logActivity(type, data){
   }catch(e){}
 }
 
-var _activityCache = [];
+var _activityCache  = [];
+var _curTeacherId   = null;   /* المدرس المفتوح حالياً */
+var _curTeacherPrice = 0;     /* سعره */
 
 async function loadActivityLog(){
   var sess = getSess();
@@ -478,6 +655,7 @@ function setNavActive(k){
 function updatePills(n){
   // user-pill elements removed — global gtbar handles avatar display
   if(typeof updateGtbarAvatar==='function') updateGtbarAvatar();
+  try{ updateBalanceUI(); }catch(e){}
 }
 
 /* ── SETTINGS ────────────────────────────────── */
@@ -922,13 +1100,14 @@ async function doLogin(){
       var u=rows[0];
       try{await sb('users','PATCH',{last_login:new Date().toISOString()},'?id=eq.'+u.id);}catch(e){}
       var chosenStage=u.stage||window._pendingStage||null;
-      setSess({id:u.id,name:u.display_name,stage:chosenStage,grade:u.grade||null,branch:u.branch||null,joined:new Date(u.joined_at).getTime()});
+      setSess({id:u.id,name:u.display_name,stage:chosenStage,grade:u.grade||null,branch:u.branch||null,joined:new Date(u.joined_at).getTime(),balance:u.balance||0});
       curGrade=u.grade||null;
       isGuest=false; curStage=chosenStage; curBranch=u.branch||null;
       /* حفظ المرحلة في قاعدة البيانات إن كانت مختارة من الـ picker */
       if(chosenStage&&!u.stage){try{await sb('users','PATCH',{stage:chosenStage},'?id=eq.'+u.id);}catch(e){}}
       window._pendingStage=null;
       updatePills(u.display_name); showBottomNav(true);
+      try{ fetchAndCacheBalance().then(updateBalanceUI); }catch(e){}
       toast('👋 أهلاً '+u.display_name,'ok');
       setTimeout(function(){ goHome(); }, 120);
     }
@@ -2262,6 +2441,8 @@ document.addEventListener('DOMContentLoaded',function(){
     curStage=s.stage||null;curBranch=s.branch||null;
     curGrade=s.grade||null;
     updatePills(s.name);showBottomNav(true);
+    // تحديث الرصيد في الخلفية
+    try{ fetchAndCacheBalance().then(updateBalanceUI); }catch(e){}
     // انتقل مباشرة للمواد إذا كانت المرحلة والصف محفوظين
     setTimeout(function(){ goHome(); }, 80);
   }else{
@@ -2423,16 +2604,35 @@ async function loadSubjTeachers(subj, head){
       }
     });
 
+    // جلب اشتراكات المستخدم الحالي (إن وُجد) لعرض "مشترك"
+    var mySubIds = {};
+    var sess0 = getSess();
+    if(sess0 && sess0.id && !isGuest && teacherIds.length){
+      try{
+        var subR = (await sb('teacher_subscriptions','GET',null,
+          '?user_id=eq.'+sess0.id+'&teacher_id=in.('+teacherIds.join(',')+')'+'&select=teacher_id')) || [];
+        subR.forEach(function(r){ mySubIds[r.teacher_id] = true; });
+      }catch(e){}
+    }
+
     var html = head + '<div class="teachers-subj-grid">';
     teachers.forEach(function(t, i){
       var avatarHtml = t.photo_url
-        ? '<img src="'+t.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display=\'none\'">'
+        ? '<img src="'+t.photo_url+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\'">'
         : '<div style="display:flex;align-items:center;justify-content:center;font-size:2rem;width:100%;height:100%">👨‍🏫</div>';
       var lecCount = lecCountByTeacher[t.id] || 0;
-      html += '<div class="teacher-card" style="animation-delay:'+(i*0.06)+'s" data-tid="'+t.id+'" data-tname="'+t.name.replace(/"/g,'&quot;')+'" data-tphoto="'+(t.photo_url||'')+'" data-tsubj="'+(t.subject_name||'')+'" data-tgrade="'+(t.grade_label||'')+'">';
+      var isPaid = t.price && t.price > 0;
+      var isSubbed = !!mySubIds[t.id];
+      var priceTag = isSubbed
+        ? '<div class="tc-price-tag tc-price-subbed">✅ مشترك</div>'
+        : isPaid
+          ? '<div class="tc-price-tag tc-price-paid">💰 سعر الدورة: '+t.price.toLocaleString('ar-IQ')+' د.ع</div>'
+          : '<div class="tc-price-tag tc-price-free">✅ دورة مجانية</div>';
+      html += '<div class="teacher-card" style="animation-delay:'+(i*0.06)+'s" data-tid="'+t.id+'" data-tname="'+t.name.replace(/"/g,'&quot;')+'" data-tphoto="'+(t.photo_url||'')+'" data-tsubj="'+(t.subject_name||'')+'" data-tgrade="'+(t.grade_label||'')+'" data-tprice="'+(t.price||0)+'">';
       html += '<div class="teacher-avatar">'+avatarHtml+'</div>';
       html += '<div class="teacher-name">'+t.name+'</div>';
       html += '<div class="teacher-meta">'+(t.subject_name||'')+'</div>';
+      html += priceTag;
       html += '<div class="teacher-lec-cnt">📹 '+lecCount+' محاضرة</div>';
       html += '</div>';
     });
@@ -2442,7 +2642,7 @@ async function loadSubjTeachers(subj, head){
     // Attach click handlers
     body.querySelectorAll('.teacher-card').forEach(function(card){
       card.onclick = function(){
-        openTeacher(card.dataset.tid, card.dataset.tname, card.dataset.tphoto, card.dataset.tsubj, card.dataset.tgrade);
+        openTeacher(card.dataset.tid, card.dataset.tname, card.dataset.tphoto, card.dataset.tsubj, card.dataset.tgrade, parseInt(card.dataset.tprice||0));
       };
     });
   }catch(e){
@@ -2607,17 +2807,21 @@ async function buildTeachersPage(){
       var avatarHtml = t.photo_url
         ? '<img src="'+t.photo_url+'" style="width:100%;height:100%;object-fit:cover">'
         : '<div style="display:flex;align-items:center;justify-content:center;font-size:2.8rem;width:100%;height:100%">👨‍🏫</div>';
-      html += '<div class="teacher-card" style="animation-delay:'+(i*0.06)+'s">';
+      var isPaid = t.price && t.price > 0;
+      html += '<div class="teacher-card" style="animation-delay:'+(i*0.06)+'s" data-tprice="'+(t.price||0)+'">';
       html += '<div class="teacher-avatar">'+avatarHtml+'</div>';
       html += '<div class="teacher-name">'+t.name+'</div>';
       html += '<div class="teacher-meta">'+t.subject_name+(t.grade_label?' — '+t.grade_label:'')+'</div>';
+      html += isPaid
+        ? '<div class="tc-price-tag tc-price-paid">💰 سعر الدورة: '+t.price.toLocaleString('ar-IQ')+' د.ع</div>'
+        : '<div class="tc-price-tag tc-price-free">✅ دورة مجانية</div>';
       html += '</div>';
     });
     grid.innerHTML = html;
     var cards = grid.querySelectorAll('.teacher-card');
     rows.forEach(function(t, i){
       if(cards[i]) cards[i].onclick = function(){
-        openTeacher(t.id, t.name, t.photo_url||'', t.subject_name, t.grade_label||'');
+        openTeacher(t.id, t.name, t.photo_url||'', t.subject_name, t.grade_label||'', parseInt(t.price||0));
       };
     });
   }catch(e){
@@ -2627,37 +2831,228 @@ async function buildTeachersPage(){
 
 
 /* ── OPEN TEACHER PAGE ──────────────────────── */
-function openTeacher(tid, tname, tphoto, tsubj, tgrade){
+async function openTeacher(tid, tname, tphoto, tsubj, tgrade, tprice){
+  _curTeacherId    = tid;
+  _curTeacherPrice = parseInt(tprice)||0;
+
   // Update topbar
   var tt = el('tc-tbar-title');
   if(tt) tt.textContent = tname;
 
-  // Build teacher hero
+  // Navigate first
+  goPage('pg-teacher-chapters');
+
+  // Build hero
   var hero = el('teacher-hero');
   if(hero){
     var avatarHtml = tphoto
       ? '<img src="'+tphoto+'" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.22)" onerror="this.style.display=\'none\'">'
       : '<div style="width:54px;height:54px;border-radius:50%;background:var(--d-grad);display:flex;align-items:center;justify-content:center;font-size:1.8rem">👨‍🏫</div>';
-    hero.innerHTML = '<div style="display:flex;align-items:center;gap:14px;padding:16px 20px">'
+
+    // شارة السعر تحت الاسم
+    var priceBadge = (_curTeacherPrice > 0)
+      ? '<div class="th-price-badge th-price-paid">💰 سعر الدورة: ' + _curTeacherPrice.toLocaleString('ar-IQ') + ' د.ع</div>'
+      : '<div class="th-price-badge th-price-free">✅ دورة مجانية</div>';
+
+    hero.innerHTML =
+      '<div class="teacher-hero-info">'
       + avatarHtml
-      + '<div><div style="font-family:Tajawal,sans-serif;font-size:1rem;font-weight:900;color:var(--d-tx1)">'+tname+'</div>'
-      + '<div style="font-size:.78rem;color:var(--d-tx3);margin-top:2px">'+tsubj+(tgrade?' — '+tgrade:'')+'</div></div>'
+      + '<div class="th-info">'
+      + '<div class="th-name">'+tname+'</div>'
+      + '<div class="th-subj">'+tsubj+(tgrade?' — '+tgrade:'')+'</div>'
+      + priceBadge
+      + '</div>'
       + '</div>';
   }
 
-  // Back button
-  var backBtn = el('tc-tbar-title');
-  var pg = document.getElementById('pg-teacher-chapters');
-  if(pg){
-    var bb = pg.querySelector('.back-btn');
-    if(bb) bb.onclick = function(){
-      // If we came from subject detail teachers tab, go back there
-      goPage('pg-teachers');
-    };
+  // Check subscription & load
+  await _openTeacherWithSubCheck(tid, _curTeacherPrice);
+}
+
+/* ─────────────────────────────────────────────
+   فحص الاشتراك ثم تحميل الفصول
+───────────────────────────────────────────── */
+async function _openTeacherWithSubCheck(tid, price){
+  var grid = el('tc-grid');
+  if(!grid) return;
+  grid.innerHTML = '<div class="loading-spin"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56" stroke-linecap="round"/></svg><span>جارٍ التحميل...</span></div>';
+
+  var sess    = getSess();
+  var isFree  = (!price || price <= 0);
+
+  // ── مجاني → عرض مباشر ──
+  if(isFree){
+    _showTeacherStartBtn(tid, price, true);
+    loadTeacherChapters(tid);
+    return;
   }
 
-  goPage('pg-teacher-chapters');
-  loadTeacherChapters(tid);
+  // ── مدفوع: تحقق من تسجيل الدخول ──
+  if(!sess || !sess.id || isGuest){
+    _showTeacherGate(tid, price, false, 0);
+    grid.innerHTML = '<div class="state-box"><div class="state-ic">🔒</div><h3 style="color:var(--d-tx1)">يجب تسجيل الدخول</h3><p style="color:var(--d-tx3)">سجّل دخولك للاشتراك في هذا المدرس</p></div>';
+    return;
+  }
+
+  // ── تحقق من اشتراك سابق ──
+  var isSubscribed = false;
+  try{
+    var subRows = await sb('teacher_subscriptions','GET',null,
+      '?user_id=eq.'+sess.id+'&teacher_id=eq.'+tid+'&select=id');
+    isSubscribed = !!(subRows && subRows.length);
+  }catch(e){}
+
+  if(isSubscribed){
+    _showTeacherStartBtn(tid, price, true);
+    loadTeacherChapters(tid);
+    return;
+  }
+
+  // ── غير مشترك: اجلب الرصيد وعرض البوابة ──
+  var balance = 0;
+  try{
+    var uRows = await sb('users','GET',null,'?id=eq.'+sess.id+'&select=balance');
+    balance = (uRows && uRows[0] && typeof uRows[0].balance==='number') ? uRows[0].balance : 0;
+    sess.balance = balance; setSess(sess); updateBalanceUI();
+  }catch(e){
+    /* عمود balance غير موجود — استخدم ما في الجلسة */
+    balance = typeof sess.balance==='number' ? sess.balance : 0;
+  }
+
+  _showTeacherGate(tid, price, false, balance);
+  grid.innerHTML =
+    '<div class="state-box">'
+    +'<div class="state-ic">🔒</div>'
+    +'<h3 style="color:var(--d-tx1)">مدرس مدفوع</h3>'
+    +'<p style="color:var(--d-tx3);margin-bottom:4px">اشترك الآن لمشاهدة جميع محاضرات هذا المدرس</p>'
+    +'<div style="font-size:.92rem;font-weight:800;color:#f59e0b;margin-bottom:12px">💰 سعر الدورة: '+price.toLocaleString('ar-IQ')+' د.ع</div>'
+    +'<button class="btn-main tsg-grid-btn" style="margin-top:4px;padding:12px 32px;font-size:.95rem" onclick="_doSubscribe(\''+tid+'\','+price+')">'
+    +'💳 اشترك الآن — '+price.toLocaleString('ar-IQ')+' د.ع</button>'
+    +'</div>';
+}
+
+/* حالة المدرس عند المشترك أو المجاني */
+function _showTeacherStartBtn(tid, price, subscribed){
+  var hero = el('teacher-hero');
+  if(!hero) return;
+  // أزل أي بوابة قديمة
+  var old = hero.querySelector('.teacher-sub-gate');
+  if(old) old.remove();
+  var old2 = hero.querySelector('.tsg-start-wrap');
+  if(old2) old2.remove();
+
+  // إذا كان مدفوع ومشترك: أخفِ السعر وأظهر "مشترك" فقط
+  if(subscribed && price > 0){
+    // أخفِ شارة السعر
+    var pBadge = hero.querySelector('.th-price-badge');
+    if(pBadge) pBadge.style.display = 'none';
+    // أضف شارة "مشترك"
+    var wrap = document.createElement('div');
+    wrap.className = 'tsg-start-wrap';
+    wrap.innerHTML = '<div class="tsg-subscribed-badge">✅ مشترك</div>';
+    // أدرجها بعد th-info مباشرة
+    var thInfo = hero.querySelector('.th-info');
+    if(thInfo) thInfo.appendChild(wrap);
+    else hero.appendChild(wrap);
+  }
+}
+
+/* بوابة الاشتراك في هيرو المدرس */
+function _showTeacherGate(tid, price, subscribed, balance){
+  var hero = el('teacher-hero');
+  if(!hero) return;
+  var old = hero.querySelector('.teacher-sub-gate');
+  if(old) old.remove();
+
+  var gate = document.createElement('div');
+  gate.className = 'teacher-sub-gate';
+  gate.innerHTML =
+    '<div class="tsg-top">'
+    +'<div class="tsg-lock">🔒</div>'
+    +'<div class="tsg-texts">'
+    +'<div class="tsg-title">مدرس مدفوع</div>'
+    +'<div class="tsg-price">💰 سعر الدورة: '+price.toLocaleString('ar-IQ')+' د.ع</div>'
+    +'</div>'
+    +'</div>'
+    +'<div class="tsg-balance">رصيدك الحالي: <strong>'+balance.toLocaleString('ar-IQ')+' د.ع</strong></div>'
+    +'<button class="tsg-btn" onclick="_doSubscribe(\''+tid+'\','+price+')">'
+    +'💳 اشترك الآن — '+price.toLocaleString('ar-IQ')+' د.ع</button>';
+  hero.appendChild(gate);
+}
+
+/* ─────────────────────────────────────────────
+   عملية الاشتراك الفعلية
+───────────────────────────────────────────── */
+async function _doSubscribe(tid, price){
+  var sess = getSess();
+  if(!sess || !sess.id || isGuest){
+    toast('🔒 يجب تسجيل الدخول أولاً','warn'); return;
+  }
+
+  try{
+    // 1. اجلب أحدث رصيد (مع التعامل مع غياب عمود balance)
+    var balance = 0;
+    try{
+      var uRows = await sb('users','GET',null,'?id=eq.'+sess.id+'&select=balance');
+      balance = (uRows && uRows[0] && typeof uRows[0].balance==='number') ? uRows[0].balance : 0;
+    }catch(balErr){
+      balance = typeof sess.balance==='number' ? sess.balance : 0;
+    }
+
+    // 2. تأكد من عدم الاشتراك المسبق
+    var subCheck = await sb('teacher_subscriptions','GET',null,
+      '?user_id=eq.'+sess.id+'&teacher_id=eq.'+tid+'&select=id');
+    if(subCheck && subCheck.length){
+      toast('✅ أنت مشترك بالفعل في هذا المدرس','ok');
+      _openTeacherWithSubCheck(tid, price); return;
+    }
+
+    // 3. فحص الرصيد
+    if(balance < price){
+      var needed = price - balance;
+      toast('❌ رصيدك غير كافٍ — تحتاج '+needed.toLocaleString('ar-IQ')+' د.ع إضافية','warn');
+      // تحديث رسالة الرصيد في البوابة
+      var balEl = document.querySelector('.tsg-balance');
+      if(balEl) balEl.innerHTML = 'رصيدك الحالي: <strong style="color:#ef4444">'+balance.toLocaleString('ar-IQ')+' د.ع</strong> — <span style="color:#ef4444">غير كافٍ</span>';
+      return;
+    }
+
+    // 4. خصم الرصيد
+    var newBal = balance - price;
+    try{
+      await sb('users','PATCH',{balance: newBal},'?id=eq.'+sess.id);
+    }catch(patchErr){
+      if(patchErr.message && patchErr.message.toLowerCase().includes('balance')){
+        toast('❌ عمود balance غير موجود — شغّل migration_balance_price.sql في Supabase','warn');
+        return;
+      }
+      throw patchErr;
+    }
+
+    // 5. تسجيل الاشتراك
+    await sb('teacher_subscriptions','POST',{
+      user_id:      sess.id,
+      teacher_id:   tid,
+      price:        price,
+      subscribed_at: new Date().toISOString()
+    });
+
+    // 6. حفظ الرصيد في الجلسة
+    sess.balance = newBal; setSess(sess); updateBalanceUI();
+
+    toast('✅ تم الاشتراك بنجاح! رصيدك المتبقي: '+newBal.toLocaleString('ar-IQ')+' د.ع','ok');
+
+    // 7. أزل البوابة وأضف شارة "مشترك" ثم حمّل الفصول
+    var gate = document.querySelector('.teacher-sub-gate');
+    if(gate) gate.remove();
+    var gridGate = document.querySelector('.tsg-grid-btn');
+    if(gridGate && gridGate.parentElement) gridGate.parentElement.remove();
+    _showTeacherStartBtn(tid, price, true);
+    loadTeacherChapters(tid);
+
+  }catch(e){
+    toast('❌ خطأ: '+e.message,'warn');
+  }
 }
 
 async function loadTeacherChapters(tid){
@@ -2698,6 +3093,23 @@ var _curChapterMeta = {tid:'', chtitle:'', chcover:'', chid:''};
 async function openChapterLectures(chid, chtitle, chcover, tid){
   curChapterId = chid;
   _curChapterMeta = {tid:tid, chtitle:chtitle, chcover:chcover, chid:chid};
+
+  // ── فحص الاشتراك قبل فتح الفصل ──
+  if(tid && _curTeacherPrice > 0){
+    var sess = getSess();
+    if(!sess || !sess.id || isGuest){
+      toast('🔒 يجب تسجيل الدخول لمشاهدة محاضرات هذا المدرس','warn');
+      goPage('pg-teacher-chapters'); return;
+    }
+    try{
+      var subRow = await sb('teacher_subscriptions','GET',null,
+        '?user_id=eq.'+sess.id+'&teacher_id=eq.'+tid+'&select=id');
+      if(!subRow || !subRow.length){
+        toast('🔒 هذا المدرس يتطلب اشتراك — اشترك أولاً','warn');
+        goPage('pg-teacher-chapters'); return;
+      }
+    }catch(e){ /* allow on error */ }
+  }
 
   var tt = el('lec-tbar-title');
   var ts = el('lec-tbar-sub');

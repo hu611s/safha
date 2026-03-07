@@ -268,6 +268,9 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>المستخدمون
         <span class="ni-badge" id="nb-us">0</span>
       </div>
+      <div class="ni" onclick="navTo('balance',this)" id="nav-balance">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>إدارة الرصيد
+      </div>
       <div class="nav-sec">الإدارة</div>
       <div class="ni" onclick="navTo('notifications',this)" id="nav-notifications">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>الإشعارات
@@ -511,6 +514,7 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
           <div class="sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>المستخدمون</div>
           <button class="btn btn-ghost" onclick="loadUsers()">🔄 تحديث</button>
         </div>
+
         <div class="tbl-wrap">
           <div class="tbl-filters">
             <div class="tbl-search"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" placeholder="بحث باسم المستخدم..." oninput="searchUsers(this.value)"/></div>
@@ -524,6 +528,74 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
               <th>إجراءات</th>
             </tr></thead>
           <tbody id="us-tb"></tbody></table>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════════════════
+           PAGE — إدارة الرصيد
+      ══════════════════════════════════════ -->
+      <div class="pg" id="pg-balance">
+        <div class="sec-hd">
+          <div class="sec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+            </svg>
+            إدارة الرصيد
+          </div>
+        </div>
+
+        <!-- بحث عن مستخدم -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-hd">🔍 البحث عن مستخدم</div>
+          <div class="card-body">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <input class="fi" id="bal-search-inp"
+                placeholder="ابحث بالاسم أو اسم المستخدم..."
+                oninput="balanceSearchUsers(this.value)"
+                style="flex:1;min-width:200px"/>
+              <button class="btn btn-ghost" onclick="balanceClearUser()">✖ مسح</button>
+            </div>
+            <div id="bal-search-results" style="margin-top:10px"></div>
+          </div>
+        </div>
+
+        <!-- بطاقة المستخدم المختار -->
+        <div class="card hidden" id="bal-user-card">
+          <div class="card-hd">👤 المستخدم المختار</div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap">
+              <div style="width:52px;height:52px;border-radius:50%;background:var(--d-grad);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0" id="bal-user-av">؟</div>
+              <div style="flex:1">
+                <div style="font-size:1rem;font-weight:800;color:var(--tx1)" id="bal-user-name">—</div>
+                <div style="font-size:.8rem;color:var(--tx3);margin-top:2px" id="bal-user-uname">—</div>
+                <div style="font-size:.85rem;margin-top:8px">
+                  الرصيد الحالي: <strong id="bal-user-bal" style="color:#22c55e;font-size:1.05rem">0 د.ع</strong>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+              <div style="flex:1;min-width:160px">
+                <label style="font-size:.78rem;color:var(--tx3);display:block;margin-bottom:6px">المبلغ المراد إضافته (د.ع)</label>
+                <input class="fi" id="bal-add-amount" type="number" min="1"
+                  placeholder="مثال: 250" style="width:100%"/>
+              </div>
+              <button class="btn btn-pri" onclick="adminAddBalance()"
+                style="padding:10px 22px;white-space:nowrap;min-width:140px;justify-content:center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                إضافة رصيد
+              </button>
+            </div>
+            <div id="bal-op-msg" style="margin-top:10px;font-size:.83rem;min-height:20px"></div>
+          </div>
+        </div>
+
+        <!-- آخر اشتراكات المستخدم -->
+        <div class="card hidden" id="bal-history-card">
+          <div class="card-hd">📋 آخر اشتراكات المستخدم</div>
+          <div class="card-body" id="bal-history-body">—</div>
         </div>
       </div>
 
@@ -854,7 +926,7 @@ function navTo(id,el){
   if(el)el.classList.add('active');
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active')});
   var pg=g('pg-'+id);if(pg)pg.classList.add('active');
-  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',curriculum:'المناهج',users:'المستخدمون',settings:'الإعدادات',teachers:'المدرسون',notifications:'الإشعارات','teacher-chapters-admin':'فصول المدرس','lectures-admin':'محاضرات الفصل','lec-stats':'إحصائيات المحاضرة'};
+  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',curriculum:'المناهج',users:'المستخدمون',settings:'الإعدادات',teachers:'المدرسون',notifications:'الإشعارات',balance:'إدارة الرصيد','teacher-chapters-admin':'فصول المدرس','lectures-admin':'محاضرات الفصل','lec-stats':'إحصائيات المحاضرة'};
   g('pg-title').textContent=t[id]||id;
   g('pg-bc').textContent='لوحة التحكم / '+(t[id]||id);
   closeSidebar();
@@ -862,6 +934,7 @@ function navTo(id,el){
   if(id==='users')loadUsers();
   if(id==='teachers')loadTeachersAdmin();
   if(id==='notifications')loadNotifsAdmin();
+  if(id==='balance')initBalancePage();
 }
 function openSidebar(){g('sidebar').classList.add('open');g('soOv').classList.add('show')}
 function closeSidebar(){g('sidebar').classList.remove('open');g('soOv').classList.remove('show')}
@@ -1541,6 +1614,10 @@ function showToast(msg,type){
         </div>
       </div>
       <div class="fr">
+        <label>سعر الاشتراك (د.ع) — اتركه 0 للمجاني</label>
+        <input class="fi" id="teacher-price" type="number" value="0" min="0" placeholder="مثال: 250 أو 0 للمجاني"/>
+      </div>
+      <div class="fr">
         <label>الترتيب</label>
         <input class="fi" id="teacher-sort" type="number" value="1" placeholder="1"/>
       </div>
@@ -2191,7 +2268,7 @@ function renderTeachersAdminList(rows){
     list.innerHTML = '<div class="tbl-empty">لا يوجد مدرسون بعد — اضغط "إضافة مدرس" للبدء</div>';
     return;
   }
-  var html = '<table><thead><tr><th>المدرس</th><th>المادة</th><th>المرحلة / الصف</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody>';
+  var html = '<table><thead><tr><th>المدرس</th><th>المادة</th><th>المرحلة / الصف</th><th>السعر</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody>';
   rows.forEach(function(t){
     var avatarHtml = t.photo_url
       ? '<img src="'+t.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
@@ -2202,6 +2279,7 @@ function renderTeachersAdminList(rows){
     html += '<div><div class="td-nm">'+t.name+'</div><div class="td-sub">'+(t.subject_name||'')+'</div></div></div></td>';
     html += '<td><span class="badge b-blue">'+(t.subject_name||'—')+'</span></td>';
     html += '<td><div style="font-size:.78rem;line-height:1.5"><span class="badge b-blue">'+(t.stage ? STAGE_NAMES_AR[t.stage]||t.stage : '—')+'</span><br>'+(t.grade_label||'—')+'</div></td>';
+    html += '<td>'+(t.price && t.price > 0 ? '<span class="badge b-yellow">'+t.price.toLocaleString('ar-IQ')+' د.ع</span>' : '<span class="badge b-grn">مجاني</span>')+'</td>';
     html += '<td><span class="badge '+(t.is_visible?'b-grn':'b-red')+'">'+(t.is_visible?'ظاهر':'مخفي')+'</span></td>';
     html += '<td><div class="tbl-actions">';
     html += '<button class="btn-icon" title="فصول المدرس" data-tid="'+t.id+'" data-tname="'+t.name.replace(/"/g,'&quot;')+'" onclick="openTeacherChapsAdmin(this.dataset.tid,this.dataset.tname)">';
@@ -2230,6 +2308,7 @@ function openAddTeacher(){
   document.getElementById('teacher-name').value = '';
   document.getElementById('teacher-subject').value = '';
   document.getElementById('teacher-sort').value = '1';
+  var tpEl2 = document.getElementById('teacher-price'); if(tpEl2) tpEl2.value = '0';
   document.getElementById('teacher-photo-url').value = '';
   // reset cascade selects
   var stageEl = document.getElementById('teacher-stage');
@@ -2253,6 +2332,7 @@ function editTeacher(id){
   document.getElementById('teacher-name').value = t.name||'';
   document.getElementById('teacher-subject').value = t.subject_name||'';
   document.getElementById('teacher-sort').value = t.sort_order||1;
+  var tpEl = document.getElementById('teacher-price'); if(tpEl) tpEl.value = t.price||0;
   document.getElementById('teacher-photo-url').value = t.photo_url||'';
 
   // Populate cascade selects with saved data
@@ -2325,6 +2405,9 @@ async function saveTeacher(){
 
   if(btn){ btn.textContent='⏳ جارٍ الحفظ...'; btn.disabled=true; }
 
+  var priceEl = document.getElementById('teacher-price');
+  var price   = priceEl ? (parseInt(priceEl.value)||0) : 0;
+
   var payload = {
     name:         name,
     subject_name: subjectName,
@@ -2333,23 +2416,44 @@ async function saveTeacher(){
     grade_id:     gradeId,
     photo_url:    photoUrl||null,
     sort_order:   sort,
+    price:        price,
     updated_at:   new Date().toISOString()
   };
 
   try{
     if(id){
-      var res = await db('teachers','PATCH',payload,'?id=eq.'+id);
+      await db('teachers','PATCH',payload,'?id=eq.'+id);
       showToast('✅ تم تحديث بيانات المدرس','ok');
     } else {
       var insertPayload = Object.assign({is_visible:true, created_at:new Date().toISOString()}, payload);
-      var res = await db('teachers','POST',insertPayload);
+      await db('teachers','POST',insertPayload);
       showToast('✅ تمت إضافة المدرس بنجاح','ok');
     }
     closeOv('ov-teacher');
     await loadTeachersAdmin();
   }catch(e){
-    console.error('saveTeacher error:', e);
-    showToast('❌ فشل الحفظ: '+e.message,'err');
+    var msg = e.message || '';
+    console.error('saveTeacher error:', msg);
+    /* إذا كان الخطأ بسبب عمود price غير موجود — احفظ بدون السعر */
+    if(msg.toLowerCase().includes('price') || (msg.toLowerCase().includes('column') && msg.toLowerCase().includes('does not exist'))){
+      try{
+        var payloadNP = Object.assign({}, payload);
+        delete payloadNP.price;
+        if(id){
+          await db('teachers','PATCH',payloadNP,'?id=eq.'+id);
+        } else {
+          var insertNP = Object.assign({is_visible:true, created_at:new Date().toISOString()}, payloadNP);
+          await db('teachers','POST',insertNP);
+        }
+        closeOv('ov-teacher');
+        await loadTeachersAdmin();
+        showToast('⚠️ تم الحفظ — السعر لم يُحفظ (شغّل migration_balance_price.sql)','warn');
+      }catch(e2){
+        showToast('❌ فشل الحفظ: '+e2.message,'err');
+      }
+    } else {
+      showToast('❌ فشل الحفظ: '+msg,'err');
+    }
   }
   if(btn){ btn.textContent='💾 حفظ'; btn.disabled=false; }
 }
@@ -2969,4 +3073,248 @@ async function deleteNotif(id){
   }catch(e){ showToast('❌ '+e.message,'err'); }
 }
 
-</script> 
+
+
+/* ══════════════════════════════════════════════
+   BALANCE MANAGEMENT — إدارة الرصيد
+══════════════════════════════════════════════ */
+var _balanceSelectedUser = null;
+var _balSearchTimeout    = null;
+
+/* ─── تهيئة صفحة إدارة الرصيد ─── */
+function initBalancePage(){
+  window._balanceSelectedUser = null;
+  window._balSearchRows       = [];
+  var inp = document.getElementById('bal-search-inp');
+  var res = document.getElementById('bal-search-results');
+  var uc  = document.getElementById('bal-user-card');
+  var hc  = document.getElementById('bal-history-card');
+  var msg = document.getElementById('bal-op-msg');
+  var amt = document.getElementById('bal-add-amount');
+  if(inp) inp.value      = '';
+  if(res) res.innerHTML  = '';
+  if(uc)  uc.classList.add('hidden');
+  if(hc)  hc.classList.add('hidden');
+  if(msg) msg.innerHTML  = '';
+  if(amt) amt.value      = '';
+}
+
+/* ─── مسح المستخدم المختار ─── */
+function balanceClearUser(){
+  initBalancePage();
+}
+
+/* ─── بحث بتأخير ─── */
+function balanceSearchUsers(val){
+  clearTimeout(window._balSearchTimeout);
+  var q = (val || '').trim();
+  var res = document.getElementById('bal-search-results');
+  if(q.length < 2){
+    if(res) res.innerHTML = '';
+    return;
+  }
+  window._balSearchTimeout = setTimeout(function(){ _doBalanceSearch(q); }, 350);
+}
+
+/* ─── تنفيذ البحث ─── */
+async function _doBalanceSearch(q){
+  var res = document.getElementById('bal-search-results');
+  if(!res) return;
+  res.innerHTML = '<div style="padding:8px 0;color:#94a3b8;font-size:.82rem">جارٍ البحث...</div>';
+
+  /* نحاول أولاً مع عمود balance، وإن غاب نعيد المحاولة بدونه */
+  var rows = null;
+  var balMissing = false;
+
+  try{
+    var enc = encodeURIComponent('%' + q + '%');
+    rows = (await db('users','GET',null,
+      '?or=(display_name.ilike.' + enc + ',username.ilike.' + enc + ')' +
+      '&select=id,display_name,username,balance&limit=8')) || [];
+  }catch(err1){
+    if(err1.message && err1.message.toLowerCase().includes('balance')){
+      /* العمود غير موجود — أعد المحاولة بدونه */
+      balMissing = true;
+      try{
+        var enc2 = encodeURIComponent('%' + q + '%');
+        rows = (await db('users','GET',null,
+          '?or=(display_name.ilike.' + enc2 + ',username.ilike.' + enc2 + ')' +
+          '&select=id,display_name,username&limit=8')) || [];
+        /* أضف balance=0 مؤقتاً حتى يعمل باقي الكود */
+        rows.forEach(function(u){ u.balance = 0; });
+      }catch(err2){
+        res.innerHTML = '<div style="padding:8px 0;color:#ef4444;font-size:.82rem">❌ ' + err2.message + '</div>';
+        return;
+      }
+    } else {
+      res.innerHTML = '<div style="padding:8px 0;color:#ef4444;font-size:.82rem">❌ ' + err1.message + '</div>';
+      return;
+    }
+  }
+
+  if(!rows || !rows.length){
+    res.innerHTML = '<div style="padding:8px 0;color:#94a3b8;font-size:.82rem">لا توجد نتائج</div>';
+    return;
+  }
+
+  window._balSearchRows = rows;
+
+  var warning = balMissing
+    ? '<div style="margin-bottom:8px;padding:7px 12px;background:rgba(245,158,11,.1);' +
+      'border:1px solid rgba(245,158,11,.3);border-radius:8px;font-size:.76rem;color:#f59e0b">' +
+      '⚠️ عمود <strong>balance</strong> غير موجود — شغّل <strong>migration_balance_price.sql</strong> في Supabase SQL Editor</div>'
+    : '';
+
+  var html = warning + '<div style="display:flex;flex-direction:column;gap:6px">';
+  for(var i = 0; i < rows.length; i++){
+    var u = rows[i];
+    var bal = typeof u.balance === 'number' ? u.balance : 0;
+    html += '<div class="bal-row-item" data-idx="' + i + '" style="' +
+            'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;' +
+            'background:rgba(102,126,234,.07);cursor:pointer;' +
+            'border:1px solid rgba(102,126,234,.15);transition:background .15s">' +
+            '<div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;' +
+            'background:linear-gradient(135deg,#667eea,#764ba2);' +
+            'display:flex;align-items:center;justify-content:center;font-size:1rem">👤</div>' +
+            '<div style="flex:1;min-width:0">' +
+            '<div style="font-weight:700;font-size:.88rem;color:#f1f5f9;' +
+            'white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + u.display_name + '</div>' +
+            '<div style="font-size:.75rem;color:#94a3b8;margin-top:2px">@' + u.username +
+            ' &mdash; رصيد: <strong style="color:' + (balMissing ? '#f59e0b' : '#22c55e') + '">' +
+            (balMissing ? '—' : bal.toLocaleString('ar-IQ')) + '</strong>' +
+            (balMissing ? '' : ' د.ع') + '</div>' +
+            '</div></div>';
+  }
+  html += '</div>';
+  res.innerHTML = html;
+
+  res.querySelectorAll('.bal-row-item').forEach(function(el){
+    var idx = parseInt(el.getAttribute('data-idx'));
+    el.addEventListener('click',     function(){ balanceSelectRow(idx); });
+    el.addEventListener('mouseover', function(){ this.style.background = 'rgba(102,126,234,.18)'; });
+    el.addEventListener('mouseout',  function(){ this.style.background = 'rgba(102,126,234,.07)'; });
+  });
+}
+
+/* ─── اختيار مستخدم من نتائج البحث ─── */
+function balanceSelectRow(idx){
+  var rows = window._balSearchRows || [];
+  var u    = rows[idx];
+  if(!u) return;
+  balanceSelectUser(u);
+}
+
+function balanceSelectUser(u){
+  if(typeof u === 'string') u = JSON.parse(u);
+  window._balanceSelectedUser = u;
+
+  /* إخفاء نتائج البحث */
+  var res = document.getElementById('bal-search-results');
+  var inp = document.getElementById('bal-search-inp');
+  if(res) res.innerHTML = '';
+  if(inp) inp.value     = u.display_name;
+
+  /* عرض بطاقة المستخدم */
+  var card = document.getElementById('bal-user-card');
+  var nm   = document.getElementById('bal-user-name');
+  var un   = document.getElementById('bal-user-uname');
+  var bl   = document.getElementById('bal-user-bal');
+  var amt  = document.getElementById('bal-add-amount');
+  var msg  = document.getElementById('bal-op-msg');
+  if(card) card.classList.remove('hidden');
+  if(nm)   nm.textContent  = u.display_name;
+  if(un)   un.textContent  = '@' + u.username;
+  if(bl)   bl.textContent  = (u.balance||0).toLocaleString('ar-IQ') + ' د.ع';
+  if(amt)  amt.value       = '';
+  if(msg)  msg.innerHTML   = '';
+
+  /* تحميل سجل الاشتراكات */
+  _loadUserSubHistory(u.id);
+}
+
+/* ─── تحميل آخر اشتراكات المستخدم ─── */
+async function _loadUserSubHistory(uid){
+  var hcard = document.getElementById('bal-history-card');
+  var hbody = document.getElementById('bal-history-body');
+  if(!hcard || !hbody) return;
+  hcard.classList.remove('hidden');
+  hbody.innerHTML = '<span style="color:#94a3b8;font-size:.82rem">جارٍ التحميل...</span>';
+  try{
+    var rows = (await db('teacher_subscriptions','GET',null,
+      '?user_id=eq.' + uid + '&order=subscribed_at.desc&limit=10')) || [];
+    if(!rows.length){
+      hbody.innerHTML = '<span style="color:#94a3b8;font-size:.82rem">لا توجد اشتراكات بعد</span>';
+      return;
+    }
+    var html = '<div style="display:flex;flex-direction:column;gap:8px">';
+    for(var i = 0; i < rows.length; i++){
+      var r  = rows[i];
+      var d  = new Date(r.subscribed_at);
+      var ds = d.toLocaleDateString('ar-IQ') + ' ' +
+               d.toLocaleTimeString('ar-IQ',{hour:'2-digit',minute:'2-digit'});
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;'
+            + 'padding:8px 12px;background:rgba(255,255,255,.04);border-radius:10px;font-size:.82rem">'
+            + '<div>'
+            + '<div style="font-weight:600;color:#f1f5f9">اشتراك مدرس</div>'
+            + '<div style="color:#94a3b8;margin-top:2px">' + ds + '</div>'
+            + '</div>'
+            + '<span class="badge b-red">&minus;' + r.price.toLocaleString('ar-IQ') + ' د.ع</span>'
+            + '</div>';
+    }
+    html += '</div>';
+    hbody.innerHTML = html;
+  }catch(err){
+    hbody.innerHTML = '<span style="color:#ef4444;font-size:.82rem">❌ ' + err.message + '</span>';
+  }
+}
+
+/* ─── إضافة رصيد للمستخدم ─── */
+async function adminAddBalance(){
+  var user  = window._balanceSelectedUser;
+  if(!user){ showToast('⚠️ اختر مستخدماً أولاً','warn'); return; }
+
+  var amtEl = document.getElementById('bal-add-amount');
+  var msgEl = document.getElementById('bal-op-msg');
+  var balEl = document.getElementById('bal-user-bal');
+  var amt   = parseInt(amtEl ? amtEl.value : '0');
+
+  if(!amt || amt < 1){ showToast('⚠️ أدخل مبلغاً صحيحاً','warn'); return; }
+  if(msgEl) msgEl.innerHTML = '<span style="color:#94a3b8">⏳ جارٍ التنفيذ...</span>';
+
+  try{
+    /* جلب أحدث رصيد — مع التعامل مع غياب العمود */
+    var curBal = 0;
+    try{
+      var fresh = (await db('users','GET',null,'?id=eq.' + user.id + '&select=balance')) || [];
+      curBal = (fresh[0] && typeof fresh[0].balance === 'number') ? fresh[0].balance : 0;
+    }catch(colErr){
+      /* عمود balance غير موجود بعد — سيُنشأ تلقائياً عند الـ PATCH */
+      curBal = typeof user.balance === 'number' ? user.balance : 0;
+    }
+
+    var newBal = curBal + amt;
+    await db('users','PATCH',{balance: newBal},'?id=eq.' + user.id);
+
+    /* تحديث الواجهة */
+    window._balanceSelectedUser.balance = newBal;
+    if(balEl) balEl.textContent = newBal.toLocaleString('ar-IQ') + ' د.ع';
+    if(amtEl) amtEl.value = '';
+    if(msgEl) msgEl.innerHTML =
+      '<span style="color:#22c55e;font-weight:700">✅ تمت إضافة ' +
+      amt.toLocaleString('ar-IQ') + ' د.ع &mdash; الرصيد الجديد: ' +
+      newBal.toLocaleString('ar-IQ') + ' د.ع</span>';
+    showToast('✅ تمت إضافة الرصيد بنجاح','ok');
+
+  }catch(err){
+    var msg = err.message || '';
+    if(msgEl) msgEl.innerHTML = '<span style="color:#ef4444">❌ ' + msg + '</span>';
+    if(msg.toLowerCase().includes('balance') || msg.toLowerCase().includes('column')){
+      showToast('❌ شغّل migration_balance_price.sql في Supabase أولاً','err');
+    } else {
+      showToast('❌ فشل: ' + msg,'err');
+    }
+  }
+}
+
+
+</script>
