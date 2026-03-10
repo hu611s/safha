@@ -210,6 +210,51 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
 .hidden{display:none!important}
+
+/* ═══════════════════════════════════════
+   أكواد الشحن — Recharge Codes
+═══════════════════════════════════════ */
+.codes-toolbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px
+}
+.codes-filters{display:flex;gap:6px;flex-wrap:wrap}
+.codes-flt{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 13px;border-radius:20px;font-size:.78rem;
+  border:1.5px solid var(--bdr2);background:var(--card);
+  color:var(--tx2);cursor:pointer;font-family:'Cairo',sans-serif;
+  transition:all .15s;
+}
+.codes-flt:hover{border-color:var(--pri-c);color:var(--tx)}
+.codes-flt-active{
+  background:linear-gradient(135deg,#667eea,#764ba2)!important;
+  color:#fff!important;border-color:transparent!important;
+}
+.code-cell{
+  font-family:'Courier New',monospace;font-size:.85rem;
+  letter-spacing:.6px;color:var(--pri-c);font-weight:600;
+}
+.badge-open{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 9px;
+  border-radius:12px;font-size:.72rem;font-weight:700;
+  background:rgba(34,197,94,.12);color:#22c55e;
+  border:1px solid rgba(34,197,94,.2);
+}
+.badge-used{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 9px;
+  border-radius:12px;font-size:.72rem;font-weight:700;
+  background:rgba(239,68,68,.1);color:#ef4444;
+  border:1px solid rgba(239,68,68,.18);
+}
+.user-cell-name{font-size:.83rem;font-weight:700;color:var(--tx)}
+.user-cell-handle{font-size:.72rem;color:var(--tx3);margin-top:1px}
+.pager-btn{
+  padding:5px 11px;border-radius:7px;font-size:.78rem;cursor:pointer;
+  border:1px solid var(--bdr2);background:var(--card);color:var(--tx2);
+  font-family:'Cairo',sans-serif;transition:all .12s;
+}
+.pager-btn:hover{border-color:var(--pri-c);color:var(--tx)}
+.pager-btn.cur{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:transparent}
 </style>
 </head>
 <body>
@@ -272,6 +317,11 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>إدارة الرصيد
       </div>
       <div class="nav-sec">الإدارة</div>
+      <div class="ni" onclick="navTo('codes',this)" id="nav-codes">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+        أكواد الشحن
+        <span class="ni-badge" id="nb-codes">—</span>
+      </div>
       <div class="ni" onclick="navTo('notifications',this)" id="nav-notifications">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>الإشعارات
         <span class="ni-badge" id="nb-notifs">0</span>
@@ -627,6 +677,62 @@ label{display:block;font-size:.73rem;font-weight:700;color:var(--tx2);margin-bot
         <div id="notifs-admin-list"><div class="tbl-empty">جارٍ التحميل...</div></div>
       </div>
 
+
+      <!-- ══ RECHARGE CODES ══ -->
+      <div class="pg" id="pg-codes">
+        <div class="pg-hd">
+          <h2>إدارة أكواد الشحن</h2>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span id="codes-summary" style="font-size:.8rem;color:var(--tx2)"></span>
+            <button class="btn btn-sec" onclick="exportCodesCsv()" style="gap:5px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              تصدير CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- فلاتر + بحث -->
+        <div class="codes-toolbar">
+          <div class="codes-filters">
+            <button class="codes-flt codes-flt-active" data-f="all"  onclick="setCodesFilter('all',this)">الكل</button>
+            <button class="codes-flt"                  data-f="open" onclick="setCodesFilter('open',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="9"/></svg>
+              مفتوح
+            </button>
+            <button class="codes-flt"                  data-f="used" onclick="setCodesFilter('used',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              مستعمل
+            </button>
+          </div>
+          <input id="codes-search-inp" type="text" placeholder="ابحث بالكود أو اسم المستخدم..."
+            oninput="searchCodes(this.value)"
+            style="flex:1;min-width:180px;padding:8px 12px;border-radius:9px;
+                   border:1px solid var(--bdr2);background:var(--card2);
+                   color:var(--tx);font-size:.82rem;font-family:'Cairo',sans-serif"/>
+        </div>
+
+        <!-- جدول -->
+        <div class="tbl-wrap" style="overflow-x:auto;margin-top:12px">
+          <table id="codes-tbl">
+            <thead>
+              <tr>
+                <th style="width:32px">#</th>
+                <th>الكود</th>
+                <th>القيمة</th>
+                <th>الحالة</th>
+                <th>المستخدم</th>
+                <th class="hide-mob">تاريخ الاستخدام</th>
+              </tr>
+            </thead>
+            <tbody id="codes-tbody"></tbody>
+          </table>
+          <div id="codes-empty" class="tbl-empty" style="display:none">لا توجد نتائج</div>
+        </div>
+
+        <!-- ترقيم الصفحات -->
+        <div id="codes-pager" style="display:flex;justify-content:center;gap:6px;margin-top:16px;flex-wrap:wrap"></div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -822,13 +928,28 @@ async function db(table, method, body, query){
   if(method==='POST'||method==='PATCH') h['Prefer']='return=representation';
   var opts = {method: method||'GET', headers: h};
   if(body) opts.body = JSON.stringify(body);
-  var r = await fetch(url, opts);
+
+  var r;
+  try{ r = await fetch(url, opts); }
+  catch(netErr){
+    throw new Error('❌ تعذّر الاتصال بالسيرفر — تحقق من الإنترنت ('+netErr.message+')');
+  }
+
   if(!r.ok){
-    var txt = await r.text();
+    var txt='';
+    try{ txt=await r.text(); }catch(e){}
     var msg = txt;
-    try{ var j=JSON.parse(txt); msg=j.message||j.error||j.hint||txt; }catch(e){}
+    try{ var j=JSON.parse(txt); msg=j.message||j.hint||j.error||j.details||txt; }catch(e){}
+
+    if(r.status===401||r.status===403) msg='❌ خطأ صلاحيات ('+r.status+') — تحقق من إعدادات RLS في Supabase';
+    else if(r.status===404) msg='❌ الجدول "'+table+'" غير موجود — شغّل SQL الإعداد في Supabase';
+    else if(r.status===409) msg='❌ البيانات مكررة — السجل موجود مسبقاً';
+    else if(r.status>=500)  msg='❌ خطأ في السيرفر ('+r.status+') — '+(msg||'حاول مرة أخرى');
+    else msg = '❌ خطأ ('+r.status+'): '+(msg||'غير معروف');
+
     throw new Error(msg);
   }
+
   if(r.status===204||method==='DELETE') return null;
   var ct = r.headers.get('content-type')||'';
   if(ct.includes('json')){
@@ -838,13 +959,49 @@ async function db(table, method, body, query){
 }
 
 async function upload(file, folder){
-  var fname = folder+'/'+Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-  var r = await fetch(SB+'/storage/v1/object/files/'+fname, {
+  /* ── فحص الحجم ── */
+  var maxMB = 50;
+  if(file.size > maxMB * 1024 * 1024){
+    throw new Error('حجم الملف ('+Math.round(file.size/1024/1024)+'MB) يتجاوز الحد المسموح ('+maxMB+'MB)');
+  }
+
+  var ext   = file.name.split('.').pop().toLowerCase();
+  var safe  = file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  var fname = folder+'/'+Date.now()+'_'+safe;
+  var url   = SB+'/storage/v1/object/files/'+fname;
+
+  var r = await fetch(url, {
     method:'POST',
-    headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':file.type||'application/octet-stream'},
+    headers:{
+      'apikey':SK,
+      'Authorization':'Bearer '+SK,
+      'Content-Type':file.type||'application/octet-stream',
+      'x-upsert':'true'           /* يتجنب خطأ "already exists" */
+    },
     body:file
   });
-  if(!r.ok){ var t=await r.text(); throw new Error('رفع الملف فشل: '+t); }
+
+  if(!r.ok){
+    var errText = '';
+    try { var j=await r.json(); errText=j.error||j.message||j.statusCode||''; }
+    catch(e){ try{ errText=await r.text(); }catch(e2){} }
+
+    /* رسائل خطأ واضحة حسب الحالة */
+    if(r.status===400 && (errText.includes('Bucket not found')||errText.includes('bucket'))){
+      throw new Error('❌ الـ Storage bucket غير موجود — اذهب إلى Supabase → Storage → أنشئ bucket اسمه "files" وضعه Public');
+    }
+    if(r.status===401||r.status===403){
+      throw new Error('❌ خطأ صلاحيات Storage ('+r.status+') — تأكد من سياسات bucket "files" في Supabase');
+    }
+    if(r.status===413){
+      throw new Error('❌ الملف كبير جداً — الحد المسموح 50MB');
+    }
+    if(r.status===0||errText.includes('Failed to fetch')){
+      throw new Error('❌ تعذّر الوصول إلى Supabase — تحقق من اتصال الإنترنت');
+    }
+    throw new Error('❌ رفع الملف فشل ('+r.status+'): '+(errText||'خطأ غير معروف'));
+  }
+
   return SB+'/storage/v1/object/public/files/'+fname;
 }
 // Alias with progress callback support
@@ -926,7 +1083,7 @@ function navTo(id,el){
   if(el)el.classList.add('active');
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active')});
   var pg=g('pg-'+id);if(pg)pg.classList.add('active');
-  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',curriculum:'المناهج',users:'المستخدمون',settings:'الإعدادات',teachers:'المدرسون',notifications:'الإشعارات',balance:'إدارة الرصيد','teacher-chapters-admin':'فصول المدرس','lectures-admin':'محاضرات الفصل','lec-stats':'إحصائيات المحاضرة'};
+  var t={dash:'الإحصائيات',booklets:'الملازم',exams:'الاختبارات',curriculum:'المناهج',users:'المستخدمون',settings:'الإعدادات',teachers:'المدرسون',notifications:'الإشعارات',balance:'إدارة الرصيد',codes:'أكواد الشحن','teacher-chapters-admin':'فصول المدرس','lectures-admin':'محاضرات الفصل','lec-stats':'إحصائيات المحاضرة'};
   g('pg-title').textContent=t[id]||id;
   g('pg-bc').textContent='لوحة التحكم / '+(t[id]||id);
   closeSidebar();
@@ -934,6 +1091,7 @@ function navTo(id,el){
   if(id==='users')loadUsers();
   if(id==='teachers')loadTeachersAdmin();
   if(id==='notifications')loadNotifsAdmin();
+  if(id==='codes')loadCodesAdmin();
   if(id==='balance')initBalancePage();
 }
 function openSidebar(){g('sidebar').classList.add('open');g('soOv').classList.add('show')}
@@ -1142,39 +1300,80 @@ async function saveBk(){
   if(!name){showToast('⚠️ أدخل اسم الملزمة','warn');return;}
   if(!subj){showToast('⚠️ اختر المادة','warn');return;}
   if(!stage){showToast('⚠️ اختر المرحلة','warn');return;}
-  var btn=g('bk-save-btn');btn.textContent='جارٍ الحفظ...';btn.disabled=true;
+
+  var btn=g('bk-save-btn');
+  var origTxt = btn.textContent;
+  btn.textContent='جارٍ الحفظ...';btn.disabled=true;
+
   try{
-    var fileUrl=g('bk-url').value.trim();
-    if(files.bk) fileUrl=await uploadProg('bk','booklets');
-    var coverUrl=await uploadCoverImg();
-    var editId=g('bk-eid').value;
-    var payload={
-      name:name,
-      subject_id:toSubjId(subj),
+    /* ── رفع ملف PDF إن وُجد ── */
+    var fileUrl = g('bk-url').value.trim();
+    if(files.bk){
+      showToast('📤 جارٍ رفع ملف PDF...','info');
+      try{
+        fileUrl = await uploadProg('bk','booklets');
+      } catch(uploadErr){
+        throw new Error('فشل رفع PDF — '+uploadErr.message);
+      }
+    }
+
+    /* ── رفع صورة الغلاف إن وُجدت ── */
+    var coverUrl = null;
+    try{
+      coverUrl = await uploadCoverImg();
+    } catch(coverErr){
+      /* نكمل حتى لو فشلت الصورة */
+      showToast('⚠️ تعذّر رفع الصورة — سيُحفظ بدونها','warn');
+    }
+
+    var editId = g('bk-eid').value;
+    var payload = {
+      name:        name,
+      subject_id:  toSubjId(subj),
       subject_name:subj,
-      stage:stage,
-      grade:g('bk-grade').value||null,  // grade_id: p1, m2, s3 etc
-      emoji:selBkE,
-      color:selBkC,
-      cover_url:coverUrl||null,
-      file_url:fileUrl||null,
-      notes:g('bk-notes').value.trim()||null,
-      is_visible:true,
-      updated_at:new Date().toISOString()
+      stage:       stage,
+      grade:       g('bk-grade').value||null,
+      emoji:       selBkE,
+      color:       selBkC,
+      cover_url:   coverUrl||null,
+      file_url:    fileUrl||null,
+      notes:       g('bk-notes').value.trim()||null,
+      is_visible:  true,
+      updated_at:  new Date().toISOString()
     };
+
+    /* ── حفظ في قاعدة البيانات ── */
     if(editId){
       await db('booklets','PATCH',payload,'?id=eq.'+editId);
-      showToast('✅ تم تحديث الملزمة','ok');
-    }else{
+      showToast('✅ تم تحديث الملزمة بنجاح','ok');
+    } else {
       await db('booklets','POST',payload);
-      showToast('✅ تم إضافة الملزمة','ok');
+      showToast('✅ تم إضافة الملزمة بنجاح','ok');
     }
-    if(!g('bk-eid').value && g('bk-send-notif') && g('bk-send-notif').checked){
-      await sendAutoNotif({title:'📚 ملزمة جديدة: '+g('bk-name').value.trim(),body:'تم إضافة ملزمة '+g('bk-subj').value+' جديدة'+(g('bk-grade').value?' لصفك':''),type:'booklet',stage:g('bk-stage').value,grade:g('bk-grade').value||null});
+
+    /* ── إشعار تلقائي ── */
+    if(!editId && g('bk-send-notif') && g('bk-send-notif').checked){
+      try{
+        await sendAutoNotif({
+          title: '📚 ملزمة جديدة: '+name,
+          body:  'تم إضافة ملزمة '+subj+' جديدة'+(g('bk-grade').value?' لصفك':''),
+          type:'booklet', stage:stage, grade:g('bk-grade').value||null
+        });
+      } catch(notifErr){ /* لا نوقف العملية بسبب الإشعار */ }
     }
-    closeOv('ov-bk');await loadBk();loadDash();
-  }catch(e){showToast('❌ '+e.message,'err');}
-  btn.textContent='💾 حفظ الملزمة';btn.disabled=false;
+
+    closeOv('ov-bk');
+    await loadBk();
+    loadDash();
+
+  } catch(e){
+    /* خطأ واضح يظهر كامل */
+    showToast(e.message || '❌ حدث خطأ غير متوقع','err');
+    console.error('[saveBk]', e);
+  } finally {
+    btn.textContent = origTxt;
+    btn.disabled = false;
+  }
 }
 
 async function toggleBk(id,vis){
@@ -3317,4 +3516,182 @@ async function adminAddBalance(){
 }
 
 
+
+/* ════════════════════════════════════════════
+   إدارة أكواد الشحن
+════════════════════════════════════════════ */
+var _codesAll    = [];   // كل الأكواد من DB
+var _codesFilter = 'all';
+var _codesSearch = '';
+var _codesPage   = 1;
+var _codesPerPg  = 50;
+
+async function loadCodesAdmin(){
+  var tbody = g('codes-tbody');
+  var empty  = g('codes-empty');
+  if(tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tx3)">جارٍ التحميل...</td></tr>';
+
+  try{
+    // جلب كل الأكواد
+    var rows = await db('recharge_codes','GET',null,
+      '?order=created_at.asc&select=id,code,value,is_used,used_at,used_by,created_at'
+    );
+    if(!rows || !rows.length){ rows = []; }
+
+    // جلب بيانات المستخدمين الذين استخدموا الأكواد
+    var usedIds = [...new Set(rows.filter(function(r){return r.used_by;}).map(function(r){return r.used_by;}))];
+    var uMap = {};
+    if(usedIds.length){
+      var chunk = usedIds.slice(0,60).join(',');
+      var uRows = await db('users','GET',null,
+        '?id=in.('+chunk+')&select=id,username,display_name') || [];
+      uRows.forEach(function(u){ uMap[u.id] = u; });
+    }
+
+    _codesAll = rows.map(function(r){
+      var u = uMap[r.used_by] || null;
+      r._uname    = u ? (u.display_name || u.username || '—') : '—';
+      r._uhandle  = u ? ('@'+(u.username||'')) : '';
+      return r;
+    });
+
+    // إحصاءات
+    var total = _codesAll.length;
+    var used  = _codesAll.filter(function(r){return r.is_used;}).length;
+    var open  = total - used;
+    var smry  = g('codes-summary');
+    if(smry) smry.innerHTML =
+      '<span style="color:#22c55e;font-weight:700">'+open+'</span> مفتوح &nbsp;·&nbsp; '
+      +'<span style="color:#ef4444;font-weight:700">'+used+'</span> مستعمل &nbsp;·&nbsp; '
+      +'<span>'+total+'</span> إجمالي';
+
+    var nb = g('nb-codes');
+    if(nb) nb.textContent = open;
+
+    _codesPage = 1;
+    renderCodesTable();
+  }catch(err){
+    console.error('loadCodesAdmin:',err);
+    if(tbody) tbody.innerHTML = '<tr><td colspan="6" style="color:#ef4444;text-align:center;padding:16px">خطأ: '+err.message+'</td></tr>';
+  }
+}
+
+function setCodesFilter(f, btn){
+  _codesFilter = f;
+  _codesPage   = 1;
+  document.querySelectorAll('.codes-flt').forEach(function(b){
+    b.classList.remove('codes-flt-active');
+  });
+  if(btn) btn.classList.add('codes-flt-active');
+  renderCodesTable();
+}
+
+function searchCodes(q){
+  _codesSearch = (q||'').toLowerCase().trim();
+  _codesPage = 1;
+  renderCodesTable();
+}
+
+function renderCodesTable(){
+  var filtered = _codesAll.filter(function(r){
+    if(_codesFilter==='open' &&  r.is_used) return false;
+    if(_codesFilter==='used' && !r.is_used) return false;
+    if(_codesSearch){
+      var inCode = (r.code||'').toLowerCase().includes(_codesSearch);
+      var inName = (r._uname||'').toLowerCase().includes(_codesSearch);
+      var inHand = (r._uhandle||'').toLowerCase().includes(_codesSearch);
+      if(!inCode && !inName && !inHand) return false;
+    }
+    return true;
+  });
+
+  var tbody = g('codes-tbody');
+  var empty  = g('codes-empty');
+  if(!tbody) return;
+
+  if(!filtered.length){
+    tbody.innerHTML = '';
+    if(empty) empty.style.display = '';
+    g('codes-pager').innerHTML = '';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+
+  var start = (_codesPage-1)*_codesPerPg;
+  var page  = filtered.slice(start, start+_codesPerPg);
+
+  var html = '';
+  page.forEach(function(r,i){
+    var n = start+i+1;
+    var dateTxt = '—';
+    if(r.used_at){
+      try{
+        dateTxt = new Date(r.used_at).toLocaleDateString('ar-IQ',{
+          year:'numeric',month:'short',day:'numeric',
+          hour:'2-digit',minute:'2-digit'
+        });
+      }catch(e){}
+    }
+    html += '<tr>';
+    html += '<td style="color:var(--tx3);font-size:.72rem">'+n+'</td>';
+    html += '<td><span class="code-cell">'+r.code+'</span></td>';
+    html += '<td style="font-weight:700;color:#22c55e;font-size:.85rem">'+r.value.toLocaleString('ar-IQ')+' <span style="font-size:.7rem;opacity:.7">د.ع</span></td>';
+    if(r.is_used){
+      html += '<td><span class="badge-used">'
+        +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="9" height="9"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+        +' مستعمل</span></td>';
+      html += '<td><div class="user-cell-name">'+r._uname+'</div>'
+        +'<div class="user-cell-handle">'+r._uhandle+'</div></td>';
+    } else {
+      html += '<td><span class="badge-open">'
+        +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="9" height="9"><circle cx="12" cy="12" r="9"/></svg>'
+        +' مفتوح</span></td>';
+      html += '<td style="color:var(--tx3)">—</td>';
+    }
+    html += '<td class="hide-mob" style="font-size:.77rem;color:var(--tx3)">'+dateTxt+'</td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+
+  /* ترقيم */
+  var totalPg = Math.ceil(filtered.length/_codesPerPg);
+  var pager = g('codes-pager');
+  if(pager){
+    if(totalPg<=1){ pager.innerHTML=''; return; }
+    var ph='';
+    for(var p=1;p<=totalPg;p++){
+      ph+='<button class="pager-btn'+(p===_codesPage?' cur':'')+'" onclick="goCodesPage('+p+')">'+p+'</button>';
+    }
+    pager.innerHTML = ph;
+  }
+}
+
+function goCodesPage(p){
+  _codesPage=p;
+  renderCodesTable();
+  var pg = g('pg-codes');
+  if(pg) pg.scrollTo({top:0,behavior:'smooth'});
+}
+
+function exportCodesCsv(){
+  if(!_codesAll.length){ showToast('لا توجد بيانات','warn'); return; }
+  var rows = [['#','الكود','القيمة','الحالة','المستخدم','الحساب','تاريخ الاستخدام']];
+  _codesAll.forEach(function(r,i){
+    rows.push([
+      i+1, r.code, r.value,
+      r.is_used?'مستعمل':'مفتوح',
+      r.is_used?r._uname:'—',
+      r.is_used?r._uhandle:'—',
+      r.used_at ? new Date(r.used_at).toLocaleDateString('ar-IQ') : '—'
+    ]);
+  });
+  var csv = rows.map(function(row){
+    return row.map(function(c){ return '"'+String(c).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+  var blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'recharge_codes_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
 </script>
